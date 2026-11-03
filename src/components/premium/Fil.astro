@@ -1,0 +1,171 @@
+---
+// Fil conducteur du Premium : la conduite cuivre de 2 px qui traverse tout le site.
+// - entree="haut"   (accueil) : elle sort du bas du hero et descend le long de la page.
+// - entree="gauche" (pages internes, bureau) : elle arrive du bord gauche de l'écran à la
+//   hauteur du titre — elle « vient » de la page précédente —, fait un coude et descend.
+// Elle finit toujours sur la Distribution (bas de page), qui mène aux autres pages.
+// Sur mobile : un simple trait vertical à gauche.
+//
+// Animation, une seule fois par visite (sessionStorage), jamais avec prefers-reduced-motion :
+//   haut   : descente 0 → 900 ms (après 120 ms), clip-path, cubic-bezier(0.22, 1, 0.36, 1)
+//   gauche : entrée 0 → 320 ms scaleX, cubic-bezier(0.32, 0, 0.67, 0) ; coude 320 → 400 ms,
+//            stroke-dashoffset, linear ; descente 400 → 1100 ms, clip-path, même ease-out.
+// Pourquoi : c'est l'eau qui entre dans le réseau. Accélération à l'entrée, vitesse
+// constante dans le coude, freinage en descente : pas de rupture aux raccords, et la
+// ligne se pose au lieu de s'arrêter net. Un peu plus d'une seconde : explicatif, vu une
+// fois, rien n'attend sa fin (textes et boutons sont là tout de suite). Seule la hauteur
+// d'un écran est dessinée ; le reste est déjà en place. Propriétés : transform, clip-path,
+// un coude de 24 px (peinture minime).
+interface Props {
+  slug: string;
+  entree: 'haut' | 'gauche';
+}
+const { slug, entree } = Astro.props;
+const cle = `fil-${slug}`;
+---
+
+<script is:inline define:vars={{ cle }}>
+  try {
+    if (sessionStorage.getItem(cle)) document.documentElement.dataset.fil = 'vu';
+    else sessionStorage.setItem(cle, '1');
+  } catch (e) {}
+</script>
+
+<div class:list={['fil', `fil-${entree}`]} aria-hidden="true">
+  {
+    entree === 'gauche' && (
+      <>
+        <svg class="fil-entree" viewBox="0 0 10 2" preserveAspectRatio="none" focusable="false">
+          <line x1="0" y1="1" x2="10" y2="1" vector-effect="non-scaling-stroke" />
+        </svg>
+        <svg class="fil-coude" viewBox="0 0 24 24" width="24" height="24" focusable="false">
+          <path d="M0 1 H11 A12 12 0 0 1 23 13 V24" pathLength="1" />
+        </svg>
+      </>
+    )
+  }
+  <div class="fil-descente">
+    <svg viewBox="0 0 2 10" preserveAspectRatio="none" focusable="false">
+      <line x1="1" y1="0" x2="1" y2="10" vector-effect="non-scaling-stroke"></line>
+    </svg>
+  </div>
+</div>
+
+<style>
+  .fil {
+    /* Abscisse du tracé = ligne « zd-start » de la grille .pg */
+    --x: var(--x-fil);
+    --haut: 0px;
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  .fil svg {
+    position: absolute;
+    overflow: visible;
+    fill: none;
+    stroke: var(--cuivre);
+    stroke-width: 2;
+  }
+
+  .fil-entree,
+  .fil-coude {
+    display: none;
+  }
+
+  .fil-descente {
+    position: absolute;
+    top: var(--haut);
+    bottom: 0;
+    left: calc(var(--x) - 1px);
+    width: 2px;
+  }
+
+  .fil-descente svg {
+    inset: 0;
+    width: 2px;
+    height: 100%;
+  }
+
+  @media (min-width: 56rem) {
+    .fil {
+      --x: calc((100% - var(--pI)) / 2 + var(--pI) * var(--part-zg));
+    }
+
+    /* Hauteur du titre de page : la conduite arrive en face de ses capitales */
+    .fil-gauche {
+      --haut: calc(var(--haut-tete) + var(--titre-page) * 0.4);
+    }
+
+    .fil-entree,
+    .fil-coude {
+      display: block;
+    }
+
+    .fil-entree {
+      top: calc(var(--haut) - 1px);
+      left: 0;
+      width: calc(var(--x) - 22px);
+      height: 2px;
+    }
+
+    .fil-coude {
+      top: calc(var(--haut) - 1px);
+      left: calc(var(--x) - 23px);
+    }
+
+    .fil-gauche .fil-descente {
+      top: calc(var(--haut) + 22px);
+    }
+  }
+
+  /* ——— Dessin au chargement ——— */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html:not([data-fil='vu'])) .fil-descente {
+      animation: fil-descendre 900ms cubic-bezier(0.22, 1, 0.36, 1) 120ms backwards;
+    }
+
+    @media (min-width: 56rem) {
+      :global(html:not([data-fil='vu'])) .fil-entree {
+        transform-origin: left center;
+        animation: fil-entrer 320ms cubic-bezier(0.32, 0, 0.67, 0) backwards;
+      }
+
+      :global(html:not([data-fil='vu'])) .fil-coude path {
+        stroke-dasharray: 1;
+        animation: fil-couder 80ms linear 320ms backwards;
+      }
+
+      :global(html:not([data-fil='vu'])) .fil-gauche .fil-descente {
+        animation-duration: 700ms;
+        animation-delay: 400ms;
+      }
+    }
+  }
+
+  @keyframes fil-entrer {
+    from {
+      transform: scaleX(0);
+    }
+  }
+
+  @keyframes fil-couder {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes fil-descendre {
+    from {
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      clip-path: inset(0 0 max(0px, 100% - 100vh) 0);
+    }
+  }
+</style>

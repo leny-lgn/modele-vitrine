@@ -1,0 +1,185 @@
+---
+// Galerie éditoriale (gamme Premium), posée le long du fil.
+// - Entrées avec texte (liste des chantiers) : une rangée par entrée, la photo déborde
+//   alternativement vers le bord gauche puis vers le bord droit de l'écran, le texte
+//   reste accroché au tracé.
+// - Photos seules (galerie d'un chantier) : grande photo puis photos plus petites,
+//   décalées, de la colonne de texte au bord droit.
+// Aucune animation au défilement.
+import type { ImageSite, Site } from '../../lib/schema';
+import CadreImage from '../demo/CadreImage.astro';
+import { marquerAVerifier } from '../../lib/texte';
+import { imageExiste } from '../../lib/images.mjs';
+
+export interface EntreeGalerie {
+  image: ImageSite;
+  titre?: string;
+  lien?: string;
+  libelleLien?: string;
+  /** Précisions courtes : commune, durée… */
+  details?: string[];
+  texte?: string;
+}
+
+interface Props {
+  site: Pick<Site, 'slug' | 'secteur' | 'demo'>;
+  entrees: EntreeGalerie[];
+  /** Niveau des titres d'entrée */
+  niveau?: 2 | 3;
+  class?: string;
+}
+const { site, entrees, niveau = 2, class: classe } = Astro.props;
+const Titre = `h${niveau}` as 'h2' | 'h3';
+const avecTexte = entrees.some((e) => e.titre || e.texte);
+---
+
+{
+  avecTexte ? (
+    <div class:list={['galerie-ed', classe]}>
+      {entrees.map((e, i) => (
+        <article class:list={['pg', 'ge-rangee', i % 2 ? 'ge-droite' : 'ge-gauche']}>
+          <div class:list={['ge-photo', i % 2 ? 'fuite-d' : 'fuite-g']}>
+            {/* Le lien n'entoure qu'une vraie photo : jamais le cadre de démo (il contient un bouton) */}
+            {e.lien && imageExiste(site.slug, e.image.fichier) ? (
+              <a href={e.lien} tabindex="-1" aria-hidden="true">
+                <CadreImage site={site} image={e.image} sizes="(min-width: 56rem) 60vw, 100vw" />
+              </a>
+            ) : (
+              <CadreImage site={site} image={e.image} sizes="(min-width: 56rem) 60vw, 100vw" />
+            )}
+          </div>
+          <div class:list={['ge-texte', { zg: i % 2 === 1 }]}>
+            {e.titre && (
+              <Titre class="ge-titre">{e.lien ? <a href={e.lien}>{e.titre}</a> : e.titre}</Titre>
+            )}
+            {e.details && e.details.length > 0 && (
+              <p class="ge-details">
+                {e.details.map((d, j) => (
+                  <>
+                    {j > 0 && <span aria-hidden="true"> · </span>}
+                    <span class="insecable">{d}</span>
+                  </>
+                ))}
+              </p>
+            )}
+            {e.texte && <p set:html={marquerAVerifier(e.texte)} />}
+            {e.lien && e.libelleLien && (
+              <a class="lien-p" href={e.lien}>
+                {e.libelleLien}
+              </a>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  ) : (
+    <div class:list={['galerie-photos', classe]}>
+      {entrees.map((e, i) => (
+        <figure class:list={['gp-photo', `gp-${i % 3}`]}>
+          <CadreImage
+            site={site}
+            image={e.image}
+            sizes={i % 3 === 0 ? '(min-width: 56rem) 60vw, 100vw' : '(min-width: 56rem) 30vw, 100vw'}
+          />
+        </figure>
+      ))}
+    </div>
+  )
+}
+
+<style>
+  .galerie-ed {
+    display: grid;
+    gap: var(--espace-5);
+  }
+
+  .ge-rangee {
+    row-gap: var(--espace-2);
+    --rangs: 1;
+  }
+
+  .ge-photo :global(img) {
+    width: 100%;
+  }
+
+  .ge-photo a {
+    display: block;
+  }
+
+  .ge-texte {
+    display: grid;
+    gap: var(--espace-1);
+    align-content: start;
+    max-width: 34rem;
+  }
+
+  .ge-titre {
+    font-size: var(--taille-4);
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  .ge-titre a {
+    text-decoration: none;
+  }
+
+  .ge-titre a:hover {
+    color: var(--cuivre-fonce);
+  }
+
+  .ge-details {
+    color: var(--couleur-texte-secondaire);
+    font-size: var(--taille-petit);
+    font-weight: 600;
+  }
+
+  @media (min-width: 56rem) {
+    .galerie-ed {
+      gap: calc(var(--espace-5) * 1.5);
+    }
+
+    /* Placement : .fuite-g / .fuite-d / .zg (grille .pg). Le texte se cale en bas de la photo. */
+    .ge-texte {
+      align-self: end;
+    }
+
+    .ge-titre {
+      font-size: var(--taille-5);
+    }
+
+    .ge-droite .ge-titre {
+      font-size: var(--taille-4);
+    }
+  }
+
+  /* ——— Photos seules ——— */
+  .galerie-photos {
+    display: grid;
+    gap: var(--espace-3);
+  }
+
+  .gp-photo :global(img) {
+    width: 100%;
+  }
+
+  @media (min-width: 56rem) {
+    .galerie-photos {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: var(--espace-3);
+      align-items: start;
+    }
+
+    .gp-0 {
+      grid-column: 1 / -1;
+    }
+
+    .gp-1 {
+      grid-column: 1 / span 3;
+    }
+
+    .gp-2 {
+      grid-column: 4 / span 3;
+      margin-top: var(--espace-5);
+    }
+  }
+</style>

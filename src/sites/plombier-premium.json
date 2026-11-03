@@ -75,7 +75,13 @@
   "urgences": {
     "actif": true,
     "plage": "Du lundi au samedi, 7 h – 21 h",
-    "delai": "[À VÉRIFIER] délai d'intervention réel annoncé par l'artisan"
+    "delai": "[À VÉRIFIER] délai d'intervention réel annoncé par l'artisan",
+    "cas": [
+      "Fuite d'eau",
+      "WC ou évier bouché",
+      "Plus d'eau chaude",
+      "Chasse d'eau qui coule sans arrêt"
+    ]
   },
   "fermetureExceptionnelle": null,
   "zone": {
@@ -96,6 +102,14 @@
         "Débouchage WC, évier, canalisations",
         "Remplacement de robinetterie",
         "Chasse d'eau qui coule"
+      ],
+      "page": "depannage",
+      "image": "intervention",
+      "intro": "Une fuite, un WC bouché, plus d'eau chaude : vous appelez, je décroche. Je vous dis au téléphone si je peux venir et à quel moment.",
+      "deroule": [
+        "Au téléphone, vous décrivez le problème. Je vous dis ce que vous pouvez faire tout de suite, comme couper l'arrivée d'eau.",
+        "Sur place, je cherche la cause et je vous annonce le prix avant de commencer.",
+        "Je répare, je teste avec vous et je vous laisse une facture détaillée."
       ]
     },
     {
@@ -104,6 +118,14 @@
         "Chauffe-eau électrique et thermodynamique",
         "Adoucisseur d'eau",
         "Raccordement électroménager"
+      ],
+      "page": "installation",
+      "image": "detail1",
+      "intro": "Chauffe-eau, adoucisseur, raccordements : je vous aide à choisir l'appareil adapté à votre logement, puis je le pose proprement.",
+      "deroule": [
+        "Visite chez vous : je regarde la place disponible, l'arrivée d'eau et l'électricité.",
+        "Devis écrit, avec la référence de l'appareil et le détail de la pose.",
+        "Pose, mise en service et explications sur l'entretien."
       ]
     },
     {
@@ -112,6 +134,15 @@
         "Salle de bain complète",
         "Douche à l'italienne",
         "Mise aux normes de l'installation"
+      ],
+      "page": "renovation",
+      "image": "detail2",
+      "intro": "Salle de bain complète ou douche à l'italienne : je m'occupe de la plomberie du début à la fin, et je coordonne avec le carreleur si besoin.",
+      "deroule": [
+        "Visite et relevé des mesures chez vous.",
+        "Devis détaillé poste par poste, avec un planning.",
+        "Dépose, réseau neuf, pose des équipements, essais d'étanchéité.",
+        "Réception du chantier ensemble, pièce par pièce."
       ]
     }
   ],
@@ -171,13 +202,73 @@
       "titre": "Salle de bain refaite à Saint-Exemple",
       "avant": "avant1",
       "apres": "apres1",
-      "description": "Baignoire remplacée par une douche à l'italienne, 6 jours de travaux."
+      "description": "Baignoire remplacée par une douche à l'italienne, 6 jours de travaux.",
+      "slug": "salle-de-bain-saint-exemple",
+      "commune": "Saint-Exemple",
+      "duree": "6 jours",
+      "groupe": "Rénovation",
+      "contexte": "Une salle de bain des années 1980 avec une baignoire que les propriétaires n'utilisaient plus. Ils voulaient une douche de plain-pied, facile à entretenir.",
+      "etapes": [
+        {
+          "titre": "Dépose",
+          "texte": "Baignoire, faïence et anciens tuyaux retirés. Contrôle du plancher."
+        },
+        {
+          "titre": "Réseau neuf",
+          "texte": "Alimentations refaites en cuivre, évacuation reprise avec la pente nécessaire à la douche de plain-pied."
+        },
+        {
+          "titre": "Étanchéité",
+          "texte": "Receveur maçonné, natte d'étanchéité, essais en eau avant carrelage."
+        },
+        {
+          "titre": "Pose et finitions",
+          "texte": "Robinetterie laiton brossé, paroi vitrée, joints. Réception avec les propriétaires."
+        }
+      ],
+      "materiaux": [
+        "Tube cuivre",
+        "Mitigeur thermostatique laiton brossé",
+        "Paroi vitrée fixe",
+        "Carrelage grand format"
+      ],
+      "galerie": [
+        "detail1",
+        "detail2"
+      ]
     },
     {
       "titre": "Chauffe-eau thermodynamique à Bourg-Démo",
       "avant": "avant2",
       "apres": "apres2",
-      "description": "Remplacement d'un chauffe-eau de 20 ans, raccords refaits et isolés, une journée."
+      "description": "Remplacement d'un chauffe-eau de 20 ans, raccords refaits et isolés, une journée.",
+      "slug": "chauffe-eau-bourg-demo",
+      "commune": "Bourg-Démo",
+      "duree": "1 journée",
+      "groupe": "Installation",
+      "contexte": "Un chauffe-eau électrique de vingt ans, entartré, qui ne chauffait plus assez pour une famille de quatre personnes.",
+      "etapes": [
+        {
+          "titre": "Vidange et dépose",
+          "texte": "Ancien ballon vidangé, déposé et emporté."
+        },
+        {
+          "titre": "Raccords",
+          "texte": "Raccords refaits en cuivre, groupe de sécurité neuf, tuyaux isolés."
+        },
+        {
+          "titre": "Mise en service",
+          "texte": "Réglages, essais et explications sur l'entretien."
+        }
+      ],
+      "materiaux": [
+        "Chauffe-eau thermodynamique",
+        "Groupe de sécurité",
+        "Isolant pour tuyaux"
+      ],
+      "galerie": [
+        "atelier"
+      ]
     }
   ],
   "images": {
@@ -253,6 +344,11 @@
     "fichier": "raccord-cuivre.glb",
     "poster": "raccord-cuivre-poster.webp",
     "page": "artisan",
+    "alt": "Raccord coudé en cuivre, à manipuler du doigt",
     "credit": ""
+  },
+  "description": "Plomberie Lemoine, plombier chauffagiste à Ville-Exemple et 15 km autour : dépannage, chauffe-eau, salle de bain. Prix donné avant de commencer.",
+  "devis": {
+    "intro": "Décrivez vos travaux. Je vous rappelle pour poser les questions utiles, puis je passe voir si c'est nécessaire."
   }
 }

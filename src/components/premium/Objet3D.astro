@@ -1,0 +1,157 @@
+---
+// Objet 3D lié au métier (gamme Premium, optionnel), affiché avec <model-viewer>.
+// Rendu seulement si `objet3d.actif` est vrai. Fichiers dans public/models/<slug>/ :
+// le .glb (< 2 Mo) et le poster (image d'aperçu, obligatoire).
+// - Le poster s'affiche tout de suite ; la bibliothèque n'est chargée que lorsque l'objet
+//   approche de l'écran, sur bureau. Sur mobile, le poster suffit : la 3D se charge
+//   seulement si l'on touche « Manipuler en 3D ».
+// - Rotation au doigt ou à la souris, aucune rotation automatique.
+// - Crédit affiché si le modèle vient d'un service tiers.
+import { existsSync, statSync } from 'node:fs';
+import { join } from 'node:path';
+import type { Site } from '../../lib/schema';
+import { RACINE } from '../../lib/images.mjs';
+
+interface Props {
+  site: Site;
+  class?: string;
+}
+const { site, class: classe } = Astro.props;
+const o = site.objet3d;
+const actif = !!o?.actif;
+
+let src = '';
+let poster = '';
+if (o && actif) {
+  const dossier = `public/models/${site.slug}`;
+  const glb = join(RACINE, dossier, o.fichier);
+  const img = join(RACINE, dossier, o.poster);
+  const manquants = [glb, img].filter((f) => !existsSync(f));
+  if (manquants.length) {
+    throw new Error(
+      `\n\nobjet3d.actif est vrai pour ${site.slug}, mais il manque :\n${manquants
+        .map((f) => `  - ${f.replace(RACINE + '/', '')}`)
+        .join('\n')}\n(le poster est obligatoire)\n`,
+    );
+  }
+  const taille = statSync(glb).size;
+  if (taille > 2 * 1024 * 1024) {
+    throw new Error(`\n\n${o.fichier} pèse ${(taille / 1024 / 1024).toFixed(1)} Mo : 2 Mo au maximum.\n`);
+  }
+  src = `/models/${site.slug}/${o.fichier}`;
+  poster = `/models/${site.slug}/${o.poster}`;
+}
+---
+
+{
+  o && actif && (
+    <figure class:list={['objet3d', classe]} data-objet3d>
+      <model-viewer
+        src={src}
+        poster={poster}
+        alt={o.alt}
+        loading="lazy"
+        reveal="auto"
+        camera-controls
+        disable-zoom
+        touch-action="pan-y"
+        interaction-prompt="none"
+        shadow-intensity="0.6"
+        exposure="1"
+      >
+        <img slot="poster" src={poster} alt={o.alt} width="800" height="800" loading="lazy" decoding="async" />
+      </model-viewer>
+      <figcaption>
+        <span>{o.alt}</span>
+        {o.credit && <span class="objet3d-credit">{o.credit}</span>}
+        <button type="button" class="objet3d-charger" data-charger hidden>
+          Manipuler en 3D
+        </button>
+      </figcaption>
+    </figure>
+  )
+}
+
+<script>
+  const figures = document.querySelectorAll<HTMLElement>('[data-objet3d]');
+  let chargement: Promise<unknown> | undefined;
+  const charger = () => (chargement ??= import('@google/model-viewer'));
+
+  if (figures.length) {
+    const bureau = matchMedia('(min-width: 48rem)');
+    if (bureau.matches && 'IntersectionObserver' in window) {
+      const obs = new IntersectionObserver(
+        (entrees) => {
+          if (entrees.some((e) => e.isIntersecting)) {
+            obs.disconnect();
+            charger();
+          }
+        },
+        { rootMargin: '300px' },
+      );
+      figures.forEach((f) => obs.observe(f));
+    } else {
+      for (const f of figures) {
+        const bouton = f.querySelector<HTMLButtonElement>('[data-charger]');
+        if (!bouton) continue;
+        bouton.hidden = false;
+        bouton.addEventListener('click', () => {
+          bouton.disabled = true;
+          bouton.textContent = 'Chargement…';
+          charger().then(
+            () => (bouton.hidden = true),
+            () => {
+              bouton.disabled = false;
+              bouton.textContent = 'Réessayer';
+            },
+          );
+        });
+      }
+    }
+  }
+</script>
+
+<style>
+  .objet3d {
+    display: grid;
+    gap: var(--espace-1);
+  }
+
+  model-viewer {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    background: #e6e8e5;
+    --poster-color: transparent;
+  }
+
+  model-viewer img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem var(--espace-2);
+    color: var(--couleur-texte-secondaire);
+    font-size: var(--taille-petit);
+  }
+
+  .objet3d-charger {
+    min-height: 2.75rem;
+    padding-inline: 1rem;
+    background: none;
+    border: 2px solid currentColor;
+    color: var(--couleur-texte);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .objet3d-charger:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+</style>

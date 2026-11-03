@@ -72,6 +72,12 @@ export const siteSchema = z.looseObject({
         items: z.array(texte),
         /** Clé d'une entrée de `images` illustrant ce groupe (page Services). */
         image: z.string().optional(),
+        /** Premium : clé de la page dédiée à ce groupe (dépannage, installation, rénovation). */
+        page: z.enum(PAGES).optional(),
+        /** Premium : phrase d'introduction de la page du groupe. */
+        intro: z.string().optional(),
+        /** Premium : déroulé d'une intervention, étape par étape. */
+        deroule: z.array(texte).optional(),
       }),
     )
     .optional()
@@ -105,17 +111,42 @@ export const siteSchema = z.looseObject({
         avant: z.string().optional(),
         apres: z.string().optional(),
         description: z.string().optional(),
+        /** Premium : adresse de la page du chantier (realisations/<slug>/). */
+        slug: z
+          .string()
+          .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'slug en minuscules et tirets')
+          .optional(),
+        commune: z.string().optional(),
+        duree: z.string().optional(),
+        /** Groupe de services concerné (« Rénovation »…) */
+        groupe: z.string().optional(),
+        contexte: z.string().optional(),
+        etapes: z.array(z.object({ titre: texte, texte: z.string().optional() })).optional(),
+        materiaux: z.array(texte).optional(),
+        /** Clés d'entrées de `images` pour la galerie du chantier. */
+        galerie: z.array(z.string()).optional(),
       }),
     )
     .optional()
     .default([]),
+  /** Premium : formulaire de demande de devis. Sans `action`, le formulaire n'est relié à rien. */
+  devis: z
+    .object({
+      intro: z.string().optional(),
+      /** Adresse du service de formulaire tiers (ex. https://formspree.io/f/…) */
+      action: z.url().optional(),
+      service: z.string().optional(),
+    })
+    .optional(),
   images: z.record(z.string(), imageSchema),
   objet3d: z
     .object({
       actif: z.boolean(),
       fichier: z.string(),
       poster: z.string(),
-      page: z.string(),
+      page: z.enum(PAGES),
+      /** Description de l'objet, lue par les lecteurs d'écran et affichée en légende. */
+      alt: texte,
       credit: z.string().optional(),
     })
     .optional(),

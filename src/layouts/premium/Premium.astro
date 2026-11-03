@@ -1,0 +1,316 @@
+---
+// Gamme Premium : « on se souvient de vous ». Mise en page éditoriale construite autour
+// d'un axe : la conduite cuivre (Fil). Elle sort du hero sur l'accueil, arrive par la
+// gauche en haut de chaque page interne, et finit sur la Distribution qui mène aux autres
+// pages : on suit le même réseau d'une page à l'autre.
+//
+// Grille (.pg), de gauche à droite :
+//   plein-start | marge | zg (zone gauche, 36 %) | fil ▸ retrait | texte … | zd-end | marge | plein-end
+// Le tracé passe exactement sur la ligne `zd-start`. Sous 56rem : une seule colonne,
+// le tracé devient un simple trait vertical à gauche.
+import Base from '../Base.astro';
+import EntetePremium from '../../components/premium/EntetePremium.astro';
+import Fil from '../../components/premium/Fil.astro';
+import Distribution from '../../components/premium/Distribution.astro';
+import type { Site } from '../../lib/schema';
+import type { CibleLien } from '../../lib/liens';
+
+interface Props {
+  site: Site;
+  page: CibleLien;
+  titre?: string;
+  description?: string;
+  /** « haut » : le tracé sort du hero (accueil). « gauche » : il arrive de la page précédente. */
+  entree?: 'haut' | 'gauche';
+}
+const { site, page, titre, description, entree = 'gauche' } = Astro.props;
+---
+
+<Base site={site} page={page} titre={titre} description={description}>
+  <EntetePremium slot="entete" site={site} page={page} />
+  <slot name="avant-reseau" />
+  <div class="reseau" data-entree={entree}>
+    <Fil slug={site.slug} entree={entree} />
+    <slot />
+  </div>
+  <Distribution site={site} page={page} />
+</Base>
+
+<style is:global>
+  :root[data-gamme='premium'] {
+    --largeur-page: 84rem;
+    /* Largeur intérieure de la colonne de page */
+    --pI: min(100% - 2 * var(--marge-page), var(--largeur-page) - 2 * var(--marge-page));
+    /* Part de la zone gauche, et retrait du texte par rapport au tracé */
+    --part-zg: 0;
+    --x-fil: 0.875rem;
+    --retrait: 1.375rem;
+
+    /* Titres : très grands, condensés, en capitales comme une plaque */
+    --titre-une: clamp(2.6rem, 0.9rem + 6.4vw, 6rem);
+    --titre-page: clamp(2.5rem, 1rem + 5vw, 5.25rem);
+    --titre-section: clamp(2.125rem, 1rem + 3.4vw, 4.25rem);
+    --haut-tete: var(--espace-4);
+  }
+
+  @media (min-width: 56rem) {
+    :root[data-gamme='premium'] {
+      --part-zg: 0.36;
+      --retrait: 3rem;
+      --haut-tete: var(--espace-5);
+    }
+  }
+
+  [data-gamme='premium'] .reseau {
+    position: relative;
+    overflow-x: clip;
+  }
+
+  /* ——— Grille ——— */
+  [data-gamme='premium'] .pg {
+    display: grid;
+    grid-template-columns:
+      [plein-start zg-start zg-end] var(--x-fil)
+      [zd-start] var(--retrait)
+      [texte-start] minmax(0, 1fr)
+      [zd-end] var(--marge-page) [plein-end];
+    position: relative;
+  }
+
+  @media (min-width: 56rem) {
+    [data-gamme='premium'] .pg {
+      grid-template-columns:
+        [plein-start] calc((100% - var(--pI)) / 2)
+        [zg-start] calc(var(--pI) * var(--part-zg))
+        [zg-end zd-start] var(--retrait)
+        [texte-start] minmax(0, 1fr)
+        [zd-end] calc((100% - var(--pI)) / 2) [plein-end];
+    }
+  }
+
+  [data-gamme='premium'] .pg > * {
+    grid-column: texte-start / zd-end;
+    min-width: 0;
+  }
+
+  /* Éléments dessinés en position absolue (conduite) : rapportés à toute la grille */
+  [data-gamme='premium'] .pg > [aria-hidden='true'] {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  /* Débord à gauche : de l'écran jusqu'au tracé (mobile : pleine largeur, sous le texte) */
+  [data-gamme='premium'] .pg > .fuite-g {
+    grid-column: plein-start / plein-end;
+  }
+
+  [data-gamme='premium'] .pg > .fuite-d {
+    grid-column: texte-start / plein-end;
+  }
+
+  /* Zone gauche : annotations du plan, sous le texte sur mobile */
+  [data-gamme='premium'] .pg > .zg {
+    grid-column: texte-start / zd-end;
+  }
+
+  @media (min-width: 56rem) {
+    [data-gamme='premium'] .pg > .zg {
+      grid-column: zg-start / zg-end;
+      margin-right: var(--espace-4);
+    }
+
+    [data-gamme='premium'] .pg > .fuite-g {
+      grid-column: plein-start / zg-end;
+      margin-right: var(--espace-4);
+    }
+
+    /* Sur bureau, la zone gauche se pose en face du premier bloc de texte,
+       quel que soit son rang dans le code (sur mobile, l'ordre du code s'applique). */
+    [data-gamme='premium'] .pg > .zg,
+    [data-gamme='premium'] .pg > .fuite-g {
+      grid-row: 1 / span var(--rangs, 1);
+      align-self: start;
+    }
+  }
+
+  /* ——— Sections ——— */
+  [data-gamme='premium'] .section-p {
+    padding-block: var(--espace-5);
+    row-gap: var(--espace-3);
+  }
+
+  @media (min-width: 56rem) {
+    [data-gamme='premium'] .section-p {
+      padding-block: calc(var(--espace-5) * 1.5);
+    }
+  }
+
+  [data-gamme='premium'] .titre-p {
+    font-size: var(--titre-section);
+    line-height: 0.92;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    max-width: 16ch;
+    /* Un titre ne se coupe jamais au milieu d'un mot (« INTERVENTION ») */
+    overflow-wrap: normal;
+  }
+
+  [data-gamme='premium'] .chapo-p {
+    max-width: 34rem;
+    font-size: var(--taille-1);
+    line-height: 1.45;
+  }
+
+  [data-gamme='premium'] .texte-p {
+    max-width: 38rem;
+  }
+
+  [data-gamme='premium'] .texte-p > * + * {
+    margin-top: var(--espace-2);
+  }
+
+  [data-gamme='premium'] .note-p {
+    color: var(--couleur-texte-secondaire);
+    font-size: var(--taille-petit);
+  }
+
+  /* Annotation de plan : petit libellé gras, valeur dessous, filet fin */
+  [data-gamme='premium'] .annotations {
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--couleur-trait);
+    font-size: var(--taille-petit);
+  }
+
+  [data-gamme='premium'] .annotations > div {
+    display: grid;
+    gap: 0.1rem;
+    padding-block: 0.6rem;
+    border-bottom: 1px solid var(--couleur-trait);
+  }
+
+  [data-gamme='premium'] .annotations dt {
+    font-weight: 700;
+  }
+
+  [data-gamme='premium'] .annotations dd {
+    margin: 0;
+    color: var(--couleur-texte-secondaire);
+  }
+
+  /* Liste à filets, en grand : ce que fait l'artisan */
+  [data-gamme='premium'] .liste-p {
+    list-style: none;
+    padding: 0;
+    border-top: 2px solid var(--couleur-texte);
+  }
+
+  [data-gamme='premium'] .liste-p > li {
+    padding-block: 0.7rem;
+    border-bottom: 1px solid var(--couleur-trait);
+    font-size: var(--taille-1);
+    line-height: 1.3;
+  }
+
+  @media (min-width: 56rem) {
+    [data-gamme='premium'] .liste-p.deux-colonnes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: var(--espace-4);
+    }
+  }
+
+  /* Photos posées dans la grille : pleine hauteur de leur zone */
+  [data-gamme='premium'] .photo-p img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* ——— Actions ——— */
+  [data-gamme='premium'] .actions-p {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--espace-2) var(--espace-3);
+  }
+
+  [data-gamme='premium'] .bouton-p,
+  [data-gamme='premium'] .bouton-p-contour {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.5rem;
+    padding: 0.5rem 1.5rem;
+    border-radius: 0;
+    font-size: var(--taille-1);
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background-color 150ms ease-out,
+      color 150ms ease-out,
+      transform 120ms ease-out;
+  }
+
+  [data-gamme='premium'] .bouton-p {
+    background: var(--couleur-accent);
+    color: var(--couleur-accent-texte);
+  }
+
+  [data-gamme='premium'] .bouton-p-contour {
+    border: 2px solid currentColor;
+    font-size: var(--taille-texte);
+  }
+
+  [data-gamme='premium'] .bouton-p:active,
+  [data-gamme='premium'] .bouton-p-contour:active {
+    transform: scale(0.98);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    [data-gamme='premium'] .bouton-p:hover {
+      background: var(--ardoise);
+      color: var(--blanc-zinc);
+    }
+
+    [data-gamme='premium'] .surface-ardoise .bouton-p:hover {
+      background: #e8a578;
+      color: var(--ardoise);
+    }
+
+    [data-gamme='premium'] .bouton-p-contour:hover {
+      background: var(--couleur-texte);
+      color: var(--couleur-fond);
+    }
+  }
+
+  [data-gamme='premium'] .lien-p {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--couleur-lien);
+    font-weight: 700;
+  }
+
+  [data-gamme='premium'] .sans-cesure,
+  [data-gamme='premium'] a[href^='mailto:'] {
+    hyphens: none;
+    overflow-wrap: anywhere;
+  }
+
+  [data-gamme='premium'] .insecable {
+    white-space: nowrap;
+  }
+
+  /* Pied de page commun : aligné sur la colonne de texte */
+  :root[data-gamme='premium'] .pied-de-page {
+    padding-left: calc(max(var(--marge-page), (100% - var(--largeur-page)) / 2 + var(--marge-page)));
+    padding-right: var(--marge-page);
+  }
+
+  @media (min-width: 56rem) {
+    :root[data-gamme='premium'] .pied-de-page {
+      padding-left: calc((100% - var(--pI)) / 2 + var(--pI) * var(--part-zg) + var(--retrait));
+    }
+  }
+</style>

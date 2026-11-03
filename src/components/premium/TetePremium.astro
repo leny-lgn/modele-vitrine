@@ -1,0 +1,96 @@
+---
+// Tête des pages internes Premium. Sur bureau, la conduite arrive par la gauche en face
+// du titre (voir Fil, entree="gauche") ; sous elle, dans la zone gauche : disponibilité et
+// bouton Appeler. Sur mobile, ils suivent directement le titre : visibles sans défiler.
+// Slot « zg » : ajouté en tête de la zone gauche (ex. fiche d'un chantier).
+import type { Site } from '../../lib/schema';
+import Appeler from '../commun/Appeler.astro';
+import Disponibilite from '../commun/Disponibilite.astro';
+import { echapper } from '../../lib/texte';
+
+interface Props {
+  site: Site;
+  titre: string;
+  intro?: string;
+  /** Disponibilité + Appeler sous le contenu de la zone gauche (désactiver si le slot les contient déjà). */
+  contact?: boolean;
+}
+const { site, titre, intro, contact = true } = Astro.props;
+const zgPerso = Astro.slots.has('zg');
+// Les noms composés (« Saint-Exemple ») ne se coupent pas au trait d'union dans le grand titre.
+const titreHtml = titre
+  .split(' ')
+  .map((m) => (m.includes('-') ? `<span class="insecable">${echapper(m)}</span>` : echapper(m)))
+  .join(' ');
+---
+
+<section class="tete-p pg" aria-labelledby="titre-page">
+  <h1 id="titre-page" class="tp-titre" set:html={titreHtml} />
+  <div class="zg tp-zg">
+    {zgPerso && <slot name="zg" />}
+    {
+      contact && (
+        <div class="tp-contact">
+          <Disponibilite site={site} />
+          <Appeler site={site} class="bouton-p" />
+        </div>
+      )
+    }
+  </div>
+  {intro && <p class="tp-intro">{intro}</p>}
+  <slot />
+</section>
+
+<style>
+  .tete-p {
+    --rangs: 4;
+    padding-top: var(--haut-tete);
+    padding-bottom: var(--espace-4);
+    row-gap: var(--espace-3);
+  }
+
+  .tp-titre {
+    font-size: var(--titre-page);
+    line-height: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    max-width: 15ch;
+    overflow-wrap: normal;
+  }
+
+  .tp-intro {
+    max-width: 36rem;
+    font-size: var(--taille-2);
+    line-height: 1.3;
+  }
+
+  .tp-zg {
+    display: grid;
+    gap: var(--espace-3);
+    align-content: start;
+  }
+
+  .tp-contact {
+    display: grid;
+    gap: var(--espace-2);
+    justify-items: start;
+  }
+
+  /* Mobile : disponibilité et appel d'abord, la fiche ensuite */
+  @media (max-width: 55.99rem) {
+    .tp-contact {
+      order: -1;
+    }
+  }
+
+  @media (min-width: 56rem) {
+    .tete-p {
+      padding-bottom: var(--espace-5);
+    }
+
+    /* Sous la conduite d'arrivée, qui passe à hauteur des capitales du titre */
+    .tp-zg {
+      padding-top: calc(var(--titre-page) * 0.4 + var(--espace-4));
+    }
+  }
+</style>

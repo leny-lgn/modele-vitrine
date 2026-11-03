@@ -1,0 +1,173 @@
+---
+// Pages Dépannage, Installation et Rénovation (gamme Premium), une par groupe de services
+// (services[].page dans le JSON). Tête → ce que fait l'artisan → (dépannage : prix) →
+// déroulé sur la conduite → chantiers du groupe → appel ou devis.
+import Premium from './Premium.astro';
+import TetePremium from '../../components/premium/TetePremium.astro';
+import Titre from '../../components/premium/Titre.astro';
+import Deroule from '../../components/premium/Deroule.astro';
+import GalerieEditoriale, { type EntreeGalerie } from '../../components/premium/GalerieEditoriale.astro';
+import Objet3D from '../../components/premium/Objet3D.astro';
+import CadreImage from '../../components/demo/CadreImage.astro';
+import Appeler from '../../components/commun/Appeler.astro';
+import Tarifs from '../../components/vitrine/Tarifs.astro';
+import type { Site, CleePage } from '../../lib/schema';
+import { lienSite } from '../../lib/liens';
+import { LIBELLES_PAGES } from '../../lib/secteurs';
+import { marquerAVerifier } from '../../lib/texte';
+import { groupeDePage, lienChantier } from '../../lib/premium';
+
+interface Props {
+  site: Site;
+  page: CleePage;
+}
+const { site, page } = Astro.props;
+const g = groupeDePage(site, page);
+const titre = g?.groupe ?? LIBELLES_PAGES[page];
+const urgent = page === 'depannage';
+const urgences = urgent && site.urgences?.actif ? site.urgences : undefined;
+const image = g?.image ? site.images[g.image] : undefined;
+const objet = site.objet3d?.actif && site.objet3d.page === page;
+
+const chantiers: EntreeGalerie[] = site.realisations
+  .filter((r) => g && r.groupe === g.groupe)
+  .flatMap((r): EntreeGalerie[] => {
+    const cle = r.apres ?? r.avant;
+    return cle && site.images[cle]
+      ? [{
+          image: site.images[cle],
+          titre: r.titre,
+          lien: r.slug && site.pages.includes('realisations') ? lienChantier(site, r.slug) : undefined,
+          libelleLien: 'Le chantier étape par étape',
+          details: [r.commune, r.duree].filter((d): d is string => !!d),
+          texte: r.description,
+        }]
+      : [];
+  });
+const a = (p: CleePage) => site.pages.includes(p);
+---
+
+<Premium site={site} page={page} titre={titre} description={g?.intro}>
+  <TetePremium site={site} titre={titre} intro={g?.intro} />
+
+  {
+    objet && (
+      <div class="pg sv-objet">
+        <Objet3D site={site} class="fuite-d" />
+      </div>
+    )
+  }
+
+  {
+    g && (
+      <section class="section-p pg" aria-labelledby="t-travaux" style="--rangs: 3">
+        <Titre id="t-travaux">{urgent ? 'Ce que je dépanne' : 'Ce que je fais'}</Titre>
+        {image && (
+          <div class="fuite-g photo-p">
+            <CadreImage site={site} image={image} sizes="(min-width: 56rem) 34vw, 100vw" />
+          </div>
+        )}
+        <ul class="liste-p">
+          {g.items.map((i) => (
+            <li>{i}</li>
+          ))}
+        </ul>
+        {urgences && (
+          <dl class="annotations sv-urgences">
+            {urgences.plage && (
+              <div>
+                <dt>Urgences</dt>
+                <dd>{urgences.plage}</dd>
+              </div>
+            )}
+            {urgences.delai && (
+              <div>
+                <dt>Délai d’intervention</dt>
+                <dd set:html={marquerAVerifier(urgences.delai)} />
+              </div>
+            )}
+          </dl>
+        )}
+      </section>
+    )
+  }
+
+  {
+    urgent && site.tarifs && site.tarifs.lignes.length > 0 && (
+      <section class="section-p pg" id="prix" aria-labelledby="t-prix">
+        <Titre id="t-prix">Prix</Titre>
+        <div class="texte-p">
+          <Tarifs tarifs={site.tarifs} infoPrix />
+        </div>
+      </section>
+    )
+  }
+
+  {
+    g?.deroule && g.deroule.length > 0 && (
+      <section class="section-p pg" aria-labelledby="t-deroule">
+        <Titre id="t-deroule">Comment ça se passe</Titre>
+        <Deroule etapes={g.deroule} />
+      </section>
+    )
+  }
+
+  {
+    chantiers.length > 0 && (
+      <section class="section-p sv-chantiers" aria-labelledby="t-chantiers">
+        <div class="pg">
+          <Titre id="t-chantiers">Chantiers</Titre>
+        </div>
+        <GalerieEditoriale site={site} entrees={chantiers} niveau={3} />
+      </section>
+    )
+  }
+
+  <section class="section-p pg surface-ardoise" aria-labelledby="t-action">
+    <Titre id="t-action">{urgent ? 'Un problème maintenant ?' : 'Votre projet'}</Titre>
+    <div class="actions-p">
+      {
+        urgent ? (
+          <Appeler site={site} class="bouton-p" />
+        ) : (
+          a('devis') && (
+            <a class="bouton-p" href={lienSite(site, 'devis')}>
+              Demander un devis
+            </a>
+          )
+        )
+      }
+      {
+        urgent
+          ? a('devis') && (
+              <a class="lien-p" href={lienSite(site, 'devis')}>
+                Pas urgent ? Demander un devis
+              </a>
+            )
+          : (
+              <Appeler site={site} class="bouton-p-contour" />
+            )
+      }
+    </div>
+  </section>
+</Premium>
+
+<style>
+  .sv-objet {
+    padding-bottom: var(--espace-4);
+  }
+
+  .sv-urgences {
+    max-width: 30rem;
+  }
+
+  .sv-chantiers > .pg {
+    margin-bottom: var(--espace-4);
+  }
+
+  .surface-ardoise :global(.bouton-p-contour) {
+    background: none;
+    color: var(--couleur-texte);
+    border: 2px solid currentColor;
+  }
+</style>

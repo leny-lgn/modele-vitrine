@@ -1,0 +1,287 @@
+---
+// Formulaire de demande de devis (gamme Premium).
+// - En démo, ou sans `devis.action` : non relié. Un encadré le dit avant le formulaire, et
+//   l'envoi affiche un message clair au lieu de partir quelque part.
+// - Site client : `devis.action` = adresse du service de formulaire tiers (POST).
+// Champs : le minimum pour rappeler et chiffrer. Validation native du navigateur,
+// messages d'erreur en français ajoutés par le script.
+import type { Site } from '../../lib/schema';
+import { telephoneFr } from '../../lib/typo-fr';
+
+interface Props {
+  site: Site;
+  class?: string;
+}
+const { site, class: classe } = Astro.props;
+const action = site.devis?.action;
+const relie = !!action && !site.demo;
+const groupes = site.services.map((g) => g.groupe);
+---
+
+<div class:list={['devis', classe]}>
+  {
+    !relie && (
+      <p class="devis-demo" role="note">
+        <strong>Formulaire de démonstration.</strong> Il n’est relié à aucun service&nbsp;: rien
+        n’est envoyé. Pour une vraie demande, appelez le{' '}
+        <span class="chiffres insecable">{telephoneFr(site.telephone)}</span>.
+      </p>
+    )
+  }
+
+  <form
+    class="devis-form"
+    method={relie ? 'post' : 'get'}
+    action={relie ? action : undefined}
+    data-demo={relie ? undefined : ''}
+  >
+    <fieldset>
+      <legend>Vos travaux</legend>
+      {
+        groupes.length > 0 && (
+          <div class="champ">
+            <label for="devis-type">Type de travaux</label>
+            <select id="devis-type" name="type">
+              {groupes.map((g) => (
+                <option>{g}</option>
+              ))}
+              <option>Autre</option>
+            </select>
+          </div>
+        )
+      }
+      <div class="champ">
+        <label for="devis-commune">Commune</label>
+        <input id="devis-commune" name="commune" list="devis-communes" autocomplete="address-level2" required />
+        <datalist id="devis-communes">
+          {site.zone.communes.map((c) => <option value={c} />)}
+        </datalist>
+        <p class="champ-erreur" id="devis-commune-erreur" hidden></p>
+      </div>
+      <div class="champ">
+        <label for="devis-description">Description</label>
+        <p class="champ-aide" id="devis-description-aide">
+          Ce qui ne va pas ou ce que vous voulez faire, la pièce, l’âge de l’installation si vous le
+          connaissez.
+        </p>
+        <textarea
+          id="devis-description"
+          name="description"
+          rows="6"
+          required
+          minlength="10"
+          aria-describedby="devis-description-aide"></textarea>
+        <p class="champ-erreur" id="devis-description-erreur" hidden></p>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Pour vous rappeler</legend>
+      <div class="champ">
+        <label for="devis-nom">Nom</label>
+        <input id="devis-nom" name="nom" autocomplete="name" required />
+        <p class="champ-erreur" id="devis-nom-erreur" hidden></p>
+      </div>
+      <div class="champ">
+        <label for="devis-tel">Téléphone</label>
+        <input id="devis-tel" name="telephone" type="tel" autocomplete="tel" inputmode="tel" required pattern="[0-9 +.\-]{10,}" />
+        <p class="champ-erreur" id="devis-tel-erreur" hidden></p>
+      </div>
+      <div class="champ">
+        <label for="devis-email">E-mail <span class="facultatif">(facultatif)</span></label>
+        <input id="devis-email" name="email" type="email" autocomplete="email" />
+        <p class="champ-erreur" id="devis-email-erreur" hidden></p>
+      </div>
+      <div class="champ">
+        <label for="devis-moment">Quand vous rappeler <span class="facultatif">(facultatif)</span></label>
+        <select id="devis-moment" name="moment">
+          <option>Peu importe</option>
+          <option>Le matin</option>
+          <option>Le midi</option>
+          <option>En fin de journée</option>
+        </select>
+      </div>
+    </fieldset>
+
+    <p class="devis-rgpd">
+      Vos coordonnées servent uniquement à répondre à cette demande. Elles ne sont ni revendues ni
+      utilisées pour de la publicité.
+    </p>
+
+    <button type="submit" class="bouton-p">Envoyer la demande de devis</button>
+    <p class="devis-etat" role="status" aria-live="polite"></p>
+  </form>
+</div>
+
+<script>
+  const MESSAGES: Record<string, (c: HTMLInputElement | HTMLTextAreaElement) => string> = {
+    valueMissing: (c) => `Indiquez ${c.name === 'nom' ? 'votre nom' : c.name === 'telephone' ? 'un numéro de téléphone' : c.name === 'commune' ? 'votre commune' : 'quelques mots sur les travaux'}.`,
+    typeMismatch: () => 'Cette adresse e-mail n’est pas complète (exemple : nom@domaine.fr).',
+    patternMismatch: () => 'Le numéro doit contenir au moins 10 chiffres.',
+    tooShort: () => 'Ajoutez quelques mots : au moins 10 caractères.',
+  };
+
+  function erreur(c: HTMLInputElement | HTMLTextAreaElement): string {
+    for (const cle of Object.keys(MESSAGES)) {
+      if (c.validity[cle as keyof ValidityState]) return MESSAGES[cle](c);
+    }
+    return '';
+  }
+
+  function afficher(c: HTMLInputElement | HTMLTextAreaElement): boolean {
+    const zone = document.getElementById(`${c.id}-erreur`);
+    const message = erreur(c);
+    if (zone) {
+      zone.textContent = message;
+      zone.hidden = !message;
+    }
+    c.setAttribute('aria-invalid', message ? 'true' : 'false');
+    const decrit = (c.getAttribute('aria-describedby') ?? '').split(' ').filter((id) => id && id !== `${c.id}-erreur`);
+    if (message) decrit.push(`${c.id}-erreur`);
+    if (decrit.length) c.setAttribute('aria-describedby', decrit.join(' '));
+    else c.removeAttribute('aria-describedby');
+    return !message;
+  }
+
+  for (const form of document.querySelectorAll<HTMLFormElement>('.devis-form')) {
+    const champs = [...form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea')];
+    const etat = form.querySelector<HTMLElement>('.devis-etat')!;
+    // Avec JS : nos messages remplacent les bulles du navigateur (sans JS, la validation native reste).
+    form.noValidate = true;
+
+    champs.forEach((c) => c.addEventListener('blur', () => c.value && afficher(c)));
+
+    form.addEventListener('submit', (ev) => {
+      const invalides = champs.filter((c) => !afficher(c));
+      if (invalides.length) {
+        ev.preventDefault();
+        invalides[0].focus();
+        etat.textContent = '';
+        return;
+      }
+      if (form.hasAttribute('data-demo')) {
+        ev.preventDefault();
+        etat.textContent =
+          'Formulaire de démonstration : votre demande n’a pas été envoyée. Sur le vrai site, elle arriverait directement chez l’artisan.';
+      }
+    });
+  }
+</script>
+
+<style>
+  .devis {
+    display: grid;
+    gap: var(--espace-3);
+    max-width: 40rem;
+  }
+
+  .devis-demo {
+    padding: var(--espace-2);
+    border: 2px dashed var(--gris-joint);
+    background: #fff;
+  }
+
+  .devis-form {
+    display: grid;
+    gap: var(--espace-4);
+  }
+
+  fieldset {
+    display: grid;
+    gap: var(--espace-3);
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+
+  legend {
+    padding: 0 0 var(--espace-2);
+    font-stretch: 75%;
+    font-weight: 800;
+    font-size: var(--taille-2);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .champ {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  label {
+    font-weight: 700;
+  }
+
+  .facultatif,
+  .champ-aide {
+    color: var(--couleur-texte-secondaire);
+    font-weight: 400;
+    font-size: var(--taille-petit);
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.6rem 0.75rem;
+    background: #fff;
+    border: 1px solid var(--gris-texte);
+    border-bottom: 2px solid var(--ardoise);
+    border-radius: 0;
+    transition: border-color 150ms ease-out;
+  }
+
+  textarea {
+    resize: vertical;
+    line-height: 1.45;
+  }
+
+  input:hover,
+  select:hover,
+  textarea:hover {
+    border-color: var(--ardoise);
+  }
+
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 3px solid var(--couleur-focus);
+    outline-offset: 0;
+    border-bottom-color: var(--cuivre-fonce);
+  }
+
+  [aria-invalid='true'] {
+    border-color: #a3341f;
+    border-bottom-color: #a3341f;
+  }
+
+  .champ-erreur {
+    color: #a3341f;
+    font-size: var(--taille-petit);
+    font-weight: 600;
+  }
+
+  .devis-rgpd {
+    color: var(--couleur-texte-secondaire);
+    font-size: var(--taille-petit);
+    max-width: 36rem;
+  }
+
+  .devis-form button {
+    justify-self: start;
+    border: 0;
+    background: var(--couleur-accent);
+    color: var(--couleur-accent-texte);
+    cursor: pointer;
+    white-space: normal;
+    text-align: left;
+  }
+
+  .devis-etat:not(:empty) {
+    padding: var(--espace-2);
+    border-left: 2px solid var(--cuivre-fonce);
+    background: #fff;
+    font-weight: 600;
+  }
+</style>

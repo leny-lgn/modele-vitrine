@@ -1,0 +1,161 @@
+---
+// Une page par réalisation (gamme Premium) : le récit du chantier.
+// Tête (titre + fiche du chantier dans la zone gauche) → avant/après en grand →
+// contexte → étapes posées sur la conduite → matériaux → photos → chantier suivant.
+import Premium from '../../layouts/premium/Premium.astro';
+import TetePremium from './TetePremium.astro';
+import Titre from './Titre.astro';
+import Deroule from './Deroule.astro';
+import GalerieEditoriale from './GalerieEditoriale.astro';
+import AvantApres from '../vitrine/AvantApres.astro';
+import CadreImage from '../demo/CadreImage.astro';
+import Appeler from '../commun/Appeler.astro';
+import type { Site } from '../../lib/schema';
+import { lienSite } from '../../lib/liens';
+import { marquerAVerifier } from '../../lib/texte';
+import { aAvantApres, lienChantier, type Chantier } from '../../lib/premium';
+
+interface Props {
+  site: Site;
+  chantier: Chantier;
+}
+const { site, chantier } = Astro.props;
+
+const liste = site.realisations.filter((r) => r.slug);
+const rang = liste.indexOf(chantier);
+const suivant = liste.length > 1 ? liste[(rang + 1) % liste.length] : undefined;
+const avantApres = aAvantApres(site, chantier);
+const seule = !avantApres ? site.images[chantier.apres ?? chantier.avant ?? ''] : undefined;
+const galerie = (chantier.galerie ?? []).map((cle) => ({ image: site.images[cle] }));
+const fiche = [
+  ['Commune', chantier.commune],
+  ['Travaux', chantier.groupe],
+  ['Durée', chantier.duree],
+].filter((l): l is [string, string] => !!l[1]);
+---
+
+<Premium site={site} page="realisations" titre={chantier.titre} description={chantier.description}>
+  <TetePremium site={site} titre={chantier.titre} intro={chantier.description}>
+    {
+      fiche.length > 0 && (
+        <dl slot="zg" class="annotations">
+          {fiche.map(([dt, dd]) => (
+            <div>
+              <dt>{dt}</dt>
+              <dd set:html={marquerAVerifier(dd)} />
+            </div>
+          ))}
+        </dl>
+      )
+    }
+    <p class="pc-retour">
+      <a class="lien-p" href={lienSite(site, 'realisations')}>Tous les chantiers</a>
+    </p>
+  </TetePremium>
+
+  {
+    (avantApres || seule) && (
+      <section class="pg pc-images" aria-label="Avant et après">
+        <div class="fuite-d">
+          {avantApres ? (
+            <AvantApres
+              site={site}
+              avant={site.images[chantier.avant!]}
+              apres={site.images[chantier.apres!]}
+              titre={chantier.titre}
+              sizes="(min-width: 56rem) 64vw, 100vw"
+            />
+          ) : (
+            <CadreImage site={site} image={seule!} sizes="(min-width: 56rem) 64vw, 100vw" />
+          )}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    chantier.contexte && (
+      <section class="section-p pg" aria-labelledby="t-contexte">
+        <Titre id="t-contexte">La demande</Titre>
+        <p class="pc-contexte" set:html={marquerAVerifier(chantier.contexte)} />
+      </section>
+    )
+  }
+
+  {
+    chantier.etapes && chantier.etapes.length > 0 && (
+      <section class="section-p pg" aria-labelledby="t-etapes">
+        <Titre id="t-etapes">Le chantier</Titre>
+        <Deroule etapes={chantier.etapes} />
+      </section>
+    )
+  }
+
+  {
+    ((chantier.materiaux?.length ?? 0) > 0 || galerie.length > 0) && (
+      <section class="section-p pg" aria-labelledby="t-materiaux" style="--rangs: 3">
+        <Titre id="t-materiaux">Matériaux</Titre>
+        {chantier.materiaux && chantier.materiaux.length > 0 && (
+          <ul class="liste-p deux-colonnes">
+            {chantier.materiaux.map((m) => (
+              <li>{m}</li>
+            ))}
+          </ul>
+        )}
+        {galerie.length > 0 && <GalerieEditoriale site={site} entrees={galerie} class="fuite-d" />}
+      </section>
+    )
+  }
+
+  <section class="section-p pg surface-ardoise pc-suite" aria-labelledby="t-suite">
+    <Titre id="t-suite">Un projet du même genre ?</Titre>
+    <div class="actions-p">
+      {
+        site.pages.includes('devis') && (
+          <a class="bouton-p" href={lienSite(site, 'devis')}>
+            Demander un devis
+          </a>
+        )
+      }
+      <Appeler site={site} class="bouton-p-contour" />
+    </div>
+    {
+      suivant && suivant.slug && (
+        <p class="pc-suivant">
+          Chantier suivant&nbsp;:{' '}
+          <a class="lien-p" href={lienChantier(site, suivant.slug)}>
+            {suivant.titre}
+          </a>
+        </p>
+      )
+    }
+  </section>
+</Premium>
+
+<style>
+  .pc-retour {
+    margin-top: calc(-1 * var(--espace-2));
+  }
+
+  .pc-images {
+    padding-bottom: var(--espace-3);
+  }
+
+  .pc-contexte {
+    max-width: 32ch;
+    font-size: var(--taille-3);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .pc-suite :global(.bouton-p-contour) {
+    background: none;
+    color: var(--couleur-texte);
+    border: 2px solid currentColor;
+  }
+
+  .pc-suivant {
+    font-size: var(--taille-1);
+  }
+</style>

@@ -22,6 +22,8 @@ const CLES_TECHNIQUES = new Set([
   'apres',
   'image',
   'page',
+  'galerie',
+  'action',
   'prompt',
   'du',
   'au',
@@ -78,6 +80,22 @@ function valider(fichier: string, brut: unknown): Site {
       if (ref && !site.images[ref]) erreurs.push(`realisations[${i}].${cle} : image « ${ref} » absente de « images »`);
     }
   });
+
+  const slugsChantiers = new Set<string>();
+  site.realisations.forEach((r, i) => {
+    (r.galerie ?? []).forEach((ref, j) => {
+      if (!site.images[ref]) erreurs.push(`realisations[${i}].galerie[${j}] : image « ${ref} » absente de « images »`);
+    });
+    if (r.slug) {
+      if (slugsChantiers.has(r.slug)) erreurs.push(`realisations[${i}].slug « ${r.slug} » utilisé deux fois`);
+      slugsChantiers.add(r.slug);
+    }
+  });
+  if (site.gamme === 'premium' && site.pages.includes('realisations')) {
+    site.realisations.forEach((r, i) => {
+      if (!r.slug) erreurs.push(`realisations[${i}].slug : obligatoire en gamme Premium (une page par chantier)`);
+    });
+  }
 
   site.services.forEach((g, i) => {
     if (g.image && !site.images[g.image]) erreurs.push(`services[${i}].image : image « ${g.image} » absente de « images »`);

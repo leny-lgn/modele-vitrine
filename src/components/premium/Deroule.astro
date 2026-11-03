@@ -1,0 +1,82 @@
+---
+// Étapes posées sur la conduite : chaque étape est un piquage (té + dérivation) sur le
+// fil. L'ordre est porté par la conduite elle-même, pas par des numéros décoratifs ;
+// la liste reste un <ol> pour les lecteurs d'écran. À placer dans la colonne `texte`.
+interface Etape {
+  titre?: string;
+  texte?: string;
+}
+interface Props {
+  etapes: (Etape | string)[];
+  class?: string;
+}
+const { etapes, class: classe } = Astro.props;
+const liste = etapes.map((e) => (typeof e === 'string' ? { texte: e } : e));
+---
+
+<ol class:list={['deroule', classe]}>
+  {
+    liste.map((e) => (
+      <li class:list={{ 'sans-titre': !e.titre }}>
+        <svg class="deroule-piquage" aria-hidden="true" focusable="false">
+          <rect x="-5" y="-6" width="10" height="12" rx="3" />
+          <line x1="5" y1="0" x2="100%" y2="0" />
+        </svg>
+        {e.titre && <h3 class="deroule-titre">{e.titre}</h3>}
+        {e.texte && <p>{e.texte}</p>}
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .deroule {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--espace-3);
+    max-width: 38rem;
+  }
+
+  .deroule li {
+    position: relative;
+  }
+
+  .deroule-titre {
+    font-size: var(--taille-2);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .deroule-titre + p {
+    margin-top: 0.35rem;
+  }
+
+  .sans-titre p {
+    font-size: var(--taille-1);
+    line-height: 1.4;
+  }
+
+  .deroule-piquage {
+    display: none;
+    position: absolute;
+    right: calc(100% + 0.5rem);
+    top: 0.7em;
+    width: calc(var(--retrait) - 0.5rem);
+    height: 2px;
+    overflow: visible;
+    fill: var(--couleur-fond);
+    stroke: var(--cuivre);
+    stroke-width: 2;
+  }
+
+  @media (min-width: 56rem) {
+    .deroule {
+      gap: var(--espace-4);
+    }
+
+    .deroule-piquage {
+      display: block;
+    }
+  }
+</style>

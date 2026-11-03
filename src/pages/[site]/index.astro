@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import Provisoire from '../../components/commun/Provisoire.astro';
 import Essentiel from '../../layouts/essentiel/Essentiel.astro';
 import AccueilVitrine from '../../layouts/vitrine/Accueil.astro';
+import AccueilPremium from '../../layouts/premium/Accueil.astro';
 import { tousLesSites } from '../../lib/sites';
 import type { Site } from '../../lib/schema';
 
@@ -18,6 +19,8 @@ const { site } = Astro.props as { site: Site };
     <Essentiel site={site} />
   ) : site.gamme === 'vitrine' ? (
     <AccueilVitrine site={site} />
+  ) : site.gamme === 'premium' ? (
+    <AccueilPremium site={site} />
   ) : (
     <Base site={site} page="accueil">
       <Provisoire site={site} page="accueil" />

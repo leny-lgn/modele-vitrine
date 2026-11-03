@@ -1,0 +1,45 @@
+---
+// Page Devis (gamme Premium) : formulaire de demande. En démo, il n'est relié à rien et le dit.
+import Premium from './Premium.astro';
+import TetePremium from '../../components/premium/TetePremium.astro';
+import FormulaireDevis from '../../components/premium/FormulaireDevis.astro';
+import Appeler from '../../components/commun/Appeler.astro';
+import Disponibilite from '../../components/commun/Disponibilite.astro';
+import type { Site } from '../../lib/schema';
+
+interface Props {
+  site: Site;
+}
+const { site } = Astro.props;
+const intro = site.devis?.intro;
+---
+
+<Premium site={site} page="devis" titre="Demander un devis" description={intro}>
+  <TetePremium site={site} titre="Demander un devis" intro={intro} contact={false}>
+    <div slot="zg" class="dv-contact">
+      <p class="dv-urgent">Urgent ? Le téléphone va plus vite.</p>
+      <Disponibilite site={site} />
+      <Appeler site={site} class="bouton-p" />
+      {site.tarifs?.devisGratuit && <p class="note-p">Le devis est gratuit.</p>}
+    </div>
+  </TetePremium>
+  <section class="pg dv-form" aria-label="Formulaire de demande de devis">
+    <FormulaireDevis site={site} />
+  </section>
+</Premium>
+
+<style>
+  .dv-contact {
+    display: grid;
+    gap: var(--espace-2);
+    justify-items: start;
+  }
+
+  .dv-urgent {
+    font-weight: 700;
+  }
+
+  .dv-form {
+    padding-bottom: var(--espace-5);
+  }
+</style>

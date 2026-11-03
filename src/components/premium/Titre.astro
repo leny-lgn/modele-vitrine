@@ -1,0 +1,63 @@
+---
+// Titre de section Premium, branché sur le fil par un raccord : un té sur la conduite et
+// une courte dérivation jusqu'au titre. Le titre doit être posé dans la colonne `texte`
+// de la grille .pg (le té tombe alors exactement sur le tracé). Bureau seulement.
+interface Props {
+  id: string;
+  niveau?: 1 | 2 | 3;
+  /** Sans raccord (titre posé ailleurs que dans la colonne de texte). */
+  libre?: boolean;
+  class?: string;
+}
+const { id, niveau = 2, libre = false, class: classe } = Astro.props;
+const Balise = `h${niveau}` as 'h1' | 'h2' | 'h3';
+---
+
+<Balise id={id} class:list={['titre-p', classe]}>
+  {
+    !libre && (
+      <svg class="raccord" aria-hidden="true" focusable="false">
+        <rect class="raccord-te" x="-6" y="-7" width="12" height="14" rx="3" />
+        <line x1="6" y1="0" x2="100%" y2="0" />
+      </svg>
+    )
+  }
+  <slot />
+</Balise>
+
+<style>
+  .titre-p {
+    position: relative;
+  }
+
+  .raccord {
+    display: none;
+    position: absolute;
+    right: calc(100% + 0.5rem);
+    top: 0.45em;
+    width: calc(var(--retrait) - 0.5rem);
+    height: 2px;
+    overflow: visible;
+    fill: var(--couleur-fond);
+    stroke: var(--cuivre);
+    stroke-width: 2;
+  }
+
+  @media (min-width: 56rem) {
+    .raccord {
+      display: block;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) and (min-width: 56rem) {
+    :global(html:not([data-fil='vu'])) .raccord {
+      animation: raccord-poser 220ms ease-out 900ms backwards;
+    }
+  }
+
+  @keyframes raccord-poser {
+    from {
+      opacity: 0;
+    }
+  }
+</style>

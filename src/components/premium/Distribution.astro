@@ -1,0 +1,153 @@
+---
+// Fin du réseau, en bas de chaque page : la conduite fait un coude et devient un collecteur
+// horizontal qui file vers le bord droit de l'écran ; chaque page du site est un piquage
+// sur ce collecteur. C'est le passage d'une page à l'autre (la page suivante reprend la
+// conduite en haut, par la gauche). Mobile : le trait vertical descend le long de la liste.
+import type { Site, CleePage } from '../../lib/schema';
+import type { CibleLien } from '../../lib/liens';
+import { lienSite } from '../../lib/liens';
+import { LIBELLES_PAGES } from '../../lib/secteurs';
+
+interface Props {
+  site: Site;
+  page: CibleLien;
+}
+const { site, page } = Astro.props;
+const pages = site.pages as CleePage[];
+---
+
+<nav class="distribution pg" aria-label="Toutes les pages du site">
+  <div class="dist-collecteur" aria-hidden="true"></div>
+  <ul class="dist-liste">
+    {
+      pages.map((p) => (
+        <li class:list={{ 'dist-ici': p === page }}>
+          <a href={lienSite(site, p)} aria-current={p === page ? 'page' : undefined}>
+            {LIBELLES_PAGES[p]}
+          </a>
+          {p === page && <span class="dist-note">Vous êtes ici</span>}
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  .distribution {
+    --hauteur-collecteur: 0px;
+    padding-bottom: var(--espace-5);
+  }
+
+  /* Mobile : la conduite continue le long de la liste et s'arrête sur la dernière page */
+  .dist-collecteur {
+    position: absolute;
+    left: calc(var(--x-fil) - 1px);
+    top: 0;
+    bottom: calc(var(--espace-5) + 1.4rem);
+    width: 2px;
+    background: var(--cuivre);
+  }
+
+  .dist-liste {
+    list-style: none;
+    padding: var(--espace-3) 0 0;
+  }
+
+  .dist-liste a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-stretch: 75%;
+    font-weight: 800;
+    font-size: var(--taille-3);
+    line-height: 1;
+    text-transform: uppercase;
+    text-decoration: none;
+    hyphens: manual;
+  }
+
+  .dist-liste a:hover {
+    color: var(--cuivre-fonce);
+  }
+
+  .dist-ici a {
+    color: var(--cuivre-fonce);
+  }
+
+  .dist-note {
+    display: block;
+    margin-top: -0.25rem;
+    color: var(--couleur-texte-secondaire);
+    font-size: var(--taille-petit);
+  }
+
+  @media (min-width: 56rem) {
+    .distribution {
+      --hauteur-collecteur: var(--espace-4);
+    }
+
+    /* Coude + collecteur : bordures gauche et basse, angle arrondi = coude à 90° */
+    .dist-collecteur {
+      left: calc((100% - var(--pI)) / 2 + var(--pI) * var(--part-zg) - 1px);
+      right: 0;
+      bottom: auto;
+      width: auto;
+      height: var(--hauteur-collecteur);
+      background: none;
+      border-left: 2px solid var(--cuivre);
+      border-bottom: 2px solid var(--cuivre);
+      border-bottom-left-radius: 12px;
+    }
+
+    .dist-liste {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--espace-3);
+      row-gap: var(--espace-3);
+      padding-top: var(--hauteur-collecteur);
+    }
+
+    /* Piquage : une descente de 2 px depuis le collecteur jusqu'au nom de la page */
+    .dist-liste li {
+      position: relative;
+      padding-top: var(--espace-3);
+    }
+
+    .dist-liste li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 2px;
+      height: calc(var(--espace-3) - 0.25rem);
+      background: var(--cuivre);
+    }
+
+    /* Rangées suivantes : pas de piquage visible, le collecteur ne passe que sur la première */
+    .dist-liste li:nth-child(n + 3)::before {
+      display: none;
+    }
+
+    .dist-ici::after {
+      content: '';
+      position: absolute;
+      left: -4px;
+      top: -6px;
+      width: 10px;
+      height: 10px;
+      border: 2px solid var(--cuivre);
+      border-radius: 3px;
+      background: var(--cuivre-clair);
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .dist-liste {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .dist-liste li:nth-child(3)::before {
+      display: block;
+    }
+  }
+</style>

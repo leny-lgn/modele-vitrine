@@ -1,0 +1,123 @@
+---
+// Page L'artisan (gamme Premium) : qui vient chez vous. Portrait, preuves (seulement si
+// fournies), atelier, objet 3D éventuel, avis, zone, horaires.
+import Premium from './Premium.astro';
+import TetePremium from '../../components/premium/TetePremium.astro';
+import Titre from '../../components/premium/Titre.astro';
+import Objet3D from '../../components/premium/Objet3D.astro';
+import CadreImage from '../../components/demo/CadreImage.astro';
+import Horaires from '../../components/commun/Horaires.astro';
+import Avis from '../../components/vitrine/Avis.astro';
+import Zone from '../../components/vitrine/Zone.astro';
+import Coordonnees from '../../components/vitrine/Coordonnees.astro';
+import type { Site } from '../../lib/schema';
+import { LIBELLES_PAGES } from '../../lib/secteurs';
+import { marquerAVerifier } from '../../lib/texte';
+import { infosArtisan } from '../../lib/premium';
+
+interface Props {
+  site: Site;
+}
+const { site } = Astro.props;
+const { artisan, nomArtisan, qualifications, assurance } = infosArtisan(site);
+const portrait = site.images.artisan;
+const atelier = site.images.atelier;
+const objet = site.objet3d?.actif && site.objet3d.page === 'artisan';
+---
+
+<Premium site={site} page="artisan" titre={LIBELLES_PAGES.artisan} description={artisan.presentation}>
+  <TetePremium site={site} titre={nomArtisan || LIBELLES_PAGES.artisan} intro={artisan.presentation} />
+
+  <section class="section-p pg" aria-labelledby="t-preuves" style="--rangs: 2">
+    <Titre id="t-preuves">Ce qui est vérifiable</Titre>
+    {
+      portrait && (
+        <div class="fuite-g photo-p">
+          <CadreImage site={site} image={portrait} sizes="(min-width: 56rem) 34vw, 100vw" />
+        </div>
+      )
+    }
+    <dl class="annotations ap-preuves">
+      {
+        artisan.depuis && (
+          <div>
+            <dt>Installé depuis</dt>
+            <dd class="chiffres">{artisan.depuis}</dd>
+          </div>
+        )
+      }
+      <div>
+        <dt>Statut</dt>
+        <dd set:html={marquerAVerifier(site.mentionsLegales.formeJuridique)} />
+      </div>
+      <div>
+        <dt>SIRET</dt>
+        <dd class="chiffres" set:html={marquerAVerifier(site.mentionsLegales.siret)} />
+      </div>
+      {
+        qualifications.length > 0 && (
+          <div>
+            <dt>Qualifications</dt>
+            {qualifications.map((q) => (
+              <dd set:html={marquerAVerifier(q)} />
+            ))}
+          </div>
+        )
+      }
+      {
+        assurance && (
+          <div>
+            <dt>Assurance décennale</dt>
+            <dd set:html={marquerAVerifier(assurance)} />
+          </div>
+        )
+      }
+    </dl>
+  </section>
+
+  {
+    (atelier || objet) && (
+      <section class="pg ap-atelier" aria-label="L’atelier">
+        {atelier && (
+          <div class="fuite-d photo-p">
+            <CadreImage site={site} image={atelier} sizes="(min-width: 56rem) 64vw, 100vw" />
+          </div>
+        )}
+        {objet && <Objet3D site={site} class="ap-objet" />}
+      </section>
+    )
+  }
+
+  <section class="section-p pg" aria-labelledby="t-avis">
+    <Titre id="t-avis">Avis</Titre>
+    <Avis site={site} />
+  </section>
+
+  <section class="section-p pg" aria-labelledby="t-zone">
+    <Titre id="t-zone">Zone d’intervention</Titre>
+    <Zone site={site} />
+  </section>
+
+  <section class="section-p pg surface-ardoise" aria-labelledby="t-contact" style="--rangs: 2">
+    <Titre id="t-contact">Contact</Titre>
+    <div class="zg">
+      <Horaires site={site} titre="Horaires" />
+    </div>
+    <Coordonnees site={site} />
+  </section>
+</Premium>
+
+<style>
+  .ap-preuves {
+    max-width: 30rem;
+    font-size: var(--taille-texte);
+  }
+
+  .ap-atelier {
+    row-gap: var(--espace-4);
+  }
+
+  .ap-atelier :global(.ap-objet) {
+    max-width: 30rem;
+  }
+</style>

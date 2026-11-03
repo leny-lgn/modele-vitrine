@@ -11,4 +11,12 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
   build: { format: 'directory' },
+  vite: {
+    build: {
+      // Seul <model-viewer> (Premium, objet 3D) dépasse 500 ko (≈ 1 Mo, three.js inclus).
+      // Il est chargé à la demande (import dynamique, objet proche de l'écran, sur bureau),
+      // jamais au chargement des pages : on relève la limite pour lui seul.
+      chunkSizeWarningLimit: 1100,
+    },
+  },
 });

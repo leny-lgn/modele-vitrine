@@ -1,0 +1,46 @@
+---
+// Page Réalisations (gamme Premium) : galerie éditoriale des chantiers, chacun menant à sa page.
+import Premium from './Premium.astro';
+import TetePremium from '../../components/premium/TetePremium.astro';
+import GalerieEditoriale, { type EntreeGalerie } from '../../components/premium/GalerieEditoriale.astro';
+import type { Site } from '../../lib/schema';
+import { lienChantier } from '../../lib/premium';
+
+interface Props {
+  site: Site;
+}
+const { site } = Astro.props;
+
+const entrees: EntreeGalerie[] = site.realisations
+  .flatMap((r): EntreeGalerie[] => {
+    const cle = r.apres ?? r.avant ?? r.galerie?.[0];
+    return cle && site.images[cle]
+      ? [{
+          image: site.images[cle],
+          titre: r.titre,
+          lien: r.slug ? lienChantier(site, r.slug) : undefined,
+          libelleLien: 'Le chantier étape par étape',
+          details: [r.commune, r.groupe, r.duree].filter((d): d is string => !!d),
+          texte: r.description,
+        }]
+      : [];
+  });
+const n = site.realisations.length;
+const intro =
+  n > 1
+    ? `${n} chantiers racontés de la demande à la réception, avec les photos d’avant et d’après.`
+    : 'Un chantier raconté de la demande à la réception, avec les photos d’avant et d’après.';
+---
+
+<Premium site={site} page="realisations" titre="Réalisations">
+  <TetePremium site={site} titre="Réalisations" intro={intro} />
+  <div class="rp-galerie">
+    <GalerieEditoriale site={site} entrees={entrees} />
+  </div>
+</Premium>
+
+<style>
+  .rp-galerie {
+    padding-block: var(--espace-3) var(--espace-5);
+  }
+</style>

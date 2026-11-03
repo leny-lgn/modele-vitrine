@@ -1,0 +1,21 @@
+---
+// Gamme Premium : une page par réalisation (realisations[].slug dans le JSON du site).
+import PageChantier from '../../../components/premium/PageChantier.astro';
+import { tousLesSites } from '../../../lib/sites';
+import type { Site } from '../../../lib/schema';
+import type { Chantier } from '../../../lib/premium';
+
+export function getStaticPaths() {
+  return tousLesSites()
+    .filter((site) => site.gamme === 'premium' && site.pages.includes('realisations'))
+    .flatMap((site) =>
+      site.realisations
+        .filter((r) => r.slug)
+        .map((chantier) => ({ params: { site: site.slug, chantier: chantier.slug! }, props: { site, chantier } })),
+    );
+}
+
+const { site, chantier } = Astro.props as { site: Site; chantier: Chantier };
+---
+
+<PageChantier site={site} chantier={chantier} />

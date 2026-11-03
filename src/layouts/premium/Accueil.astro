@@ -1,0 +1,447 @@
+---
+// Accueil Premium. Hero photo plein écran, titre sur une plaque ardoise ; la conduite sort
+// du bas de la plaque et chaque section s'y branche. Ordre : dépannage (le chemin court),
+// installation, rénovation + un chantier, tarifs, l'artisan, avis, zone, contact.
+import Premium from './Premium.astro';
+import Titre from '../../components/premium/Titre.astro';
+import Appeler from '../../components/commun/Appeler.astro';
+import Disponibilite from '../../components/commun/Disponibilite.astro';
+import Horaires from '../../components/commun/Horaires.astro';
+import CadreImage from '../../components/demo/CadreImage.astro';
+import AvantApres from '../../components/vitrine/AvantApres.astro';
+import Tarifs from '../../components/vitrine/Tarifs.astro';
+import Zone from '../../components/vitrine/Zone.astro';
+import Avis from '../../components/vitrine/Avis.astro';
+import Coordonnees from '../../components/vitrine/Coordonnees.astro';
+import type { Site, CleePage } from '../../lib/schema';
+import { lienSite } from '../../lib/liens';
+import { echapper, marquerAVerifier } from '../../lib/texte';
+import { imageExiste } from '../../lib/images.mjs';
+import { lienChantier, groupeDePage, chantierVedette, infosArtisan } from '../../lib/premium';
+
+interface Props {
+  site: Site;
+}
+const { site } = Astro.props;
+
+const a = (p: CleePage) => site.pages.includes(p);
+const { artisan, nomArtisan, qualifications, assurance } = infosArtisan(site);
+const depannage = groupeDePage(site, 'depannage');
+const installation = groupeDePage(site, 'installation');
+const renovation = groupeDePage(site, 'renovation');
+const chantier = chantierVedette(site);
+const urgences = site.urgences?.actif ? site.urgences : undefined;
+
+const hero = site.images.hero;
+// Démo sans photo : le cadre (chemin, prompt, bouton Copier) reste lisible au-dessus de la plaque.
+const heroAttente = !!hero && !imageExiste(site.slug, hero.fichier);
+const imgInstallation = installation?.image ? site.images[installation.image] : undefined;
+const imgArtisan = site.images.artisan;
+
+// Les noms composés (« Ville-Exemple ») ne se coupent pas au trait d'union dans le grand titre.
+const sansCesure = (t: string) =>
+  t
+    .split(' ')
+    .map((m) => (m.includes('-') ? `<span class="insecable">${echapper(m)}</span>` : echapper(m)))
+    .join(' ');
+---
+
+<Premium site={site} page="accueil" entree="haut">
+  <section slot="avant-reseau" class:list={['hero-p', { 'hero-attente': heroAttente }]} aria-labelledby="titre-accueil">
+    {
+      hero && (
+        <div class="hp-photo">
+          <CadreImage site={site} image={hero} prioritaire sizes="100vw" />
+        </div>
+      )
+    }
+    <div class="hp-plaque surface-ardoise">
+      <h1 id="titre-accueil" class="hp-titre" set:html={sansCesure(site.accroche)} />
+      <Disponibilite site={site} class="hp-dispo" />
+      <div class="actions-p hp-actions">
+        <Appeler site={site} class="bouton-p" />
+        {a('devis') && (
+          <a class="bouton-p-contour" href={lienSite(site, 'devis')}>
+            Demander un devis
+          </a>
+        )}
+      </div>
+      {
+        (nomArtisan || site.tarifs?.devisGratuit) && (
+          <p class="note-p hp-precision">
+            {nomArtisan && <>Au téléphone&nbsp;: {nomArtisan}.</>}
+            {site.tarifs?.devisGratuit && <> Devis gratuit.</>}
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  {
+    depannage && (
+      <section class="section-p pg" aria-labelledby="t-depannage" style="--rangs: 4">
+        <Titre id="t-depannage">{depannage.groupe}</Titre>
+        {depannage.intro && <p class="chapo-p">{depannage.intro}</p>}
+        {urgences && (
+          <dl class="annotations zg">
+            {urgences.plage && (
+              <div>
+                <dt>Urgences</dt>
+                <dd>{urgences.plage}</dd>
+              </div>
+            )}
+            {urgences.delai && (
+              <div>
+                <dt>Délai d’intervention</dt>
+                <dd set:html={marquerAVerifier(urgences.delai)} />
+              </div>
+            )}
+            {nomArtisan && (
+              <div>
+                <dt>Qui décroche</dt>
+                <dd>{nomArtisan}, en personne</dd>
+              </div>
+            )}
+          </dl>
+        )}
+        <ul class="liste-p deux-colonnes">
+          {depannage.items.map((i) => (
+            <li>{i}</li>
+          ))}
+        </ul>
+        <div class="actions-p">
+          <Appeler site={site} class="bouton-p" />
+          {a('depannage') && (
+            <a class="lien-p" href={lienSite(site, 'depannage')}>
+              Le dépannage en détail
+            </a>
+          )}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    installation && (
+      <section class="section-p pg sec-installation" aria-labelledby="t-installation" style="--rangs: 4">
+        <Titre id="t-installation">{installation.groupe}</Titre>
+        {imgInstallation && (
+          <div class="fuite-g photo-p ph-carree">
+            <CadreImage site={site} image={imgInstallation} sizes="(min-width: 56rem) 34vw, 100vw" />
+          </div>
+        )}
+        {installation.intro && <p class="chapo-p">{installation.intro}</p>}
+        <ul class="liste-p">
+          {installation.items.map((i) => (
+            <li>{i}</li>
+          ))}
+        </ul>
+        {a('installation') && (
+          <p>
+            <a class="lien-p" href={lienSite(site, 'installation')}>
+              Les installations en détail
+            </a>
+          </p>
+        )}
+      </section>
+    )
+  }
+
+  {
+    renovation && (
+      <section class="section-p pg sec-renovation" aria-labelledby="t-renovation" style="--rangs: 2">
+        <Titre id="t-renovation">{renovation.groupe}</Titre>
+        {renovation.intro && <p class="chapo-p">{renovation.intro}</p>}
+        <ul class="liste-p deux-colonnes">
+          {renovation.items.map((i) => (
+            <li>{i}</li>
+          ))}
+        </ul>
+        {chantier && (
+          <>
+            <div class="fuite-d sr-avant-apres">
+              <AvantApres
+                site={site}
+                avant={site.images[chantier.avant!]}
+                apres={site.images[chantier.apres!]}
+                titre={chantier.titre}
+                sizes="(min-width: 56rem) 64vw, 100vw"
+              />
+            </div>
+            <div class="sr-legende">
+              <h3 class="sr-titre">{chantier.titre}</h3>
+              {chantier.description && <p set:html={marquerAVerifier(chantier.description)} />}
+              <div class="actions-p">
+                {chantier.slug && a('realisations') && (
+                  <a class="lien-p" href={lienChantier(site, chantier.slug)}>
+                    Le chantier étape par étape
+                  </a>
+                )}
+                {a('realisations') && site.realisations.length > 1 && (
+                  <a class="lien-p" href={lienSite(site, 'realisations')}>
+                    Les {site.realisations.length} chantiers
+                  </a>
+                )}
+              </div>
+            </div>
+          </>
+        )}
+      </section>
+    )
+  }
+
+  {
+    site.tarifs && site.tarifs.lignes.length > 0 && (
+      <section class="section-p pg" aria-labelledby="t-tarifs" style="--rangs: 2">
+        <Titre id="t-tarifs">Tarifs</Titre>
+        {site.tarifs.mention && (
+          <dl class="annotations zg">
+            <div>
+              <dt>Prix</dt>
+              <dd>{site.tarifs.mention}</dd>
+            </div>
+            {site.tarifs.devisGratuit && (
+              <div>
+                <dt>Devis</dt>
+                <dd>Gratuit, écrit, avant tout travaux.</dd>
+              </div>
+            )}
+          </dl>
+        )}
+        <div class="texte-p">
+          <Tarifs tarifs={site.tarifs} mention={false} />
+          {a('depannage') && (
+            <p>
+              <a class="lien-p" href={`${lienSite(site, 'depannage')}#t-prix`}>
+                L’information sur les prix des dépannages
+              </a>
+            </p>
+          )}
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section-p pg sec-artisan" aria-labelledby="t-artisan" style="--rangs: 4">
+    <Titre id="t-artisan">{nomArtisan || 'L’artisan'}</Titre>
+    {
+      imgArtisan && (
+        <div class="fuite-g photo-p">
+          <CadreImage site={site} image={imgArtisan} sizes="(min-width: 56rem) 34vw, 100vw" />
+        </div>
+      )
+    }
+    {artisan.presentation && <p class="sa-presentation">{artisan.presentation}</p>}
+    {
+      (artisan.depuis || qualifications.length > 0 || assurance) && (
+        <dl class="annotations sa-preuves">
+          {artisan.depuis && (
+            <div>
+              <dt>Installé depuis</dt>
+              <dd class="chiffres">{artisan.depuis}</dd>
+            </div>
+          )}
+          {qualifications.length > 0 && (
+            <div>
+              <dt>Qualifications</dt>
+              {qualifications.map((q) => (
+                <dd set:html={marquerAVerifier(q)} />
+              ))}
+            </div>
+          )}
+          {assurance && (
+            <div>
+              <dt>Assurance décennale</dt>
+              <dd set:html={marquerAVerifier(assurance)} />
+            </div>
+          )}
+        </dl>
+      )
+    }
+    {
+      a('artisan') && (
+        <p>
+          <a class="lien-p" href={lienSite(site, 'artisan')}>
+            Qui vient chez vous
+          </a>
+        </p>
+      )
+    }
+  </section>
+
+  <section class="section-p pg" aria-labelledby="t-avis">
+    <Titre id="t-avis">Avis</Titre>
+    <Avis site={site} />
+  </section>
+
+  <section class="section-p pg" aria-labelledby="t-zone">
+    <Titre id="t-zone">Zone d’intervention</Titre>
+    <Zone site={site} />
+  </section>
+
+  <section class="section-p pg surface-ardoise sec-contact" aria-labelledby="t-contact" style="--rangs: 2">
+    <Titre id="t-contact">Contact</Titre>
+    <div class="zg">
+      <Horaires site={site} titre="Horaires" />
+    </div>
+    <Coordonnees site={site} />
+  </section>
+</Premium>
+
+<style>
+  /* ——— Hero ——— */
+  .hero-p {
+    display: grid;
+    background: var(--ardoise);
+  }
+
+  .hp-photo {
+    height: max(10rem, 30svh);
+    overflow: hidden;
+  }
+
+  .hp-photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Cadre de démo : il prend la place de la photo et défile s'il est plus haut */
+  .hp-photo :global(.cadre-image) {
+    height: 100%;
+    overflow: auto;
+    border-width: 2px;
+  }
+
+  .hp-plaque {
+    position: relative;
+    padding: var(--espace-3) var(--marge-page) var(--espace-4);
+  }
+
+  .hp-titre {
+    font-size: var(--titre-une);
+    line-height: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    max-width: 13ch;
+  }
+
+  .hero-p :global(.hp-dispo) {
+    margin-top: var(--espace-2);
+  }
+
+  .hero-p :global(.dispo-horaires) {
+    hyphens: none;
+  }
+
+  .hero-p :global(.dispo-statut) {
+    font-size: var(--taille-1);
+  }
+
+  .hp-actions {
+    margin-top: var(--espace-3);
+  }
+
+  .hp-actions > :global(*) {
+    flex: 1 1 100%;
+  }
+
+  .hp-precision {
+    margin-top: var(--espace-2);
+  }
+
+  @media (min-width: 40rem) {
+    .hp-actions > :global(*) {
+      flex: 0 0 auto;
+    }
+  }
+
+  @media (min-width: 56rem) {
+    /* Plein écran : la photo occupe tout, la plaque se pose en bas à gauche */
+    .hero-p {
+      grid-template: 1fr auto / 1fr;
+      min-height: min(calc(100svh - 6.5rem), 64rem);
+    }
+
+    .hp-photo {
+      grid-area: 1 / 1 / 3 / 2;
+      height: auto;
+      min-height: 0;
+      position: relative;
+    }
+
+    .hp-photo > :global(*) {
+      position: absolute;
+      inset: 0;
+    }
+
+    .hp-plaque {
+      grid-area: 2 / 1 / 3 / 2;
+      justify-self: start;
+      width: calc((100% - var(--pI)) / 2 + var(--pI) * 0.74);
+      padding: var(--espace-4) var(--espace-4) var(--espace-4) calc((100% - var(--pI)) / 2);
+    }
+
+    .hp-titre {
+      max-width: none;
+    }
+
+    .hp-actions {
+      margin-top: var(--espace-4);
+    }
+
+    .hero-attente {
+      grid-template-rows: auto auto;
+      min-height: 0;
+    }
+
+    .hero-attente .hp-photo {
+      grid-area: 1 / 1 / 2 / 2;
+      height: 15rem;
+    }
+  }
+
+  /* ——— Sections ——— */
+  .ph-carree :global(img) {
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+
+  .sec-renovation .sr-avant-apres {
+    margin-top: var(--espace-3);
+  }
+
+  .sr-legende {
+    display: grid;
+    gap: var(--espace-1);
+    max-width: 38rem;
+  }
+
+  .sr-titre {
+    font-size: var(--taille-3);
+    line-height: 1;
+  }
+
+  .sa-presentation {
+    max-width: 30ch;
+    font-size: var(--taille-3);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .sa-preuves {
+    max-width: 30rem;
+  }
+
+  @media (min-width: 56rem) {
+    /* L'artisan : le texte descend en face de la photo, plus bas que le titre */
+    .sec-artisan .sa-presentation {
+      margin-top: var(--espace-3);
+    }
+
+    .sec-contact .zg :global(.horaires) {
+      max-width: 22rem;
+    }
+  }
+</style>
