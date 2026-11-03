@@ -1,0 +1,568 @@
+---
+// Gamme Essentiel : une seule page, « on vous trouve et on vous appelle ».
+// Plaque (hero ardoise) → urgences → l'artisan → prestations → zone → horaires et contact.
+// Aucun élément signature, aucune animation : des filets fins comme seul décor.
+import Base from '../Base.astro';
+import Appeler from '../../components/commun/Appeler.astro';
+import Disponibilite from '../../components/commun/Disponibilite.astro';
+import Horaires from '../../components/commun/Horaires.astro';
+import Carte from '../../components/commun/Carte.astro';
+import CadreImage from '../../components/demo/CadreImage.astro';
+import type { Site } from '../../lib/schema';
+import { telephoneFr, telHref } from '../../lib/typo-fr';
+import { contientAVerifier, marquerAVerifier } from '../../lib/texte';
+
+interface Props {
+  site: Site;
+}
+const { site } = Astro.props;
+
+type Artisan = { prenom?: string; nom?: string; depuis?: number; presentation?: string };
+type Confiance = { qualifications?: string[]; assuranceDecennale?: string };
+const artisan = (site.artisan ?? {}) as Artisan;
+const confiance = (site.confiance ?? {}) as Confiance;
+const nomArtisan = [artisan.prenom, artisan.nom].filter(Boolean).join(' ');
+
+const urgences = site.urgences?.actif ? site.urgences : undefined;
+const imgArtisan = site.images.artisan;
+const imgDetail = site.images.detail1;
+const email = site.email && !contientAVerifier(site.email) ? site.email : undefined;
+const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
+---
+
+<Base site={site} page="accueil">
+  <section class="plaque surface-ardoise" aria-labelledby="titre-page">
+    <div class="page plaque-grille">
+      <div class="plaque-identite">
+        <p class="plaque-nom">{site.nom}</p>
+        <h1 id="titre-page" class="plaque-accroche">{site.accroche}</h1>
+      </div>
+      <Disponibilite site={site} class="plaque-dispo" />
+      <div class="plaque-action">
+        <Appeler site={site} class="appeler-grand" />
+        {nomArtisan && <p class="plaque-interlocuteur">Au téléphone&nbsp;: {nomArtisan}</p>}
+      </div>
+    </div>
+  </section>
+
+  {
+    urgences && (urgences.cas?.length || urgences.delai) && (
+      <section class="bloc" aria-labelledby="titre-urgences">
+        <div class="page bloc-grille">
+          <h2 id="titre-urgences">Urgences</h2>
+          <div class="bloc-contenu">
+            {urgences.plage && <p class="urgences-plage chiffres">{urgences.plage}</p>}
+            {urgences.cas?.length && (
+              <ul class="liste-filets">
+                {urgences.cas.map((c) => (
+                  <li>{c}</li>
+                ))}
+              </ul>
+            )}
+            {urgences.delai && (
+              <p class="note">
+                Délai d’intervention&nbsp;: <span set:html={marquerAVerifier(urgences.delai)} />
+              </p>
+            )}
+            <p>
+              <a class="lien-tel chiffres" href={telHref(site.telephone)}>
+                Appeler le {telephoneFr(site.telephone)}
+              </a>
+            </p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    (nomArtisan || artisan.presentation) && (
+      <section class="bloc" aria-labelledby="titre-artisan">
+        <div class="page artisan-grille">
+          {imgArtisan && (
+            <div class="artisan-photo">
+              <CadreImage site={site} image={imgArtisan} sizes="(min-width: 64rem) 22rem, 100vw" />
+            </div>
+          )}
+          <div class="artisan-texte">
+            <h2 id="titre-artisan">{nomArtisan || site.nom}</h2>
+            {artisan.depuis && <p class="note chiffres">Installé depuis {artisan.depuis}</p>}
+            {artisan.presentation && <p class="artisan-presentation">{artisan.presentation}</p>}
+            {qualifications.length > 0 && (
+              <ul class="liste-filets">
+                {qualifications.map((q) => (
+                  <li set:html={marquerAVerifier(q)} />
+                ))}
+              </ul>
+            )}
+            {confiance.assuranceDecennale && (
+              <p class="note">
+                Assurance décennale&nbsp;: <span set:html={marquerAVerifier(confiance.assuranceDecennale)} />
+              </p>
+            )}
+          </div>
+          {imgDetail && (
+            <div class="artisan-detail">
+              <CadreImage site={site} image={imgDetail} sizes="(min-width: 64rem) 14rem, 50vw" />
+            </div>
+          )}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    site.services.length > 0 && (
+      <section class="bloc" aria-labelledby="titre-prestations">
+        <div class="page bloc-grille">
+          <h2 id="titre-prestations">Prestations</h2>
+          <dl class="bloc-contenu prestations">
+            {site.services.map((g) => (
+              <div class="prestation">
+                <dt>{g.groupe}</dt>
+                <dd>
+                  <ul>
+                    {g.items.map((i) => (
+                      <li>{i}</li>
+                    ))}
+                  </ul>
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="bloc" aria-labelledby="titre-zone">
+    <div class="page bloc-grille">
+      <h2 id="titre-zone">Zone d’intervention</h2>
+      <div class="bloc-contenu zone">
+        <div>
+          {
+            site.zone.rayonKm && (
+              <p class="note chiffres">
+                {site.zone.rayonKm}&nbsp;km autour de {site.adresse.ville}
+              </p>
+            )
+          }
+          <ul class="zone-communes">
+            {site.zone.communes.map((c) => <li>{c}</li>)}
+          </ul>
+        </div>
+        <Carte site={site} class="zone-carte" />
+      </div>
+    </div>
+  </section>
+
+  <section class="bloc" aria-labelledby="titre-contact">
+    <div class="page bloc-grille">
+      <h2 id="titre-contact">Horaires et contact</h2>
+      <div class="bloc-contenu contact">
+        <Horaires site={site} titre="" />
+        <address class="contact-adresse">
+          <p>
+            {site.adresse.rue}<br />
+            {site.adresse.codePostal}&nbsp;{site.adresse.ville}
+          </p>
+          <p>
+            <a class="lien-tel chiffres" href={telHref(site.telephone)}>{telephoneFr(site.telephone)}</a>
+            {
+              email && (
+                <>
+                  <br />
+                  <a href={`mailto:${email}`}>{email}</a>
+                </>
+              )
+            }
+          </p>
+          {urgences?.plage && <p class="note">Urgences&nbsp;: {urgences.plage}</p>}
+        </address>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* Colonne de page */
+  .page {
+    width: 100%;
+    max-width: var(--largeur-page);
+    margin-inline: auto;
+    padding-inline: var(--marge-page);
+  }
+
+  /* ——— Plaque (hero) ——— */
+  .plaque {
+    padding-block: var(--espace-3) var(--espace-4);
+  }
+
+  .plaque-grille {
+    display: grid;
+    gap: var(--espace-3);
+    grid-template-areas:
+      'identite'
+      'dispo'
+      'action';
+  }
+
+  .plaque-identite {
+    grid-area: identite;
+  }
+
+  .plaque-nom {
+    font-stretch: var(--largeur-titres);
+    font-weight: 800;
+    font-size: var(--taille-4);
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.005em;
+    text-wrap: balance;
+    hyphens: manual;
+  }
+
+  .plaque-accroche {
+    margin-top: var(--espace-1);
+    font-size: var(--taille-2);
+    font-stretch: 100%;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0;
+    text-wrap: pretty;
+  }
+
+  .plaque :global(.plaque-dispo) {
+    grid-area: dispo;
+    padding-top: var(--espace-2);
+    border-top: 1px solid var(--couleur-trait);
+  }
+
+  .plaque :global(.dispo-statut) {
+    align-items: flex-start;
+    font-size: var(--taille-1);
+    line-height: 1.35;
+    hyphens: manual;
+  }
+
+  .plaque :global(.dispo-statut::before) {
+    margin-top: 0.42em;
+  }
+
+  /* Une ligne par groupe de jours : pas de coupure « Ven-dredi » */
+  .plaque :global(.dispo-horaires) {
+    hyphens: manual;
+  }
+
+  .plaque :global(.dispo-groupe) {
+    display: block;
+    white-space: normal;
+  }
+
+  .plaque :global(.dispo-horaires > [aria-hidden='true']) {
+    display: none;
+  }
+
+  .plaque-action {
+    grid-area: action;
+  }
+
+  .plaque :global(.appeler-grand) {
+    width: 100%;
+    min-height: 3.5rem;
+    padding-inline: var(--espace-3);
+    font-size: var(--taille-1);
+    font-weight: 700;
+    border-radius: 2px;
+    transition: background-color 150ms ease-out;
+  }
+
+  .plaque :global(.appeler-grand:hover) {
+    background: #e59a68;
+  }
+
+  .plaque-interlocuteur {
+    margin-top: var(--espace-1);
+    color: var(--couleur-texte-secondaire);
+    font-size: var(--taille-petit);
+  }
+
+  @media (min-width: 48rem) {
+    .plaque {
+      padding-block: var(--espace-4) var(--espace-5);
+    }
+
+    .plaque-nom {
+      font-size: var(--taille-5);
+    }
+
+    .plaque-accroche {
+      max-width: 30ch;
+      font-size: var(--taille-3);
+    }
+
+    .plaque :global(.appeler-grand) {
+      width: auto;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .plaque-grille {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      grid-template-areas:
+        'identite dispo'
+        'action dispo';
+      column-gap: var(--espace-5);
+      row-gap: var(--espace-4);
+      align-items: start;
+    }
+
+    .plaque :global(.plaque-dispo) {
+      align-self: end;
+      padding-top: 0;
+      padding-left: var(--espace-3);
+      border-top: 0;
+      border-left: 1px solid var(--couleur-trait);
+    }
+  }
+
+  /* ——— Blocs ——— */
+  .bloc {
+    padding-block: var(--espace-4);
+  }
+
+  /* Un filet entre deux blocs, aligné sur la colonne de texte */
+  .bloc + .bloc > .page {
+    position: relative;
+    padding-top: var(--espace-4);
+  }
+
+  .bloc + .bloc > .page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    inset-inline: var(--marge-page);
+    border-top: 1px solid var(--couleur-trait);
+  }
+
+  .bloc + .bloc {
+    padding-top: 0;
+  }
+
+  .bloc h2 {
+    font-size: var(--taille-3);
+    line-height: 1.05;
+  }
+
+  .bloc-grille {
+    display: grid;
+    gap: var(--espace-2) var(--espace-5);
+  }
+
+  .bloc-contenu > * + * {
+    margin-top: var(--espace-2);
+  }
+
+  @media (min-width: 48rem) {
+    .bloc {
+      padding-block: var(--espace-5);
+    }
+
+    .bloc + .bloc > .page {
+      padding-top: var(--espace-5);
+    }
+
+    .bloc-grille {
+      grid-template-columns: 15rem minmax(0, 1fr);
+    }
+  }
+
+  .note {
+    color: var(--couleur-texte-secondaire);
+    font-size: var(--taille-petit);
+  }
+
+  .lien-tel {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--couleur-lien);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* Liste à filets : le « carnet de chantier » */
+  .liste-filets {
+    list-style: none;
+    padding: 0;
+    max-width: 36rem;
+    border-top: 1px solid var(--couleur-trait);
+  }
+
+  .liste-filets li {
+    padding-block: 0.7rem;
+    border-bottom: 1px solid var(--couleur-trait);
+    font-size: var(--taille-1);
+    font-weight: 500;
+  }
+
+  .urgences-plage {
+    font-weight: 600;
+  }
+
+  /* ——— L'artisan ——— */
+  .artisan-grille {
+    display: grid;
+    gap: var(--espace-3);
+  }
+
+  .artisan-texte > * + * {
+    margin-top: var(--espace-2);
+  }
+
+  .artisan-texte h2 + .note {
+    margin-top: var(--espace-1);
+  }
+
+  .artisan-presentation {
+    max-width: 34rem;
+    font-size: var(--taille-1);
+    line-height: 1.45;
+  }
+
+  .artisan-detail {
+    max-width: 12rem;
+  }
+
+  @media (min-width: 48rem) {
+    .artisan-grille {
+      grid-template-columns: 15rem minmax(0, 1fr);
+      column-gap: var(--espace-5);
+      align-items: start;
+    }
+
+    .artisan-detail {
+      grid-column: 2;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .artisan-grille {
+      grid-template-columns: 22rem minmax(0, 1fr) 14rem;
+    }
+
+    .artisan-detail {
+      grid-column: 3;
+      max-width: none;
+      align-self: end;
+    }
+  }
+
+  /* ——— Prestations ——— */
+  .prestation {
+    display: grid;
+    gap: 0.25rem var(--espace-3);
+    padding-block: var(--espace-2);
+    border-top: 1px solid var(--couleur-trait);
+  }
+
+  .prestation:last-child {
+    border-bottom: 1px solid var(--couleur-trait);
+  }
+
+  .prestation dt {
+    font-stretch: var(--largeur-titres);
+    font-weight: 700;
+    font-size: var(--taille-2);
+    line-height: 1.1;
+  }
+
+  .prestation dd ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .prestation dd li + li {
+    margin-top: 0.25rem;
+  }
+
+  @media (min-width: 40rem) {
+    .prestation {
+      grid-template-columns: 12rem minmax(0, 1fr);
+      align-items: baseline;
+    }
+  }
+
+  .prestations > * + * {
+    margin-top: 0;
+  }
+
+  /* ——— Zone ——— */
+  .zone {
+    display: grid;
+    gap: var(--espace-3);
+  }
+
+  .zone > * + * {
+    margin-top: 0;
+  }
+
+  .zone-communes {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--espace-1);
+    font-stretch: var(--largeur-titres);
+    font-weight: 700;
+    font-size: var(--taille-2);
+    line-height: 1.25;
+  }
+
+  @media (min-width: 64rem) {
+    .zone {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+      gap: var(--espace-5);
+      align-items: start;
+    }
+  }
+
+  /* ——— Contact ——— */
+  .contact {
+    display: grid;
+    gap: var(--espace-4);
+  }
+
+  .contact > * + * {
+    margin-top: 0;
+  }
+
+  .contact :global(.horaires td) {
+    white-space: nowrap;
+  }
+
+  .contact-adresse {
+    font-style: normal;
+  }
+
+  .contact-adresse > * + * {
+    margin-top: var(--espace-2);
+  }
+
+  .contact-adresse a:not(.lien-tel) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--couleur-lien);
+  }
+
+  /* Pied de page commun aligné sur la colonne de la page */
+  :global(:root[data-gamme='essentiel'] .pied-de-page) {
+    padding-inline: max(var(--marge-page), (100% - var(--largeur-page)) / 2 + var(--marge-page));
+  }
+
+  @media (min-width: 64rem) {
+    .contact {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--espace-5);
+    }
+  }
+</style>

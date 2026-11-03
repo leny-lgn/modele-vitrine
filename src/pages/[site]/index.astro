@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Provisoire from '../../components/commun/Provisoire.astro';
+import Essentiel from '../../layouts/essentiel/Essentiel.astro';
 import { tousLesSites } from '../../lib/sites';
 import type { Site } from '../../lib/schema';
 
@@ -11,6 +12,12 @@ export function getStaticPaths() {
 const { site } = Astro.props as { site: Site };
 ---
 
-<Base site={site} page="accueil">
-  <Provisoire site={site} page="accueil" />
-</Base>
+{
+  site.gamme === 'essentiel' ? (
+    <Essentiel site={site} />
+  ) : (
+    <Base site={site} page="accueil">
+      <Provisoire site={site} page="accueil" />
+    </Base>
+  )
+}

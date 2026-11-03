@@ -75,7 +75,12 @@
   "urgences": {
     "actif": true,
     "plage": "Du lundi au samedi, 7 h – 21 h",
-    "delai": "[À VÉRIFIER] délai d'intervention réel annoncé par l'artisan"
+    "delai": "[À VÉRIFIER] délai d'intervention réel annoncé par l'artisan",
+    "cas": [
+      "Fuite d'eau",
+      "WC ou évier bouché",
+      "Plus d'eau chaude"
+    ]
   },
   "fermetureExceptionnelle": null,
   "zone": {

@@ -1,6 +1,8 @@
 ---
 // Squelette commun à tous les sites. Les layouts de gamme (src/layouts/<gamme>/) l'emboîtent.
 import '../styles/base.css';
+// Thèmes de secteur : chacun est limité à :root[data-secteur='<secteur>'].
+import.meta.glob('../themes/*.css', { eager: true });
 import type { Site } from '../lib/schema';
 import type { CibleLien } from '../lib/liens';
 import SEO from '../components/commun/SEO.astro';
@@ -10,6 +12,7 @@ import BandeauDemo from '../components/demo/BandeauDemo.astro';
 import MenuModeles from '../components/demo/MenuModeles.astro';
 import { imageExiste, urlImage } from '../lib/images.mjs';
 import { telephoneFr } from '../lib/typo-fr';
+import { infosSecteur } from '../lib/secteurs';
 
 interface Props {
   site: Site;
@@ -23,6 +26,7 @@ const { site, page, titre, description } = Astro.props;
 const titreComplet = titre ? `${titre} — ${site.nom}` : `${site.nom} — ${site.accroche}`;
 const descriptionPage =
   description ?? site.description ?? `${site.accroche}. Appeler le ${telephoneFr(site.telephone)}.`;
+const police = infosSecteur(site.secteur).police;
 const favicon = imageExiste(site.slug, 'favicon.svg') ? urlImage(site.slug, 'favicon.svg') : '/favicon.svg';
 ---
 
@@ -31,6 +35,7 @@ const favicon = imageExiste(site.slug, 'favicon.svg') ? urlImage(site.slug, 'fav
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {police && <link rel="preload" href={police} as="font" type="font/woff2" crossorigin />}
     <link rel="icon" type="image/svg+xml" href={favicon} />
     <SEO site={site} titre={titreComplet} description={descriptionPage} />
     <slot name="tete" />

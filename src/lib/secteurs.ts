@@ -5,10 +5,12 @@ interface InfosSecteur {
   libelle: string;
   /** Type schema.org pour le JSON-LD */
   typeJsonLd: string;
+  /** Police principale auto-hébergée, préchargée par Base.astro */
+  police?: string;
 }
 
 const SECTEURS: Record<string, InfosSecteur> = {
-  plombier: { libelle: 'Plombier', typeJsonLd: 'Plumber' },
+  plombier: { libelle: 'Plombier', typeJsonLd: 'Plumber', police: '/fonts/archivo-variable.woff2' },
 };
 
 export function infosSecteur(secteur: string): InfosSecteur {

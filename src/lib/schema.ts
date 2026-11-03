@@ -48,7 +48,13 @@ export const siteSchema = z.looseObject({
     z.ZodArray<typeof plage>
   >),
   urgences: z
-    .object({ actif: z.boolean(), plage: z.string().optional(), delai: z.string().optional() })
+    .object({
+      actif: z.boolean(),
+      plage: z.string().optional(),
+      delai: z.string().optional(),
+      /** Situations d'urgence prises en charge (« Fuite d'eau »…) */
+      cas: z.array(texte).optional(),
+    })
     .optional(),
   fermetureExceptionnelle: z
     .object({ du: date, au: date, message: z.string().optional() })

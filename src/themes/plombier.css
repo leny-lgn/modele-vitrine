@@ -1,0 +1,120 @@
+/* Thème du secteur plombier : jetons partagés par les trois gammes.
+   Idée visuelle : « le carnet de chantier d'un artisan soigneux : cuivre, laiton,
+   carrelage blanc et trait précis » (docs/briefs/plombier.md).
+   Contrastes vérifiés (WCAG) : voir les commentaires en face de chaque couleur. */
+
+@font-face {
+  font-family: 'Archivo';
+  src: url('/fonts/archivo-variable.woff2') format('woff2');
+  font-weight: 400 800;
+  font-stretch: 75% 100%;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root[data-secteur='plombier'] {
+  /* Palette du brief */
+  --blanc-zinc: #f2f3f1;
+  --ardoise: #1f2a30; /* sur zinc : 13,2:1 */
+  --gris-joint: #8a9499; /* filets uniquement (2,8:1 sur zinc) ; texte sur ardoise : 4,7:1 */
+  --cuivre: #b4622f; /* teinte du brief, pour les traits ; blanc dessus : 4,44:1, insuffisant */
+  --laiton: #c9a24a;
+  --vert-ok: #2e7d5b;
+
+  /* Variantes calculées pour tenir 4,5:1 */
+  --gris-texte: #5e686d; /* sur zinc : 5,1:1 */
+  --gris-texte-clair: #a9b2b6; /* sur ardoise : 6,8:1 */
+  --cuivre-fonce: #a0552a; /* blanc dessus : 5,5:1 ; sur zinc : 4,9:1 */
+  --cuivre-clair: #db8a55; /* ardoise dessus : 5,4:1 */
+  --vert-ok-fonce: #2a7353; /* sur zinc : 5,1:1 */
+  --vert-ok-clair: #5fbf8e; /* sur ardoise : 6,5:1 */
+
+  /* Jetons génériques lus par les composants communs */
+  --couleur-fond: var(--blanc-zinc);
+  --couleur-texte: var(--ardoise);
+  --couleur-texte-secondaire: var(--gris-texte);
+  --couleur-trait: var(--gris-joint);
+  --couleur-accent: var(--cuivre-fonce);
+  --couleur-accent-texte: #ffffff;
+  --couleur-lien: var(--cuivre-fonce);
+  --couleur-ok: var(--vert-ok-fonce);
+  --couleur-focus: var(--ardoise);
+
+  /* Typographie : une famille, deux largeurs */
+  --police-texte: 'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --police-titres: var(--police-texte);
+  --largeur-titres: 75%;
+  --graisse-titres: 800;
+
+  /* Échelle 1,25 ; corps 17 px mobile, 18 px bureau */
+  --taille-texte: 1.0625rem;
+  --taille-petit: calc(var(--taille-texte) * 0.875);
+  --taille-1: calc(var(--taille-texte) * 1.25);
+  --taille-2: calc(var(--taille-texte) * 1.5625);
+  --taille-3: calc(var(--taille-texte) * 1.953);
+  --taille-4: calc(var(--taille-texte) * 2.441);
+  --taille-5: calc(var(--taille-texte) * 3.052);
+
+  /* Espacements */
+  --espace-1: 0.5rem;
+  --espace-2: 1rem;
+  --espace-3: 1.5rem;
+  --espace-4: 2.5rem;
+  --espace-5: 4rem;
+  --marge-page: 1.25rem;
+  --largeur-page: 72rem;
+}
+
+@media (min-width: 64rem) {
+  :root[data-secteur='plombier'] {
+    --taille-texte: 1.125rem;
+    --marge-page: 2.5rem;
+    --espace-5: 5.5rem;
+  }
+}
+
+/* Surface sombre (ardoise) : les composants communs s'y adaptent via les jetons */
+[data-secteur='plombier'] .surface-ardoise {
+  --couleur-fond: var(--ardoise);
+  --couleur-texte: var(--blanc-zinc);
+  --couleur-texte-secondaire: var(--gris-texte-clair);
+  --couleur-trait: #3d4a51;
+  --couleur-accent: var(--cuivre-clair);
+  --couleur-accent-texte: var(--ardoise);
+  --couleur-lien: var(--cuivre-clair);
+  --couleur-ok: var(--vert-ok-clair);
+  --couleur-focus: var(--blanc-zinc);
+  background: var(--couleur-fond);
+  color: var(--couleur-texte);
+}
+
+[data-secteur='plombier'] body {
+  font-size: var(--taille-texte);
+  font-stretch: 100%;
+  font-variant-numeric: lining-nums;
+}
+
+[data-secteur='plombier'] :is(h1, h2, h3) {
+  font-stretch: var(--largeur-titres);
+  font-weight: var(--graisse-titres);
+  letter-spacing: -0.01em;
+}
+
+/* Surfaces du navigateur */
+[data-secteur='plombier'] ::selection {
+  background: var(--cuivre-clair);
+  color: var(--ardoise);
+}
+
+[data-secteur='plombier'] body {
+  caret-color: var(--cuivre-fonce);
+}
+
+[data-secteur='plombier'] a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+[data-secteur='plombier'] a:hover {
+  text-decoration-thickness: 2px;
+}
