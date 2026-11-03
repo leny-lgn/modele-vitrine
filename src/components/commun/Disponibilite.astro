@@ -1,0 +1,166 @@
+---
+// Indicateur « Disponible maintenant » / « Fermé — rappel à partir de 8 h ».
+// Sans JS : résumé des horaires. Avec JS : statut calculé à l'heure de Paris.
+import type { Site } from '../../lib/schema';
+import { resumeHoraires } from '../../lib/horaires';
+
+interface Props {
+  site: Pick<Site, 'horaires' | 'urgences' | 'fermetureExceptionnelle'>;
+  class?: string;
+}
+const { site, class: classe } = Astro.props;
+const resume = resumeHoraires(site.horaires);
+const donnees = JSON.stringify({
+  horaires: site.horaires,
+  fermeture: site.fermetureExceptionnelle ?? null,
+});
+const fermeture = site.fermetureExceptionnelle;
+---
+
+<div class:list={['disponibilite', classe]} data-disponibilite={donnees}>
+  <p class="dispo-statut" data-statut hidden></p>
+  {
+    fermeture?.message && (
+      <p class="dispo-fermeture" data-fermeture hidden>
+        {fermeture.message}
+      </p>
+    )
+  }
+  <p class="dispo-horaires chiffres">
+    {
+      resume.map((r, i) => (
+        <>
+          {i > 0 && <span aria-hidden="true"> · </span>}
+          <span class="dispo-groupe">
+            {r.jours}&nbsp;: {r.plages}
+          </span>
+        </>
+      ))
+    }
+  </p>
+  {
+    site.urgences?.actif && site.urgences.plage && (
+      <p class="dispo-urgences">Urgences&nbsp;: {site.urgences.plage}</p>
+    )
+  }
+</div>
+
+<script>
+  import { heureFr } from '../../lib/typo-fr';
+
+  type Plage = [string, string];
+  interface Donnees {
+    horaires: Record<string, Plage[]>;
+    fermeture: { du: string; au: string; message?: string } | null;
+  }
+
+  const JOURS = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+  const minutes = (hhmm: string) => {
+    const [h, m] = hhmm.split(':').map(Number);
+    return h * 60 + m;
+  };
+
+  /** Date et heure actuelles à Paris, quel que soit le fuseau du visiteur. */
+  function maintenantParis() {
+    const parties = Object.fromEntries(
+      new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Europe/Paris',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hourCycle: 'h23',
+      })
+        .formatToParts(new Date())
+        .map((p) => [p.type, p.value]),
+    );
+    const date = new Date(Date.UTC(+parties.year, +parties.month - 1, +parties.day));
+    return { date, minutes: +parties.hour * 60 + +parties.minute };
+  }
+
+  const iso = (d: Date) => d.toISOString().slice(0, 10);
+  const plusJours = (d: Date, n: number) => new Date(d.getTime() + n * 86_400_000);
+
+  function statut({ horaires, fermeture }: Donnees) {
+    const { date, minutes: maintenant } = maintenantParis();
+    const fermeLe = (d: Date) => !!fermeture && iso(d) >= fermeture.du && iso(d) <= fermeture.au;
+
+    if (!fermeLe(date)) {
+      const plages = horaires[JOURS[date.getUTCDay()]] ?? [];
+      if (plages.some(([debut, fin]) => maintenant >= minutes(debut) && maintenant < minutes(fin))) {
+        return { ouvert: true, texte: 'Disponible maintenant', exceptionnel: false };
+      }
+    }
+
+    for (let n = 0; n < 60; n++) {
+      const jour = plusJours(date, n);
+      if (fermeLe(jour)) continue;
+      const nomJour = JOURS[jour.getUTCDay()];
+      const prochaine = (horaires[nomJour] ?? []).find(([debut]) => n > 0 || minutes(debut) > maintenant);
+      if (prochaine) {
+        const quand = n === 0 ? '' : n === 1 ? 'demain ' : n < 7 ? `${nomJour} ` : `le ${jour.getUTCDate()} `;
+        return {
+          ouvert: false,
+          texte: `Fermé — rappel ${quand}à partir de ${heureFr(prochaine[0])}`,
+          exceptionnel: fermeLe(date),
+        };
+      }
+    }
+    return { ouvert: false, texte: 'Fermé', exceptionnel: fermeLe(date) };
+  }
+
+  for (const bloc of document.querySelectorAll<HTMLElement>('[data-disponibilite]')) {
+    const donnees: Donnees = JSON.parse(bloc.dataset.disponibilite!);
+    const s = statut(donnees);
+    const ligne = bloc.querySelector<HTMLElement>('[data-statut]')!;
+    ligne.textContent = s.texte;
+    ligne.classList.toggle('est-ouvert', s.ouvert);
+    ligne.hidden = false;
+    const message = bloc.querySelector<HTMLElement>('[data-fermeture]');
+    if (message) message.hidden = !s.exceptionnel;
+  }
+</script>
+
+<style>
+  .disponibilite > * + * {
+    margin-top: 0.25rem;
+  }
+
+  .dispo-statut {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+  }
+
+  .dispo-statut::before {
+    content: '';
+    flex: none;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    border: 2px solid var(--couleur-texte-secondaire);
+  }
+
+  .dispo-statut.est-ouvert::before {
+    background: var(--couleur-ok);
+    border-color: var(--couleur-ok);
+  }
+
+  .dispo-groupe {
+    white-space: nowrap;
+  }
+
+  .dispo-horaires,
+  .dispo-urgences {
+    font-size: 0.9375rem;
+    color: var(--couleur-texte-secondaire);
+  }
+
+  @media (max-width: 30rem) {
+    .dispo-groupe {
+      white-space: normal;
+    }
+  }
+</style>

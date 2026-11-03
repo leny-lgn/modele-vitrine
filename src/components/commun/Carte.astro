@@ -1,0 +1,56 @@
+---
+// Carte statique cliquable de la zone d'intervention (aucun appel réseau au chargement).
+// Fichier attendu : public/images/<slug>/carte.webp (capture d'OpenStreetMap).
+import type { Site } from '../../lib/schema';
+import CadreImage from '../demo/CadreImage.astro';
+import { FICHIER_CARTE, FORMAT_CARTE, imageExiste } from '../../lib/images.mjs';
+
+interface Props {
+  site: Pick<Site, 'slug' | 'secteur' | 'demo' | 'adresse' | 'zone'>;
+  class?: string;
+}
+const { site, class: classe } = Astro.props;
+const { rue, codePostal, ville } = site.adresse;
+const lienCarte = `https://www.openstreetmap.org/search?query=${encodeURIComponent(`${rue}, ${codePostal} ${ville}`)}`;
+const existe = imageExiste(site.slug, FICHIER_CARTE);
+const image = {
+  fichier: FICHIER_CARTE,
+  format: FORMAT_CARTE,
+  alt: `Carte de la zone d’intervention autour de ${ville}`,
+};
+const consigne =
+  `Capture d’OpenStreetMap centrée sur ${ville}` +
+  (site.zone.rayonKm ? `, montrant environ ${site.zone.rayonKm} km autour` : '') +
+  `. Garder la mention « © les contributeurs d’OpenStreetMap » visible. Exporter en WebP.`;
+---
+
+<figure class:list={['carte', classe]}>
+  {
+    existe ? (
+      <a href={lienCarte} rel="noopener" target="_blank">
+        <CadreImage site={site} image={image} sizes="(min-width: 48rem) 50vw, 100vw" />
+        <span class="visuellement-cache"> (ouvre OpenStreetMap dans un nouvel onglet)</span>
+      </a>
+    ) : (
+      <CadreImage site={site} image={image} consigne={consigne} />
+    )
+  }
+  <figcaption>
+    <a href={lienCarte} rel="noopener" target="_blank">
+      Voir l’adresse sur OpenStreetMap<span class="visuellement-cache"> (nouvel onglet)</span>
+    </a>
+  </figcaption>
+</figure>
+
+<style>
+  .carte figcaption {
+    margin-top: 0.5rem;
+    font-size: 0.9375rem;
+  }
+
+  .carte figcaption a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+</style>

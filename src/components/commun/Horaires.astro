@@ -1,0 +1,73 @@
+---
+// Tableau des horaires, jour par jour.
+import { JOURS, type Site } from '../../lib/schema';
+import { LIBELLES_JOURS, plagesDuJour } from '../../lib/horaires';
+
+interface Props {
+  site: Pick<Site, 'horaires'>;
+  titre?: string;
+  class?: string;
+}
+const { site, titre = 'Horaires', class: classe } = Astro.props;
+---
+
+<table class:list={['horaires', classe]}>
+  {titre && <caption>{titre}</caption>}
+  <tbody>
+    {
+      JOURS.map((jour) => (
+        <tr data-jour={jour}>
+          <th scope="row">{LIBELLES_JOURS[jour]}</th>
+          <td class:list={['chiffres', { ferme: !site.horaires[jour].length }]}>
+            {plagesDuJour(site.horaires, jour)}
+          </td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>
+
+<script>
+  // Met en évidence le jour courant (heure de Paris).
+  const jour = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', weekday: 'long' }).format(new Date());
+  for (const ligne of document.querySelectorAll(`.horaires tr[data-jour="${jour}"]`)) {
+    ligne.setAttribute('aria-current', 'date');
+  }
+</script>
+
+<style>
+  .horaires {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 28rem;
+  }
+
+  caption {
+    text-align: left;
+    font-weight: 700;
+    padding-bottom: 0.5rem;
+  }
+
+  th,
+  td {
+    text-align: left;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid var(--couleur-trait);
+    vertical-align: top;
+  }
+
+  th {
+    font-weight: 500;
+    padding-right: 1.5rem;
+    white-space: nowrap;
+  }
+
+  .ferme {
+    color: var(--couleur-texte-secondaire);
+  }
+
+  tr[aria-current='date'] th,
+  tr[aria-current='date'] td {
+    font-weight: 700;
+  }
+</style>

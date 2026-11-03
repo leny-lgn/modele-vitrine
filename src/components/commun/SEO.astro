@@ -1,0 +1,71 @@
+---
+// Balises de tête : titre, description, robots, Open Graph, JSON-LD adapté au secteur.
+import type { Site } from '../../lib/schema';
+import { infosSecteur } from '../../lib/secteurs';
+import { horairesJsonLd } from '../../lib/horaires';
+import { telInternational } from '../../lib/typo-fr';
+import { contientAVerifier } from '../../lib/texte';
+import { imageExiste, urlImage } from '../../lib/images.mjs';
+import { lienSite } from '../../lib/liens';
+
+interface Props {
+  site: Site;
+  titre: string;
+  description: string;
+}
+const { site, titre, description } = Astro.props;
+
+const absolue = (chemin: string) => new URL(chemin, Astro.site).href;
+const canonique = absolue(Astro.url.pathname);
+const partage = site.images.partage;
+const imagePartage =
+  partage && imageExiste(site.slug, partage.fichier) ? absolue(urlImage(site.slug, partage.fichier)) : undefined;
+
+const propre = (v: string | undefined) => (v && !contientAVerifier(v) ? v : undefined);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': infosSecteur(site.secteur).typeJsonLd,
+  name: site.nom,
+  description: propre(site.description ?? site.accroche),
+  url: absolue(lienSite(site)),
+  telephone: telInternational(site.telephone),
+  email: propre(site.email),
+  image: imagePartage,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.adresse.rue,
+    postalCode: site.adresse.codePostal,
+    addressLocality: site.adresse.ville,
+    addressCountry: 'FR',
+  },
+  areaServed: site.zone.communes.map((name) => ({ '@type': 'City', name })),
+  openingHoursSpecification: horairesJsonLd(site.horaires),
+};
+const jsonLdTexte = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
+---
+
+<title>{titre}</title>
+<meta name="description" content={description} />
+{site.demo && <meta name="robots" content="noindex, nofollow" />}
+<link rel="canonical" href={canonique} />
+
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="fr_FR" />
+<meta property="og:site_name" content={site.nom} />
+<meta property="og:title" content={titre} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonique} />
+{
+  imagePartage && (
+    <>
+      <meta property="og:image" content={imagePartage} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={partage!.alt} />
+      <meta name="twitter:card" content="summary_large_image" />
+    </>
+  )
+}
+
+<script type="application/ld+json" set:html={jsonLdTexte} />

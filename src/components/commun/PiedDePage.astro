@@ -1,0 +1,68 @@
+---
+// Pied de page commun : coordonnées et liens légaux.
+import type { Site } from '../../lib/schema';
+import { telephoneFr, telHref } from '../../lib/typo-fr';
+import { lienSite } from '../../lib/liens';
+import { contientAVerifier } from '../../lib/texte';
+
+interface Props {
+  site: Site;
+  class?: string;
+}
+const { site, class: classe } = Astro.props;
+const email = site.email && !contientAVerifier(site.email) ? site.email : undefined;
+---
+
+<footer class:list={['pied-de-page', classe]}>
+  <div class="pdp-coordonnees">
+    <p class="pdp-nom">{site.nom}</p>
+    <address>
+      {site.adresse.rue}<br />
+      {site.adresse.codePostal}&nbsp;{site.adresse.ville}<br />
+      <a href={telHref(site.telephone)} class="chiffres">{telephoneFr(site.telephone)}</a>
+      {
+        email && (
+          <>
+            <br />
+            <a href={`mailto:${email}`}>{email}</a>
+          </>
+        )
+      }
+    </address>
+  </div>
+  <ul class="pdp-legal">
+    <li><a href={lienSite(site, 'mentions-legales')}>Mentions légales</a></li>
+    <li><a href={lienSite(site, 'confidentialite')}>Confidentialité</a></li>
+  </ul>
+</footer>
+
+<style>
+  .pied-de-page {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 2rem 1.25rem;
+    border-top: 1px solid var(--couleur-trait);
+    font-size: 0.9375rem;
+  }
+
+  .pdp-nom {
+    font-weight: 700;
+  }
+
+  address {
+    font-style: normal;
+  }
+
+  address a,
+  .pdp-legal a {
+    display: inline-block;
+    padding-block: 0.6rem;
+  }
+
+  .pdp-legal {
+    list-style: none;
+    padding: 0;
+  }
+</style>

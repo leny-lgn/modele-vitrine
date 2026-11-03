@@ -1,0 +1,260 @@
+---
+// Barre « Modèles » fixée en bas d'écran, générée depuis src/sites/. Démo uniquement.
+import { sitesParSecteur } from '../../lib/sites';
+import { lienSite, LIEN_GRILLE } from '../../lib/liens';
+import { infosSecteur, LIBELLES_GAMMES } from '../../lib/secteurs';
+import { GAMMES, type Site } from '../../lib/schema';
+
+interface Props {
+  site: Site;
+}
+const { site } = Astro.props;
+const groupes = sitesParSecteur();
+const gammes = groupes.get(site.secteur) ?? {};
+const autresSecteurs = [...groupes.entries()].filter(([s]) => s !== site.secteur);
+---
+
+{
+  site.demo && (
+    <>
+      <script is:inline>
+        try {
+          if (sessionStorage.getItem('menu-modeles') === 'masque')
+            document.documentElement.dataset.menuModeles = 'masque';
+        } catch (e) {}
+      </script>
+      <nav class="menu-modeles" aria-label="Modèles de démonstration">
+        <div class="mm-barre">
+          {autresSecteurs.length > 0 ? (
+            <details class="mm-secteur">
+              <summary>{infosSecteur(site.secteur).libelle}</summary>
+              <ul>
+                {autresSecteurs.map(([secteur, sites]) => {
+                  const cible = sites[site.gamme] ?? Object.values(sites)[0]!;
+                  return (
+                    <li>
+                      <a href={lienSite(cible)}>{infosSecteur(secteur).libelle}</a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </details>
+          ) : (
+            <span class="mm-secteur-seul">{infosSecteur(site.secteur).libelle}</span>
+          )}
+          <ul class="mm-gammes">
+            {GAMMES.map((g) => {
+              const cible = gammes[g];
+              return (
+                <li>
+                  {cible ? (
+                    <a href={lienSite(cible)} aria-current={g === site.gamme ? 'page' : undefined}>
+                      {LIBELLES_GAMMES[g]}
+                    </a>
+                  ) : (
+                    <span class="mm-absent">{LIBELLES_GAMMES[g]}</span>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+          <a class="mm-grille" href={LIEN_GRILLE}>
+            Tous
+            <span class="visuellement-cache"> les modèles</span>
+          </a>
+          <button type="button" class="mm-masquer" data-mm-masquer hidden>
+            Masquer
+          </button>
+        </div>
+        <button type="button" class="mm-languette" data-mm-afficher hidden>
+          Modèles
+        </button>
+      </nav>
+    </>
+  )
+}
+
+<script>
+  const nav = document.querySelector<HTMLElement>('.menu-modeles');
+  if (nav) {
+    const racine = document.documentElement;
+    const masquer = nav.querySelector<HTMLButtonElement>('[data-mm-masquer]')!;
+    const afficher = nav.querySelector<HTMLButtonElement>('[data-mm-afficher]')!;
+    masquer.hidden = false;
+    afficher.hidden = false;
+
+    const memoriser = (masque: boolean) => {
+      try {
+        if (masque) sessionStorage.setItem('menu-modeles', 'masque');
+        else sessionStorage.removeItem('menu-modeles');
+      } catch {}
+    };
+    masquer.addEventListener('click', () => {
+      racine.dataset.menuModeles = 'masque';
+      memoriser(true);
+      afficher.focus();
+    });
+    afficher.addEventListener('click', () => {
+      delete racine.dataset.menuModeles;
+      memoriser(false);
+      masquer.focus();
+    });
+  }
+</script>
+
+<style>
+  .menu-modeles {
+    position: fixed;
+    inset-inline: 0;
+    bottom: calc(var(--hauteur-appeler) + var(--bas-securite));
+    z-index: 50;
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font-size: 0.8125rem;
+    line-height: 1.2;
+    color: #f2f2f2;
+    hyphens: none;
+  }
+
+  .mm-barre {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    height: 2.75rem;
+    padding-inline: 0.5rem;
+    background: #2b2d2f;
+    border-top: 1px solid #45484b;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .mm-barre a,
+  .mm-barre button,
+  .mm-barre summary,
+  .mm-secteur-seul,
+  .mm-absent,
+  .mm-languette {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding-inline: 0.6rem;
+    white-space: nowrap;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .mm-barre ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+  }
+
+  .mm-secteur-seul,
+  .mm-secteur summary {
+    font-weight: 600;
+  }
+
+  .mm-secteur summary {
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .mm-secteur summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .mm-secteur summary::after {
+    content: '';
+    margin-left: 0.4rem;
+    border: 4px solid transparent;
+    border-bottom-color: currentColor;
+    transform: translateY(-2px);
+  }
+
+  .mm-secteur ul {
+    position: absolute;
+    bottom: 100%;
+    left: 0.5rem;
+    flex-direction: column;
+    min-width: 10rem;
+    background: #2b2d2f;
+    border: 1px solid #45484b;
+  }
+
+  .mm-gammes {
+    margin-inline: auto;
+  }
+
+  .mm-gammes a {
+    border-radius: 3px;
+  }
+
+  .mm-gammes a[aria-current='page'] {
+    background: #f2f2f2;
+    color: #1c1c1c;
+    font-weight: 600;
+  }
+
+  .mm-absent {
+    color: #8d9196;
+  }
+
+  .mm-barre a:hover:not([aria-current]),
+  .mm-barre button:hover,
+  .mm-barre summary:hover {
+    text-decoration: underline;
+  }
+
+  .mm-masquer,
+  .mm-languette {
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .mm-languette {
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0;
+    display: none;
+    background: #2b2d2f;
+    border: 1px solid #45484b;
+    border-bottom: 0;
+    border-radius: 4px 4px 0 0;
+  }
+
+  /* Petits écrans : tout doit tenir sur une ligne de 375 px.
+     Le secteur seul est masqué (il n'y a rien à choisir) et les marges sont resserrées. */
+  @media (max-width: 30rem) {
+    .mm-barre {
+      gap: 0;
+      padding-inline: 0.25rem;
+    }
+
+    .mm-barre a,
+    .mm-barre button,
+    .mm-barre summary {
+      padding-inline: 0.5rem;
+    }
+
+    .mm-secteur-seul {
+      display: none;
+    }
+
+    .mm-gammes {
+      margin-inline: 0 auto;
+    }
+  }
+
+  .menu-modeles :focus-visible {
+    outline: 2px solid #9cc2ff;
+    outline-offset: -2px;
+  }
+
+  :global(html[data-menu-modeles='masque']) .mm-barre {
+    display: none;
+  }
+
+  :global(html[data-menu-modeles='masque']) .mm-languette:not([hidden]) {
+    display: inline-flex;
+  }
+</style>

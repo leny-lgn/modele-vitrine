@@ -1,0 +1,183 @@
+---
+// Image d'un site. Si le fichier existe : <img> WebP avec srcset et dimensions.
+// Sinon, en démo : cadre en pointillés aux bonnes proportions avec chemin, format et prompt complet.
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import sharp from 'sharp';
+import type { ImageSite, Site } from '../../lib/schema';
+import {
+  RACINE,
+  LARGEURS,
+  urlImage,
+  cheminRelatif,
+  imageExiste,
+  lireFormat,
+  promptComplet,
+  nomVariante,
+} from '../../lib/images.mjs';
+
+interface Props {
+  site: Pick<Site, 'slug' | 'secteur' | 'demo'>;
+  image: Pick<ImageSite, 'fichier' | 'format' | 'alt'> & { prompt?: string };
+  /** Image visible au chargement (hero) : pas de lazy, priorité haute. */
+  prioritaire?: boolean;
+  sizes?: string;
+  class?: string;
+  /** Remplace le prompt dans le cadre (ex. consigne pour la carte). */
+  consigne?: string;
+}
+
+const { site, image, prioritaire = false, sizes = '100vw', class: classe, consigne } = Astro.props;
+const format = lireFormat(image.format);
+const existe = imageExiste(site.slug, image.fichier);
+
+let img: { src: string; srcset?: string; width: number; height: number } | undefined;
+if (existe) {
+  const meta = await sharp(join(RACINE, cheminRelatif(site.slug, image.fichier))).metadata();
+  const width = meta.width ?? format.largeur;
+  const height = meta.height ?? format.hauteur;
+  const src = urlImage(site.slug, image.fichier);
+  const variantes = LARGEURS.filter(
+    (l) => l < width && existsSync(join(RACINE, cheminRelatif(site.slug, nomVariante(image.fichier, l)))),
+  ).map((l) => `${urlImage(site.slug, nomVariante(image.fichier, l))} ${l}w`);
+  img = {
+    src,
+    srcset: variantes.length ? [...variantes, `${src} ${width}w`].join(', ') : undefined,
+    width,
+    height,
+  };
+}
+
+const prompt = consigne ?? (image.prompt ? promptComplet(site.secteur, image.prompt) : '');
+const ratio = format.css ?? `${format.largeur} / ${format.hauteur}`;
+---
+
+{
+  img ? (
+    <img
+      class={classe}
+      src={img.src}
+      srcset={img.srcset}
+      sizes={img.srcset ? sizes : undefined}
+      width={img.width}
+      height={img.height}
+      alt={image.alt}
+      loading={prioritaire ? 'eager' : 'lazy'}
+      fetchpriority={prioritaire ? 'high' : undefined}
+      decoding="async"
+    />
+  ) : (
+    site.demo && (
+      <figure class:list={['cadre-image', classe]} style={`aspect-ratio: ${ratio}`} data-cadre-image>
+        <figcaption>
+          <p class="ci-titre">Image à déposer</p>
+          <p class="ci-chemin">
+            <code set:html={cheminRelatif(site.slug, image.fichier).split("/").join("/<wbr>")} />
+          </p>
+          <p class="ci-format">
+            Format {image.format} · {format.largeur} × {format.hauteur} px
+            {format.exact ? '' : ' conseillés'} · WebP
+          </p>
+          <p class="ci-alt">Texte alternatif : {image.alt}</p>
+          {prompt && (
+            <>
+              <p class="ci-prompt" data-prompt>
+                {prompt}
+              </p>
+              {!consigne && (
+                <button type="button" class="ci-copier" data-copier hidden>
+                  Copier le prompt
+                </button>
+              )}
+            </>
+          )}
+        </figcaption>
+      </figure>
+    )
+  )
+}
+
+<script>
+  for (const bouton of document.querySelectorAll<HTMLButtonElement>('[data-copier]')) {
+    const texte = bouton.closest('[data-cadre-image]')?.querySelector('[data-prompt]');
+    if (!texte) continue;
+    bouton.hidden = false;
+    const libelle = bouton.textContent;
+    bouton.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(texte.textContent!.trim());
+        bouton.textContent = 'Prompt copié';
+      } catch {
+        // Repli : sélectionner le texte pour une copie manuelle
+        const plage = document.createRange();
+        plage.selectNodeContents(texte);
+        const sel = getSelection();
+        sel?.removeAllRanges();
+        sel?.addRange(plage);
+        bouton.textContent = 'Texte sélectionné : Cmd + C';
+      }
+      setTimeout(() => (bouton.textContent = libelle), 2500);
+    });
+  }
+</script>
+
+<style>
+  .cadre-image {
+    width: 100%;
+    /* Le ratio sert de hauteur minimale : le cadre grandit si le prompt ne tient pas (mobile). */
+    padding: 1rem;
+    background: #f1f2f3;
+    border: 2px dashed #8b9196;
+    color: #26292c;
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    hyphens: none;
+    text-align: left;
+  }
+
+  .cadre-image figcaption > * + * {
+    margin-top: 0.5rem;
+  }
+
+  .ci-titre {
+    font-weight: 700;
+    font-size: 0.875rem;
+  }
+
+  .ci-chemin code {
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.8125rem;
+    overflow-wrap: anywhere;
+    background: #fff;
+    padding: 0.1em 0.3em;
+    user-select: all;
+  }
+
+  .ci-format,
+  .ci-alt {
+    color: #4b5055;
+  }
+
+  .ci-prompt {
+    white-space: pre-line;
+    padding: 0.6rem 0.75rem;
+    background: #fff;
+    border-left: 3px solid #8b9196;
+    user-select: text;
+  }
+
+  .ci-copier {
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    background: #26292c;
+    color: #fff;
+    border: 0;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  .ci-copier:hover {
+    background: #3b3f43;
+  }
+</style>

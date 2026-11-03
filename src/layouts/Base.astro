@@ -1,0 +1,49 @@
+---
+// Squelette commun à tous les sites. Les layouts de gamme (src/layouts/<gamme>/) l'emboîtent.
+import '../styles/base.css';
+import type { Site } from '../lib/schema';
+import type { CibleLien } from '../lib/liens';
+import SEO from '../components/commun/SEO.astro';
+import PiedDePage from '../components/commun/PiedDePage.astro';
+import Appeler from '../components/commun/Appeler.astro';
+import BandeauDemo from '../components/demo/BandeauDemo.astro';
+import MenuModeles from '../components/demo/MenuModeles.astro';
+import { imageExiste, urlImage } from '../lib/images.mjs';
+import { telephoneFr } from '../lib/typo-fr';
+
+interface Props {
+  site: Site;
+  page: CibleLien;
+  /** Titre de la page ; absent sur l'accueil. */
+  titre?: string;
+  description?: string;
+}
+const { site, page, titre, description } = Astro.props;
+
+const titreComplet = titre ? `${titre} — ${site.nom}` : `${site.nom} — ${site.accroche}`;
+const descriptionPage =
+  description ?? site.description ?? `${site.accroche}. Appeler le ${telephoneFr(site.telephone)}.`;
+const favicon = imageExiste(site.slug, 'favicon.svg') ? urlImage(site.slug, 'favicon.svg') : '/favicon.svg';
+---
+
+<!doctype html>
+<html lang="fr" data-gamme={site.gamme} data-secteur={site.secteur} data-page={page}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href={favicon} />
+    <SEO site={site} titre={titreComplet} description={descriptionPage} />
+    <slot name="tete" />
+  </head>
+  <body>
+    <a class="lien-evitement" href="#contenu">Aller au contenu</a>
+    <BandeauDemo demo={site.demo} />
+    <slot name="entete" />
+    <main id="contenu" tabindex="-1">
+      <slot />
+    </main>
+    <PiedDePage site={site} />
+    <Appeler site={site} variante="barre" />
+    {site.demo && <MenuModeles site={site} />}
+  </body>
+</html>

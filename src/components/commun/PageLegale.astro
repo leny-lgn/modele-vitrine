@@ -1,0 +1,70 @@
+---
+// Habillage commun des pages légales (mentions légales, confidentialité).
+import type { Site } from '../../lib/schema';
+import { lienSite } from '../../lib/liens';
+
+interface Props {
+  site: Site;
+  titre: string;
+}
+const { site, titre } = Astro.props;
+---
+
+<div class="page-legale">
+  <p class="pl-retour"><a href={lienSite(site)}>Retour à l’accueil de {site.nom}</a></p>
+  <h1>{titre}</h1>
+  <slot />
+</div>
+
+<style>
+  .page-legale {
+    max-width: 42rem;
+    margin-inline: auto;
+    padding: 1.5rem 1.25rem 3rem;
+  }
+
+  .page-legale h1 {
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    margin-block: 0.5rem 1.5rem;
+  }
+
+  .page-legale :global(h2) {
+    font-size: 1.25rem;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-legale :global(p + p),
+  .page-legale :global(dl) {
+    margin-top: 0.75rem;
+  }
+
+  .page-legale :global(dl) {
+    display: grid;
+    grid-template-columns: minmax(8rem, max-content) 1fr;
+    gap: 0.35rem 1.25rem;
+  }
+
+  .page-legale :global(dt) {
+    color: var(--couleur-texte-secondaire);
+  }
+
+  .page-legale :global(dd) {
+    margin: 0;
+  }
+
+  .pl-retour a {
+    display: inline-block;
+    padding-block: 0.6rem;
+  }
+
+  @media (max-width: 30rem) {
+    .page-legale :global(dl) {
+      grid-template-columns: 1fr;
+    }
+
+    .page-legale :global(dd) {
+      margin-bottom: 0.5rem;
+    }
+  }
+</style>

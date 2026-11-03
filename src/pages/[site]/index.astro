@@ -1,0 +1,16 @@
+---
+import Base from '../../layouts/Base.astro';
+import Provisoire from '../../components/commun/Provisoire.astro';
+import { tousLesSites } from '../../lib/sites';
+import type { Site } from '../../lib/schema';
+
+export function getStaticPaths() {
+  return tousLesSites().map((site) => ({ params: { site: site.slug }, props: { site } }));
+}
+
+const { site } = Astro.props as { site: Site };
+---
+
+<Base site={site} page="accueil">
+  <Provisoire site={site} page="accueil" />
+</Base>

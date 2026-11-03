@@ -1,0 +1,59 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageLegale from '../../components/commun/PageLegale.astro';
+import { tousLesSites } from '../../lib/sites';
+import { telephoneFr } from '../../lib/typo-fr';
+import { contientAVerifier } from '../../lib/texte';
+import type { Site } from '../../lib/schema';
+
+export function getStaticPaths() {
+  return tousLesSites().map((site) => ({ params: { site: site.slug }, props: { site } }));
+}
+
+const { site } = Astro.props as { site: Site };
+const email = site.email && !contientAVerifier(site.email) ? site.email : undefined;
+const formulaire = site.pages.includes('devis');
+---
+
+<Base site={site} page="confidentialite" titre="Confidentialité">
+  <PageLegale site={site} titre="Confidentialité">
+    <h2>Cookies et mesure d’audience</h2>
+    <p>
+      Ce site ne dépose aucun cookie. Il n’utilise aucun outil de mesure d’audience, aucun traceur
+      publicitaire et aucun contenu tiers chargé automatiquement.
+    </p>
+    <p>
+      La carte de la zone d’intervention est une image. Le lien vers OpenStreetMap ne s’ouvre que si
+      vous cliquez dessus ; OpenStreetMap applique alors sa propre politique de confidentialité.
+    </p>
+
+    <h2>Données personnelles</h2>
+    <p>
+      Le site lui-même ne collecte aucune donnée personnelle. Si vous appelez
+      {email ? ' ou écrivez' : ''}, vos coordonnées servent uniquement à répondre à votre demande
+      et à établir un devis. Elles ne sont ni vendues ni cédées.
+    </p>
+    {
+      formulaire && (
+        <p>
+          Le formulaire de demande de devis transmet les informations saisies à {site.nom} pour
+          répondre à votre demande. Elles ne servent à rien d’autre.
+        </p>
+      )
+    }
+
+    <h2>Vos droits</h2>
+    <p>
+      Vous pouvez demander l’accès, la correction ou la suppression de vos données en contactant
+      {' '}{site.nom} au <span class="chiffres">{telephoneFr(site.telephone)}</span>
+      {email && <> ou à <a href={`mailto:${email}`}>{email}</a></>}. Vous pouvez aussi adresser une
+      réclamation à la CNIL (cnil.fr).
+    </p>
+
+    <h2>Hébergement</h2>
+    <p>
+      Le site est hébergé par {site.mentionsLegales.hebergeur.nom}. Les journaux techniques du
+      serveur peuvent contenir l’adresse IP des visiteurs, pour la sécurité du service.
+    </p>
+  </PageLegale>
+</Base>

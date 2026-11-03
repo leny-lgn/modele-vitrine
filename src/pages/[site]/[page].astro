@@ -1,0 +1,22 @@
+---
+// Une page par entrée de `pages` dans le fichier du site (hors accueil).
+import Base from '../../layouts/Base.astro';
+import Provisoire from '../../components/commun/Provisoire.astro';
+import { tousLesSites } from '../../lib/sites';
+import { LIBELLES_PAGES } from '../../lib/secteurs';
+import type { Site, CleePage } from '../../lib/schema';
+
+export function getStaticPaths() {
+  return tousLesSites().flatMap((site) =>
+    site.pages
+      .filter((page) => page !== 'accueil')
+      .map((page) => ({ params: { site: site.slug, page }, props: { site, page } })),
+  );
+}
+
+const { site, page } = Astro.props as { site: Site; page: CleePage };
+---
+
+<Base site={site} page={page} titre={LIBELLES_PAGES[page]}>
+  <Provisoire site={site} page={page} />
+</Base>

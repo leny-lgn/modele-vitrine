@@ -1,16 +1,124 @@
 ---
+// Grille de tous les modèles de démonstration, groupés par secteur.
+import Neutre from '../layouts/Neutre.astro';
+import { sitesParSecteur } from '../lib/sites';
+import { lienSite } from '../lib/liens';
+import { infosSecteur, LIBELLES_GAMMES } from '../lib/secteurs';
+import { GAMMES } from '../lib/schema';
+
+const groupes = [...sitesParSecteur().entries()];
+const pluriel = (n: number, mot: string) => `${n} ${mot}${n > 1 ? 's' : ''}`;
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Neutre titre="Modèles de sites vitrines" description="Modèles de démonstration par secteur et par gamme.">
+  <h1>Modèles de sites vitrines</h1>
+  <p class="intro">
+    Trois gammes par secteur : Essentiel, Vitrine et Premium. Chaque modèle est un site complet,
+    avec une entreprise fictive.
+  </p>
+
+  {
+    groupes.map(([secteur, sites]) => (
+      <section class="secteur" aria-labelledby={`secteur-${secteur}`}>
+        <h2 id={`secteur-${secteur}`}>{infosSecteur(secteur).libelle}</h2>
+        <ul class="gammes">
+          {GAMMES.map((g) => {
+            const site = sites[g];
+            return (
+              <li class:list={['gamme', { absente: !site }]}>
+                <h3>{LIBELLES_GAMMES[g]}</h3>
+                {site ? (
+                  <>
+                    <p class="details">
+                      {site.nom} · {pluriel(site.pages.length, 'page')} · {pluriel(Object.keys(site.images).length, 'image')}
+                    </p>
+                    <a href={lienSite(site)}>
+                      Ouvrir le modèle<span class="visuellement-cache"> {infosSecteur(secteur).libelle} {LIBELLES_GAMMES[g]}</span>
+                    </a>
+                    <code>{lienSite(site)}</code>
+                  </>
+                ) : (
+                  <p class="details">Pas encore construit</p>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    ))
+  }
+</Neutre>
+
+<style>
+  h1 {
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+  }
+
+  .intro {
+    margin-top: 0.75rem;
+    max-width: 38rem;
+    color: var(--couleur-texte-secondaire);
+  }
+
+  .secteur {
+    margin-top: 3rem;
+  }
+
+  .secteur h2 {
+    font-size: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--couleur-texte);
+  }
+
+  .gammes {
+    display: grid;
+    list-style: none;
+    padding: 0;
+  }
+
+  .gamme {
+    display: grid;
+    gap: 0.25rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--couleur-trait);
+  }
+
+  .gamme h3 {
+    font-size: 1.125rem;
+  }
+
+  .details {
+    color: var(--couleur-texte-secondaire);
+    font-size: 0.9375rem;
+  }
+
+  .gamme a {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-weight: 600;
+  }
+
+  .gamme code {
+    font-family: var(--police-code);
+    font-size: 0.8125rem;
+    color: var(--couleur-texte-secondaire);
+  }
+
+  .absente h3 {
+    color: var(--couleur-texte-secondaire);
+  }
+
+  @media (min-width: 48rem) {
+    .gammes {
+      grid-template-columns: repeat(3, 1fr);
+      column-gap: 2rem;
+    }
+
+    .gamme {
+      border-bottom: 0;
+      align-content: start;
+    }
+  }
+</style>

@@ -1,0 +1,64 @@
+---
+// Bouton « Appeler le … ». Variante « barre » : fixée en bas d'écran sur mobile.
+import type { Site } from '../../lib/schema';
+import { telephoneFr, telHref } from '../../lib/typo-fr';
+
+interface Props {
+  site: Pick<Site, 'telephone'>;
+  variante?: 'bouton' | 'barre';
+  class?: string;
+}
+const { site, variante = 'bouton', class: classe } = Astro.props;
+const libelle = `Appeler le ${telephoneFr(site.telephone)}`;
+---
+
+{
+  variante === 'barre' ? (
+    <div class="appeler-barre">
+      <a class:list={['appeler', classe]} href={telHref(site.telephone)}>
+        {libelle}
+      </a>
+    </div>
+  ) : (
+    <a class:list={['appeler', classe]} href={telHref(site.telephone)}>
+      {libelle}
+    </a>
+  )
+}
+
+<style>
+  .appeler {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+    padding: 0.5rem 1.25rem;
+    background: var(--couleur-accent);
+    color: var(--couleur-accent-texte);
+    font-weight: 600;
+    text-decoration: none;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .appeler-barre {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 60;
+    padding-bottom: var(--bas-securite);
+    background: var(--couleur-accent);
+  }
+
+  .appeler-barre .appeler {
+    display: flex;
+    width: 100%;
+    min-height: 3.5rem;
+  }
+
+  @media (min-width: 48rem) {
+    .appeler-barre {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,87 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageLegale from '../../components/commun/PageLegale.astro';
+import { tousLesSites } from '../../lib/sites';
+import { telephoneFr } from '../../lib/typo-fr';
+import { marquerAVerifier } from '../../lib/texte';
+import type { Site } from '../../lib/schema';
+
+export function getStaticPaths() {
+  return tousLesSites().map((site) => ({ params: { site: site.slug }, props: { site } }));
+}
+
+const { site } = Astro.props as { site: Site };
+const ml = site.mentionsLegales;
+const { rue, codePostal, ville } = site.adresse;
+const m = marquerAVerifier;
+---
+
+<Base site={site} page="mentions-legales" titre="Mentions légales">
+  <PageLegale site={site} titre="Mentions légales">
+    <h2>Éditeur du site</h2>
+    <dl>
+      <dt>Nom</dt>
+      <dd set:html={m(site.nom)} />
+      <dt>Forme juridique</dt>
+      <dd set:html={m(ml.formeJuridique)} />
+      <dt>Adresse</dt>
+      <dd>{rue}, {codePostal}&nbsp;{ville}</dd>
+      <dt>Téléphone</dt>
+      <dd class="chiffres">{telephoneFr(site.telephone)}</dd>
+      {
+        site.email && (
+          <>
+            <dt>E-mail</dt>
+            <dd set:html={m(site.email)} />
+          </>
+        )
+      }
+      <dt>SIRET</dt>
+      <dd class="chiffres" set:html={m(ml.siret)} />
+      {
+        ml.rcsOuRm && (
+          <>
+            <dt>RCS ou RM</dt>
+            <dd set:html={m(ml.rcsOuRm)} />
+          </>
+        )
+      }
+      <dt>Directeur de la publication</dt>
+      <dd set:html={m(ml.directeurPublication)} />
+    </dl>
+
+    <h2>Hébergeur</h2>
+    <dl>
+      <dt>Nom</dt>
+      <dd set:html={m(ml.hebergeur.nom)} />
+      <dt>Adresse</dt>
+      <dd set:html={m(ml.hebergeur.adresse)} />
+      {
+        ml.hebergeur.telephone && (
+          <>
+            <dt>Téléphone</dt>
+            <dd set:html={m(ml.hebergeur.telephone)} />
+          </>
+        )
+      }
+    </dl>
+
+    <h2>Propriété intellectuelle</h2>
+    <p>
+      Les textes et les photographies de ce site appartiennent à {site.nom} ou sont utilisés avec
+      l’accord de leurs auteurs. Toute reproduction demande une autorisation écrite.
+    </p>
+
+    {
+      site.demo && (
+        <>
+          <h2>Site de démonstration</h2>
+          <p>
+            Ce site est un modèle de démonstration. L’entreprise, ses coordonnées et ses chantiers sont
+            fictifs. Les mentions surlignées sont à compléter avant toute mise en ligne réelle.
+          </p>
+        </>
+      )
+    }
+  </PageLegale>
+</Base>

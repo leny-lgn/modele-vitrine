@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # captures du MCP Playwright
 .playwright-mcp/
+
+# variantes d’images générées au build (srcset)
+public/images/*/_variantes/

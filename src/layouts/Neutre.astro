@@ -1,0 +1,42 @@
+---
+// Mise en page des pages du dépôt (grille des modèles, 404) : neutre, hors secteur.
+import '../styles/base.css';
+
+interface Props {
+  titre: string;
+  description?: string;
+}
+const { titre, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{titre}</title>
+    {description && <meta name="description" content={description} />}
+  </head>
+  <body class="neutre">
+    <main id="contenu">
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  body.neutre {
+    --couleur-fond: #f4f4f3;
+    --couleur-texte: #1d1f21;
+    --couleur-texte-secondaire: #585d62;
+    --couleur-trait: #cfd2d4;
+  }
+
+  body.neutre main {
+    max-width: 64rem;
+    margin-inline: auto;
+    padding: 2.5rem 1.25rem 4rem;
+  }
+</style>

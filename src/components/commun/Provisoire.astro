@@ -1,0 +1,203 @@
+---
+// Contenu provisoire des pages tant que les layouts de gamme n'existent pas
+// (remplacé par les prompts 01 à 03). Montre les composants communs et les cadres d'images.
+import type { Site, CleePage } from '../../lib/schema';
+import { lienSite } from '../../lib/liens';
+import { LIBELLES_PAGES, LIBELLES_GAMMES } from '../../lib/secteurs';
+import Appeler from './Appeler.astro';
+import Disponibilite from './Disponibilite.astro';
+import Horaires from './Horaires.astro';
+import Carte from './Carte.astro';
+import CadreImage from '../demo/CadreImage.astro';
+
+interface Props {
+  site: Site;
+  page: CleePage;
+}
+const { site, page } = Astro.props;
+const accueil = page === 'accueil';
+const images = Object.entries(site.images);
+---
+
+<header class="pv-entete">
+  <a href={lienSite(site)} class="pv-nom">{site.nom}</a>
+  {
+    site.pages.length > 1 && (
+      <nav aria-label="Pages du site">
+        <ul>
+          {site.pages.map((p) => (
+            <li>
+              <a href={lienSite(site, p)} aria-current={p === page ? 'page' : undefined}>
+                {LIBELLES_PAGES[p]}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )
+  }
+</header>
+
+<div class="pv">
+  <section class="pv-tete">
+    <h1>{accueil ? site.accroche : LIBELLES_PAGES[page]}</h1>
+    <Disponibilite site={site} />
+    <Appeler site={site} />
+  </section>
+
+  <p class="pv-note">
+    Fondations communes, gamme {LIBELLES_GAMMES[site.gamme]}&nbsp;: la mise en page de cette gamme reste à construire.
+  </p>
+
+  {
+    accueil && (
+      <>
+        {site.services.length > 0 && (
+          <section>
+            <h2>Services</h2>
+            <div class="pv-colonnes">
+              {site.services.map((g) => (
+                <div>
+                  <h3>{g.groupe}</h3>
+                  <ul>
+                    {g.items.map((item) => (
+                      <li>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <section class="pv-colonnes">
+          <Horaires site={site} />
+          <div>
+            <h2>Zone d’intervention</h2>
+            <p>
+              {site.zone.rayonKm && <>{site.zone.rayonKm}&nbsp;km autour de {site.adresse.ville}&nbsp;: </>}
+              {site.zone.communes.join(', ')}.
+            </p>
+          </div>
+        </section>
+
+        <section>
+          <Carte site={site} />
+        </section>
+
+        {site.demo && (
+          <section>
+            <h2>Images du site ({images.length})</h2>
+            <div class="pv-images">
+              {images.map(([cle, image]) => (
+                <div>
+                  <p class="pv-cle">
+                    <code>images.{cle}</code>
+                  </p>
+                  <CadreImage site={site} image={image} prioritaire={cle === 'hero'} />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+      </>
+    )
+  }
+</div>
+
+<style>
+  .pv-entete {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    padding: 0.5rem 1.25rem;
+    border-bottom: 1px solid var(--couleur-trait);
+  }
+
+  .pv-nom {
+    font-weight: 700;
+    text-decoration: none;
+    padding-block: 0.6rem;
+  }
+
+  .pv-entete ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  .pv-entete nav a {
+    display: inline-block;
+    padding-block: 0.6rem;
+  }
+
+  .pv-entete a[aria-current='page'] {
+    font-weight: 700;
+  }
+
+  .pv {
+    max-width: 72rem;
+    margin-inline: auto;
+    padding: 1.5rem 1.25rem 3rem;
+  }
+
+  .pv > * + * {
+    margin-top: 2.5rem;
+  }
+
+  .pv-tete > * + * {
+    margin-top: 1rem;
+  }
+
+  .pv-tete h1 {
+    font-size: clamp(1.75rem, 5vw, 2.75rem);
+  }
+
+  .pv h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .pv h3 {
+    font-size: 1.125rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .pv-note {
+    padding: 0.75rem 1rem;
+    border-left: 3px solid var(--couleur-trait);
+    color: var(--couleur-texte-secondaire);
+    font-size: 0.9375rem;
+  }
+
+  .pv-colonnes {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .pv-images {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .pv-cle {
+    margin-bottom: 0.4rem;
+    font-size: 0.8125rem;
+    color: var(--couleur-texte-secondaire);
+  }
+
+  @media (min-width: 48rem) {
+    .pv-colonnes {
+      grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    }
+
+    .pv-images {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+    }
+  }
+</style>
