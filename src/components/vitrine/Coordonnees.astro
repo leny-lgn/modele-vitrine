@@ -1,0 +1,76 @@
+---
+// Téléphone en grand, adresse, e-mail, plage des urgences.
+import type { Site } from '../../lib/schema';
+import { telephoneFr, telHref } from '../../lib/typo-fr';
+import { contientAVerifier } from '../../lib/texte';
+
+interface Props {
+  site: Site;
+  class?: string;
+}
+const { site, class: classe } = Astro.props;
+const email = site.email && !contientAVerifier(site.email) ? site.email : undefined;
+const urgences = site.urgences?.actif ? site.urgences : undefined;
+---
+
+<address class:list={['coordonnees-v', classe]}>
+  <p class="cv-tel">
+    <a class="chiffres" href={telHref(site.telephone)}>
+      <span class="visuellement-cache">Appeler le&nbsp;</span>{telephoneFr(site.telephone)}
+    </a>
+  </p>
+  {urgences?.plage && <p class="cv-urgences">Urgences&nbsp;: {urgences.plage}</p>}
+  <p>
+    {site.nom}<br />
+    {site.adresse.rue}<br />
+    {site.adresse.codePostal}&nbsp;{site.adresse.ville}
+  </p>
+  {
+    email && (
+      <p>
+        <a class="cv-email" href={`mailto:${email}`}>
+          {email}
+        </a>
+      </p>
+    )
+  }
+</address>
+
+<style>
+  .coordonnees-v {
+    font-style: normal;
+  }
+
+  .coordonnees-v > * + * {
+    margin-top: var(--espace-2);
+  }
+
+  .cv-tel a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--couleur-lien);
+    font-stretch: var(--largeur-titres);
+    font-weight: 800;
+    font-size: var(--taille-4);
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .cv-tel a:hover {
+    text-decoration: underline;
+  }
+
+  .cv-urgences {
+    margin-top: var(--espace-1);
+    color: var(--couleur-texte-secondaire);
+  }
+
+  .cv-email {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--couleur-lien);
+  }
+</style>

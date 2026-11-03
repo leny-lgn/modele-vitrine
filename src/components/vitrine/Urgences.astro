@@ -1,0 +1,103 @@
+---
+// Bloc urgences : situations prises en charge, plage horaire, délai réel s'il est fourni.
+// Bande ardoise : le chemin court de la personne qui a une fuite.
+import type { Site } from '../../lib/schema';
+import TitreSection from './TitreSection.astro';
+import Appeler from '../commun/Appeler.astro';
+import { marquerAVerifier } from '../../lib/texte';
+
+interface Props {
+  site: Site;
+  id?: string;
+}
+const { site, id = 'urgences' } = Astro.props;
+const u = site.urgences?.actif ? site.urgences : undefined;
+---
+
+{
+  u && (
+    <section class="section-v surface-ardoise urgences-v" aria-labelledby={`titre-${id}`}>
+      <div class="page-v">
+        <TitreSection id={`titre-${id}`}>Urgences</TitreSection>
+        {u.plage && <p class="uv-plage chiffres">{u.plage}</p>}
+        {u.cas?.length && (
+          <ul class="uv-cas">
+            {u.cas.map((c) => (
+              <li>{c}</li>
+            ))}
+          </ul>
+        )}
+        <div class="uv-pied">
+          <Appeler site={site} class="bouton-v" />
+          {u.delai && (
+            <p class="uv-delai">
+              Délai d’intervention&nbsp;: <span set:html={marquerAVerifier(u.delai)} />
+            </p>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .uv-plage {
+    margin-top: var(--espace-1);
+    color: var(--couleur-texte-secondaire);
+    font-weight: 500;
+  }
+
+  .uv-cas {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--espace-3);
+    border-top: 1px solid var(--couleur-trait);
+  }
+
+  .uv-cas li {
+    padding-block: 0.75rem;
+    border-bottom: 1px solid var(--couleur-trait);
+    font-stretch: var(--largeur-titres);
+    font-weight: 700;
+    font-size: var(--taille-3);
+    line-height: 1.05;
+    hyphens: manual;
+  }
+
+  .uv-pied {
+    display: grid;
+    gap: var(--espace-2);
+    margin-top: var(--espace-3);
+  }
+
+  .uv-delai {
+    color: var(--couleur-texte-secondaire);
+    font-size: var(--taille-petit);
+  }
+
+  @media (min-width: 64rem) {
+    .uv-cas {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+      border-top: 0;
+    }
+
+    .uv-cas li {
+      padding: var(--espace-2) var(--espace-3) var(--espace-2) 0;
+      border-bottom: 0;
+      border-top: 1px solid var(--couleur-trait);
+      font-size: var(--taille-4);
+    }
+
+    .uv-cas li + li {
+      padding-left: var(--espace-3);
+      border-left: 1px solid var(--couleur-trait);
+    }
+
+    .uv-pied {
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      column-gap: var(--espace-4);
+    }
+  }
+</style>

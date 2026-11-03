@@ -1,0 +1,82 @@
+---
+// Page Tarifs : tableau complet, mention TTC, information légale sur les prix des dépannages.
+import Vitrine from './Vitrine.astro';
+import TetePage from '../../components/vitrine/TetePage.astro';
+import TitreSection from '../../components/vitrine/TitreSection.astro';
+import Tarifs from '../../components/vitrine/Tarifs.astro';
+import Appeler from '../../components/commun/Appeler.astro';
+import type { Site } from '../../lib/schema';
+import { lienSite } from '../../lib/liens';
+import { telephoneFr } from '../../lib/typo-fr';
+import { contientAVerifier } from '../../lib/texte';
+
+interface Props {
+  site: Site;
+}
+const { site } = Astro.props;
+const tarifs = site.tarifs;
+const email = site.email && !contientAVerifier(site.email) ? site.email : undefined;
+---
+
+<Vitrine site={site} page="tarifs" titre="Tarifs">
+  <TetePage site={site} titre="Tarifs" intro={tarifs?.mention} />
+
+  {
+    tarifs && tarifs.lignes.length > 0 && (
+      <section class="section-v section-v-suite" aria-labelledby="titre-grille">
+        <div class="page-v">
+          <TitreSection id="titre-grille">Prix de départ</TitreSection>
+          <Tarifs tarifs={tarifs} infoPrix mention={false} />
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section-v" aria-labelledby="titre-devis">
+    <div class="page-v">
+      <TitreSection id="titre-devis">{tarifs?.devisGratuit ? 'Devis gratuit' : 'Devis'}</TitreSection>
+      <ol class="liste-v etapes">
+        <li>
+          Appelez le <span class="chiffres">{telephoneFr(site.telephone)}</span>{email && <> ou écrivez à <span class="sans-cesure">{email}</span></>}.
+        </li>
+        <li>Décrivez le problème ou les travaux, et donnez votre commune.</li>
+      </ol>
+      <div class="actions">
+        <Appeler site={site} class="bouton-v" />
+        {
+          site.pages.includes('contact') && (
+            <a class="bouton-contour" href={`${lienSite(site, 'contact')}#devis`}>
+              Demander un devis
+            </a>
+          )
+        }
+      </div>
+    </div>
+  </section>
+</Vitrine>
+
+<style>
+  .etapes {
+    max-width: 38rem;
+    padding-left: 1.75rem;
+    list-style: decimal;
+  }
+
+  .etapes li {
+    padding-left: 0.5rem;
+    font-size: var(--taille-1);
+    line-height: 1.4;
+  }
+
+  .etapes li::marker {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--espace-1) var(--espace-2);
+    margin-top: var(--espace-3);
+  }
+</style>

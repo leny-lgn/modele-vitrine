@@ -1,0 +1,113 @@
+---
+// Tableau des tarifs « à partir de » : sobre, chiffres tabulaires, mention TTC.
+import type { Site } from '../../lib/schema';
+import { marquerAVerifier } from '../../lib/texte';
+
+interface Props {
+  tarifs: NonNullable<Site['tarifs']>;
+  /** Affiche l'information légale sur les prix des dépannages (page Tarifs). */
+  infoPrix?: boolean;
+  /** Affiche la mention TTC sous le tableau (masquée si la page l'affiche déjà en tête). */
+  mention?: boolean;
+  class?: string;
+}
+const { tarifs, infoPrix = false, mention = true, class: classe } = Astro.props;
+const texteMention = mention ? tarifs.mention : undefined;
+---
+
+<div class:list={['tarifs-v', classe]}>
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Prestation</th>
+        <th scope="col">Prix TTC</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        tarifs.lignes.map((l) => (
+          <tr>
+            <th scope="row">{l.libelle}</th>
+            <td class="chiffres" set:html={marquerAVerifier(l.prix)} />
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+  {
+    (texteMention || tarifs.devisGratuit) && (
+      <p class="tv-mention">
+        {texteMention}
+        {tarifs.devisGratuit && <strong class="tv-devis"> Devis gratuit.</strong>}
+      </p>
+    )
+  }
+  {infoPrix && tarifs.infoPrix && <p class="tv-legal" set:html={marquerAVerifier(tarifs.infoPrix)} />}
+</div>
+
+<style>
+  .tarifs-v {
+    max-width: 44rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+
+  thead th {
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--couleur-texte);
+    color: var(--couleur-texte-secondaire);
+    font-size: var(--taille-petit);
+    font-weight: 500;
+    text-align: left;
+  }
+
+  thead th:last-child,
+  td {
+    text-align: right;
+  }
+
+  tbody th,
+  td {
+    padding-block: 0.85rem;
+    border-bottom: 1px solid var(--couleur-trait);
+    vertical-align: baseline;
+  }
+
+  tbody th {
+    padding-right: var(--espace-2);
+    font-weight: 500;
+    text-align: left;
+  }
+
+  td {
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* Sur petit écran, le prix « à partir de [À VÉRIFIER] » passe sous le libellé */
+  @media (max-width: 30rem) {
+    td {
+      white-space: normal;
+      min-width: 7rem;
+    }
+  }
+
+  .tv-mention,
+  .tv-legal {
+    margin-top: var(--espace-2);
+    color: var(--couleur-texte-secondaire);
+    font-size: var(--taille-petit);
+  }
+
+  .tv-devis {
+    color: var(--couleur-texte);
+  }
+
+  .tv-legal {
+    max-width: 38rem;
+  }
+</style>

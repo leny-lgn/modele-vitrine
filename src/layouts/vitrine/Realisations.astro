@@ -1,0 +1,50 @@
+---
+// Page Réalisations : un bloc par chantier, avant / après au curseur.
+import Vitrine from './Vitrine.astro';
+import TetePage from '../../components/vitrine/TetePage.astro';
+import TitreSection from '../../components/vitrine/TitreSection.astro';
+import AvantApres from '../../components/vitrine/AvantApres.astro';
+import type { Site } from '../../lib/schema';
+import { marquerAVerifier } from '../../lib/texte';
+
+interface Props {
+  site: Site;
+}
+const { site } = Astro.props;
+const chantiers = site.realisations;
+const n = chantiers.length;
+const intro = n ? `${n} chantier${n > 1 ? 's' : ''} photographié${n > 1 ? 's' : ''} avant et après les travaux.` : undefined;
+---
+
+<Vitrine site={site} page="realisations" titre="Réalisations">
+  <TetePage site={site} titre="Réalisations" intro={intro} />
+
+  {
+    chantiers.map((c, i) => {
+      const avant = c.avant ? site.images[c.avant] : undefined;
+      const apres = c.apres ? site.images[c.apres] : undefined;
+      return (
+        <section class:list={['section-v', { 'section-v-suite': i === 0 }]} aria-labelledby={`titre-chantier-${i}`}>
+          <div class="page-v chantier">
+            <TitreSection id={`titre-chantier-${i}`}>{c.titre}</TitreSection>
+            {c.description && <p class="chantier-texte" set:html={marquerAVerifier(c.description)} />}
+            {avant && apres && <AvantApres site={site} avant={avant} apres={apres} titre={c.titre} />}
+          </div>
+        </section>
+      );
+    })
+  }
+</Vitrine>
+
+<style>
+  .chantier-texte {
+    max-width: 38rem;
+    font-size: var(--taille-1);
+    line-height: 1.4;
+  }
+
+  .chantier :global(.avant-apres) {
+    margin-top: var(--espace-3);
+    max-width: 60rem;
+  }
+</style>

@@ -66,13 +66,22 @@ export const siteSchema = z.looseObject({
     communes: z.array(texte).min(1, 'au moins une commune'),
   }),
   services: z
-    .array(z.object({ groupe: texte, items: z.array(texte) }))
+    .array(
+      z.object({
+        groupe: texte,
+        items: z.array(texte),
+        /** Clé d'une entrée de `images` illustrant ce groupe (page Services). */
+        image: z.string().optional(),
+      }),
+    )
     .optional()
     .default([]),
   tarifs: z
     .object({
       mention: z.string().optional(),
       devisGratuit: z.boolean().optional(),
+      /** Information légale sur les prix des dépannages à domicile (arrêté du 24 janvier 2017). */
+      infoPrix: z.string().optional(),
       lignes: z.array(z.object({ libelle: texte, prix: texte })),
     })
     .optional(),

@@ -2,9 +2,13 @@
 // Une page par entrée de `pages` dans le fichier du site (hors accueil).
 import Base from '../../layouts/Base.astro';
 import Provisoire from '../../components/commun/Provisoire.astro';
+import ServicesVitrine from '../../layouts/vitrine/Services.astro';
+import TarifsVitrine from '../../layouts/vitrine/TarifsPage.astro';
+import RealisationsVitrine from '../../layouts/vitrine/Realisations.astro';
+import ContactVitrine from '../../layouts/vitrine/Contact.astro';
 import { tousLesSites } from '../../lib/sites';
 import { LIBELLES_PAGES } from '../../lib/secteurs';
-import type { Site, CleePage } from '../../lib/schema';
+import type { Site, CleePage, Gamme } from '../../lib/schema';
 
 export function getStaticPaths() {
   return tousLesSites().flatMap((site) =>
@@ -15,8 +19,25 @@ export function getStaticPaths() {
 }
 
 const { site, page } = Astro.props as { site: Site; page: CleePage };
+
+// Pages construites, par gamme. Les autres restent provisoires.
+const PAGES: Partial<Record<Gamme, Partial<Record<CleePage, any>>>> = {
+  vitrine: {
+    services: ServicesVitrine,
+    tarifs: TarifsVitrine,
+    realisations: RealisationsVitrine,
+    contact: ContactVitrine,
+  },
+};
+const Page = PAGES[site.gamme]?.[page];
 ---
 
-<Base site={site} page={page} titre={LIBELLES_PAGES[page]}>
-  <Provisoire site={site} page={page} />
-</Base>
+{
+  Page ? (
+    <Page site={site} />
+  ) : (
+    <Base site={site} page={page} titre={LIBELLES_PAGES[page]}>
+      <Provisoire site={site} page={page} />
+    </Base>
+  )
+}

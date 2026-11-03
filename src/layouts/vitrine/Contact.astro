@@ -1,0 +1,96 @@
+---
+// Page Contact : téléphone, horaires, adresse, demande de devis (par téléphone ou e-mail),
+// zone d'intervention. Le formulaire de devis est réservé à la gamme Premium.
+import Vitrine from './Vitrine.astro';
+import TetePage from '../../components/vitrine/TetePage.astro';
+import TitreSection from '../../components/vitrine/TitreSection.astro';
+import Coordonnees from '../../components/vitrine/Coordonnees.astro';
+import Zone from '../../components/vitrine/Zone.astro';
+import Horaires from '../../components/commun/Horaires.astro';
+import Appeler from '../../components/commun/Appeler.astro';
+import type { Site } from '../../lib/schema';
+import { contientAVerifier } from '../../lib/texte';
+
+interface Props {
+  site: Site;
+}
+const { site } = Astro.props;
+const email = site.email && !contientAVerifier(site.email) ? site.email : undefined;
+const sujet = encodeURIComponent(`Demande de devis — ${site.nom}`);
+const corps = encodeURIComponent('Commune :\nTravaux ou problème :\nTéléphone pour vous rappeler :\n');
+---
+
+<Vitrine site={site} page="contact" titre="Contact">
+  <TetePage site={site} titre="Contact" intro={site.accroche} />
+
+  <section class="section-v section-v-suite" aria-labelledby="titre-coordonnees">
+    <div class="page-v contact-grille">
+      <div>
+        <TitreSection id="titre-coordonnees">Coordonnées</TitreSection>
+        <Coordonnees site={site} class="contact-coordonnees" />
+      </div>
+      <Horaires site={site} titre="Horaires" />
+    </div>
+  </section>
+
+  <section class="section-v surface-ardoise" id="devis" aria-labelledby="titre-devis">
+    <div class="page-v">
+      <TitreSection id="titre-devis">{site.tarifs?.devisGratuit ? 'Demander un devis gratuit' : 'Demander un devis'}</TitreSection>
+      <p class="devis-texte">
+        Indiquez votre commune, les travaux ou le problème, et joignez une photo si vous pouvez.
+      </p>
+      <div class="devis-actions">
+        <Appeler site={site} class="bouton-v" />
+        {
+          email && (
+            <a class="bouton-contour" href={`mailto:${email}?subject=${sujet}&body=${corps}`}>
+              Écrire un e-mail
+            </a>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section-v" aria-labelledby="titre-zone">
+    <div class="page-v">
+      <TitreSection id="titre-zone">Zone d’intervention</TitreSection>
+      <Zone site={site} />
+    </div>
+  </section>
+</Vitrine>
+
+<style>
+  .contact-grille {
+    display: grid;
+    gap: var(--espace-4);
+  }
+
+  .contact-grille :global(.contact-coordonnees) {
+    margin-top: var(--espace-3);
+  }
+
+  .contact-grille :global(.horaires) {
+    align-self: end;
+  }
+
+  @media (min-width: 64rem) {
+    .contact-grille {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--espace-5);
+    }
+  }
+
+  .devis-texte {
+    max-width: 36rem;
+    font-size: var(--taille-1);
+    line-height: 1.4;
+  }
+
+  .devis-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--espace-1) var(--espace-2);
+    margin-top: var(--espace-3);
+  }
+</style>

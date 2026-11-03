@@ -1,0 +1,115 @@
+---
+// Avis clients. Uniquement de vrais avis, tirés du JSON (confiance.avis).
+// En démo sans avis : trois emplacements marqués « Exemple d'avis », sans texte inventé.
+// Hors démo sans avis : rien n'est affiché.
+import type { Site } from '../../lib/schema';
+
+interface Avis {
+  texte: string;
+  auteur: string;
+  commune?: string;
+  date?: string;
+  source?: string;
+}
+
+interface Props {
+  site: Site;
+  class?: string;
+}
+const { site, class: classe } = Astro.props;
+const avis = (((site.confiance ?? {}) as { avis?: Avis[] }).avis ?? []).filter((a) => a?.texte && a?.auteur);
+const exemples = avis.length === 0 && site.demo;
+---
+
+{
+  avis.length > 0 && (
+    <ul class:list={['avis-v', classe]}>
+      {avis.map((a) => (
+        <li>
+          <figure>
+            <blockquote>
+              <p>{a.texte}</p>
+            </blockquote>
+            <figcaption>
+              <span class="av-auteur">{a.auteur}</span>
+              {[a.commune, a.date, a.source].filter(Boolean).map((x) => (
+                <span class="av-meta"> · {x}</span>
+              ))}
+            </figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  )
+}
+{
+  exemples && (
+    <ul class:list={['avis-v', 'avis-exemples', classe]} aria-label="Emplacements d’avis (démonstration)">
+      {[0, 1, 2].map(() => (
+        <li>
+          <p class="av-marque">Exemple d’avis</p>
+          <p class="av-consigne">
+            Emplacement pour un avis client réel, recopié mot pour mot depuis sa source.
+          </p>
+          <p class="av-champs">Prénom et initiale · commune · mois et année · source (Google…)</p>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .avis-v {
+    display: grid;
+    gap: var(--espace-3);
+    list-style: none;
+    padding: 0;
+  }
+
+  .avis-v > li {
+    padding-top: var(--espace-2);
+    border-top: 2px solid var(--couleur-texte);
+  }
+
+  blockquote p {
+    font-size: var(--taille-1);
+    line-height: 1.4;
+  }
+
+  figcaption {
+    margin-top: var(--espace-1);
+    font-size: var(--taille-petit);
+  }
+
+  .av-auteur {
+    font-weight: 700;
+  }
+
+  .av-meta {
+    color: var(--couleur-texte-secondaire);
+  }
+
+  /* Démo : emplacements clairement distincts d'un vrai avis */
+  .avis-exemples > li {
+    padding: var(--espace-2);
+    border: 2px dashed var(--couleur-trait);
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+
+  .av-marque {
+    font-weight: 700;
+  }
+
+  .av-consigne,
+  .av-champs {
+    margin-top: 0.35rem;
+    color: var(--couleur-texte-secondaire);
+    font-size: var(--taille-petit);
+  }
+
+  @media (min-width: 48rem) {
+    .avis-v {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

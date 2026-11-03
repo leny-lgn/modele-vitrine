@@ -1,0 +1,240 @@
+---
+// Curseur avant / après. Les deux photos sont superposées ; la photo « après » est
+// découpée (clip-path) à la position du curseur.
+// Clavier : flèches, Page préc./suiv., Début/Fin (champ range natif, focus visible).
+// Doigt et souris : glisser n'importe où sur l'image (le défilement vertical reste libre).
+// Sans JavaScript, ou tant que les deux photos manquent : les deux images côte à côte.
+// Aucune animation : c'est une manipulation directe, l'image suit le doigt.
+import type { ImageSite, Site } from '../../lib/schema';
+import CadreImage from '../demo/CadreImage.astro';
+import { imageExiste } from '../../lib/images.mjs';
+
+interface Props {
+  site: Pick<Site, 'slug' | 'secteur' | 'demo'>;
+  avant: ImageSite;
+  apres: ImageSite;
+  /** Titre du chantier, pour le nom accessible du curseur. */
+  titre: string;
+  sizes?: string;
+  class?: string;
+}
+const { site, avant, apres, titre, sizes = '(min-width: 64rem) 60rem, 100vw', class: classe } = Astro.props;
+const pret = imageExiste(site.slug, avant.fichier) && imageExiste(site.slug, apres.fichier);
+---
+
+<div class:list={['avant-apres', classe]} data-avant-apres={pret ? '' : undefined}>
+  <div class="aa-images" data-aa-zone>
+    <div class="aa-vue aa-avant">
+      <p class="aa-etiquette">Avant</p>
+      <CadreImage site={site} image={avant} sizes={sizes} />
+    </div>
+    <div class="aa-vue aa-apres" data-aa-apres>
+      <p class="aa-etiquette">Après</p>
+      <CadreImage site={site} image={apres} sizes={sizes} />
+    </div>
+    {
+      pret && (
+        <>
+          <div class="aa-poignee" data-aa-poignee aria-hidden="true">
+            <span class="aa-prise" />
+          </div>
+          <input
+            class="aa-curseur"
+            type="range"
+            min="0"
+            max="100"
+            step="1"
+            value="50"
+            aria-label={`Comparer avant et après : ${titre}`}
+            aria-valuetext="Moitié avant, moitié après"
+            data-aa-curseur
+            hidden
+          />
+        </>
+      )
+    }
+  </div>
+</div>
+
+<script>
+  for (const bloc of document.querySelectorAll<HTMLElement>('[data-avant-apres]')) {
+    const zone = bloc.querySelector<HTMLElement>('[data-aa-zone]')!;
+    const apres = bloc.querySelector<HTMLElement>('[data-aa-apres]')!;
+    const poignee = bloc.querySelector<HTMLElement>('[data-aa-poignee]')!;
+    const curseur = bloc.querySelector<HTMLInputElement>('[data-aa-curseur]')!;
+
+    const placer = (valeur: number) => {
+      const v = Math.min(100, Math.max(0, Math.round(valeur)));
+      curseur.value = String(v);
+      // Styles posés directement sur les éléments concernés (pas de variable héritée)
+      apres.style.clipPath = `inset(0 0 0 ${v}%)`;
+      poignee.style.transform = `translateX(${v}%)`;
+      curseur.setAttribute(
+        'aria-valuetext',
+        v === 0 ? 'Photo après en entier' : v === 100 ? 'Photo avant en entier' : `Avant ${v} %, après ${100 - v} %`,
+      );
+    };
+
+    curseur.hidden = false;
+    bloc.classList.add('est-curseur');
+    placer(50);
+
+    curseur.addEventListener('input', () => placer(Number(curseur.value)));
+
+    // Glisser au doigt ou à la souris, n'importe où sur l'image
+    let pointeur: number | null = null;
+    const depuisPointeur = (e: PointerEvent) => {
+      const r = zone.getBoundingClientRect();
+      placer(((e.clientX - r.left) / r.width) * 100);
+    };
+    zone.addEventListener('pointerdown', (e) => {
+      if (pointeur !== null || e.button > 0) return; // un seul doigt à la fois
+      pointeur = e.pointerId;
+      try {
+        zone.setPointerCapture(e.pointerId);
+      } catch {}
+      depuisPointeur(e);
+      curseur.focus({ preventScroll: true });
+    });
+    zone.addEventListener('pointermove', (e) => {
+      if (e.pointerId === pointeur) depuisPointeur(e);
+    });
+    const lacher = (e: PointerEvent) => {
+      if (e.pointerId === pointeur) pointeur = null;
+    };
+    zone.addEventListener('pointerup', lacher);
+    zone.addEventListener('pointercancel', lacher);
+  }
+</script>
+
+<style>
+  /* Sans curseur : côte à côte (ou l'un sous l'autre sur mobile) */
+  .aa-images {
+    display: grid;
+    gap: var(--espace-2);
+  }
+
+  .aa-etiquette {
+    margin-bottom: 0.4rem;
+    font-weight: 700;
+  }
+
+  @media (min-width: 48rem) {
+    .aa-images {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+  }
+
+  /* ——— Mode curseur ——— */
+  .est-curseur .aa-images {
+    position: relative;
+    grid-template-columns: 1fr;
+    gap: 0;
+    touch-action: pan-y;
+    cursor: ew-resize;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .est-curseur .aa-vue {
+    grid-area: 1 / 1;
+  }
+
+  .est-curseur .aa-vue :global(img) {
+    width: 100%;
+    pointer-events: none;
+  }
+
+  .est-curseur .aa-apres {
+    clip-path: inset(0 0 0 50%);
+  }
+
+  .est-curseur .aa-etiquette {
+    position: absolute;
+    top: 0.75rem;
+    z-index: 1;
+    margin: 0;
+    padding: 0.2rem 0.6rem;
+    background: var(--ardoise);
+    color: var(--blanc-zinc);
+    font-size: var(--taille-petit);
+  }
+
+  .est-curseur .aa-avant .aa-etiquette {
+    left: 0.75rem;
+  }
+
+  .est-curseur .aa-apres .aa-etiquette {
+    right: 0.75rem;
+  }
+
+  /* Poignée : élément pleine largeur déplacé par translateX(%) ; le trait est à son bord gauche */
+  .aa-poignee {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    transform: translateX(50%);
+  }
+
+  .aa-poignee::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -1px;
+    width: 2px;
+    background: var(--blanc-zinc);
+    box-shadow: 0 0 0 1px rgb(31 42 48 / 0.35);
+  }
+
+  /* La prise rappelle un manchon de raccord : deux traits dans un cylindre */
+  .aa-prise {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+    translate: -50% -50%;
+    border: 2px solid var(--cuivre-fonce);
+    border-radius: 50%;
+    background: var(--blanc-zinc);
+    box-shadow: 0 2px 8px rgb(31 42 48 / 0.3);
+  }
+
+  .aa-prise::before,
+  .aa-prise::after {
+    content: '';
+    position: absolute;
+    top: 30%;
+    bottom: 30%;
+    width: 2px;
+    background: var(--ardoise);
+  }
+
+  .aa-prise::before {
+    left: calc(50% - 5px);
+  }
+
+  .aa-prise::after {
+    left: calc(50% + 3px);
+  }
+
+  /* Le champ range reste dans l'ordre de tabulation, invisible ; le pointeur est géré par la zone */
+  .aa-curseur {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .avant-apres:has(.aa-curseur:focus-visible) .aa-prise {
+    outline: 3px solid var(--ardoise);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 6px var(--blanc-zinc);
+  }
+</style>

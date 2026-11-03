@@ -1,0 +1,445 @@
+---
+// Accueil Vitrine : la structure complète du brief, dans l'ordre.
+// Hero → urgences → services → tarifs → réalisation → zone → confiance → contact.
+import Vitrine from './Vitrine.astro';
+import Appeler from '../../components/commun/Appeler.astro';
+import Disponibilite from '../../components/commun/Disponibilite.astro';
+import Horaires from '../../components/commun/Horaires.astro';
+import CadreImage from '../../components/demo/CadreImage.astro';
+import TitreSection from '../../components/vitrine/TitreSection.astro';
+import Urgences from '../../components/vitrine/Urgences.astro';
+import Tarifs from '../../components/vitrine/Tarifs.astro';
+import AvantApres from '../../components/vitrine/AvantApres.astro';
+import Zone from '../../components/vitrine/Zone.astro';
+import Avis from '../../components/vitrine/Avis.astro';
+import Coordonnees from '../../components/vitrine/Coordonnees.astro';
+import type { Site, CleePage } from '../../lib/schema';
+import { lienSite } from '../../lib/liens';
+import { echapper, marquerAVerifier } from '../../lib/texte';
+
+interface Props {
+  site: Site;
+}
+const { site } = Astro.props;
+
+type Artisan = { prenom?: string; nom?: string; depuis?: number; presentation?: string };
+type Confiance = { qualifications?: string[]; assuranceDecennale?: string };
+const artisan = (site.artisan ?? {}) as Artisan;
+const confiance = (site.confiance ?? {}) as Confiance;
+const nomArtisan = [artisan.prenom, artisan.nom].filter(Boolean).join(' ');
+const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
+
+const a = (p: CleePage) => site.pages.includes(p);
+const lienDevis = a('contact') ? `${lienSite(site, 'contact')}#devis` : undefined;
+const hero = site.images.hero;
+// Les noms composés (« Ville-Exemple ») ne se coupent pas au trait d'union dans le grand titre.
+const sansCesure = (t: string) =>
+  t
+    .split(' ')
+    .map((m) => (m.includes('-') ? `<span class="insecable">${echapper(m)}</span>` : echapper(m)))
+    .join(' ');
+const imgArtisan = site.images.artisan;
+const chantier = site.realisations.find((r) => r.avant && r.apres && site.images[r.avant] && site.images[r.apres]);
+---
+
+<Vitrine site={site} page="accueil">
+  <section class="hero-v" aria-labelledby="titre-accueil">
+    <div class="page-v hero-grille">
+      <div class="hero-texte">
+        <h1 id="titre-accueil" class="hero-titre" set:html={sansCesure(site.accroche)} />
+        <Disponibilite site={site} class="hero-dispo" />
+        <div class="hero-actions">
+          <Appeler site={site} class="bouton-v" />
+          {lienDevis && <a class="bouton-contour" href={lienDevis}>Demander un devis</a>}
+        </div>
+        {
+          (nomArtisan || site.tarifs?.devisGratuit) && (
+            <p class="note-v hero-precision">
+              {nomArtisan && <>Au téléphone&nbsp;: {nomArtisan}.</>}
+              {site.tarifs?.devisGratuit && <> Devis gratuit.</>}
+            </p>
+          )
+        }
+      </div>
+      {
+        hero && (
+          <div class="hero-photo">
+            <CadreImage site={site} image={hero} prioritaire sizes="(min-width: 64rem) 45vw, 100vw" />
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <Urgences site={site} />
+
+  {
+    site.services.length > 0 && (
+      <section class="section-v" aria-labelledby="titre-services">
+        <div class="page-v">
+          <TitreSection id="titre-services">Services</TitreSection>
+          <div class="services-colonnes">
+            {site.services.map((g) => (
+              <div class="service-groupe">
+                <h3>{g.groupe}</h3>
+                <ul>
+                  {g.items.map((i) => (
+                    <li>{i}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          {a('services') && (
+            <p>
+              <a class="lien-v" href={lienSite(site, 'services')}>
+                Le détail des services
+              </a>
+            </p>
+          )}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    site.tarifs && site.tarifs.lignes.length > 0 && (
+      <section class="section-v" aria-labelledby="titre-tarifs">
+        <div class="page-v">
+          <TitreSection id="titre-tarifs">Tarifs</TitreSection>
+          <Tarifs tarifs={site.tarifs} />
+          {a('tarifs') && (
+            <p>
+              <a class="lien-v" href={lienSite(site, 'tarifs')}>
+                Tous les tarifs et l’information sur les prix
+              </a>
+            </p>
+          )}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    chantier && (
+      <section class="section-v" aria-labelledby="titre-realisations">
+        <div class="page-v">
+          <TitreSection id="titre-realisations">Réalisations</TitreSection>
+          <div class="realisation-une">
+            <AvantApres
+              site={site}
+              avant={site.images[chantier.avant!]}
+              apres={site.images[chantier.apres!]}
+              titre={chantier.titre}
+            />
+            <div class="realisation-texte">
+              <h3>{chantier.titre}</h3>
+              {chantier.description && <p set:html={marquerAVerifier(chantier.description)} />}
+              {a('realisations') && site.realisations.length > 1 && (
+                <p>
+                  <a class="lien-v" href={lienSite(site, 'realisations')}>
+                    Voir les {site.realisations.length} chantiers
+                  </a>
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section-v" aria-labelledby="titre-zone">
+    <div class="page-v">
+      <TitreSection id="titre-zone">Zone d’intervention</TitreSection>
+      <Zone site={site} />
+    </div>
+  </section>
+
+  <section class="section-v" aria-labelledby="titre-confiance">
+    <div class="page-v">
+      <TitreSection id="titre-confiance">Qui vient chez vous</TitreSection>
+      <div class="confiance-grille">
+        {
+          imgArtisan && (
+            <div class="confiance-photo">
+              <CadreImage site={site} image={imgArtisan} sizes="(min-width: 64rem) 24rem, 100vw" />
+            </div>
+          )
+        }
+        <div class="confiance-texte">
+          {nomArtisan && <h3>{nomArtisan}</h3>}
+          {artisan.depuis && <p class="note-v chiffres">Installé depuis {artisan.depuis}</p>}
+          {artisan.presentation && <p class="confiance-presentation">{artisan.presentation}</p>}
+          {
+            (qualifications.length > 0 || confiance.assuranceDecennale) && (
+              <dl class="confiance-preuves">
+                {qualifications.length > 0 && (
+                  <div>
+                    <dt>Qualifications</dt>
+                    {qualifications.map((q) => (
+                      <dd set:html={marquerAVerifier(q)} />
+                    ))}
+                  </div>
+                )}
+                {confiance.assuranceDecennale && (
+                  <div>
+                    <dt>Assurance décennale</dt>
+                    <dd set:html={marquerAVerifier(confiance.assuranceDecennale)} />
+                  </div>
+                )}
+              </dl>
+            )
+          }
+        </div>
+      </div>
+      <Avis site={site} class="confiance-avis" />
+    </div>
+  </section>
+
+  <section class="section-v surface-ardoise" aria-labelledby="titre-contact">
+    <div class="page-v">
+      <TitreSection id="titre-contact">Contact</TitreSection>
+      <div class="contact-grille">
+        <Coordonnees site={site} />
+        <Horaires site={site} titre="Horaires" />
+      </div>
+    </div>
+  </section>
+</Vitrine>
+
+<style>
+  /* ——— Hero ——— */
+  .hero-v {
+    padding-top: var(--espace-3);
+  }
+
+  .hero-grille {
+    display: grid;
+    gap: var(--espace-4);
+  }
+
+  .hero-titre {
+    font-size: var(--taille-4);
+    line-height: 0.98;
+    letter-spacing: -0.015em;
+    max-width: 16ch;
+  }
+
+  .hero-titre :global(.insecable) {
+    white-space: nowrap;
+  }
+
+  .hero-v :global(.hero-dispo) {
+    margin-top: var(--espace-3);
+  }
+
+  .hero-v :global(.dispo-statut) {
+    font-size: var(--taille-1);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--espace-1) var(--espace-2);
+    margin-top: var(--espace-3);
+  }
+
+  .hero-actions > :global(*) {
+    flex: 1 1 100%;
+  }
+
+  .hero-precision {
+    margin-top: var(--espace-1);
+  }
+
+  /* Photo pleine largeur sur mobile, posée au-dessus du tracé (la conduite passe derrière) */
+  .hero-photo {
+    position: relative;
+    z-index: 2;
+    margin-left: calc(-1 * (var(--marge-page) + var(--gouttiere)));
+    margin-right: calc(-1 * var(--marge-page));
+  }
+
+  .hero-photo :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  @media (min-width: 48rem) {
+    .hero-actions > :global(*) {
+      flex: 0 0 auto;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .hero-v {
+      padding-top: 0;
+    }
+
+    .hero-grille {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      column-gap: var(--espace-4);
+      align-items: stretch;
+    }
+
+    .hero-texte {
+      padding-block: calc(var(--espace-4) + 2.5rem) var(--espace-5);
+    }
+
+    .hero-titre {
+      font-size: calc(var(--taille-5) * 1.25);
+    }
+
+    /* La photo déborde jusqu'au bord droit de l'écran */
+    .hero-photo {
+      margin-left: 0;
+      margin-right: calc(-1 * (max(0px, (100vw - var(--largeur-page)) / 2) + var(--marge-page)));
+    }
+
+    .hero-photo :global(img) {
+      height: 100%;
+      aspect-ratio: auto;
+    }
+  }
+
+  /* ——— Services : deux colonnes de texte ——— */
+  .services-colonnes {
+    display: grid;
+    gap: var(--espace-3);
+  }
+
+  .service-groupe h3 {
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--couleur-texte);
+    font-size: var(--taille-2);
+  }
+
+  .service-groupe ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .service-groupe li {
+    padding-block: 0.5rem;
+    border-bottom: 1px solid var(--couleur-trait);
+  }
+
+  .services-colonnes + p {
+    margin-top: var(--espace-2);
+  }
+
+  @media (min-width: 48rem) {
+    .services-colonnes {
+      display: block;
+      columns: 2;
+      column-gap: var(--espace-5);
+    }
+
+    .service-groupe {
+      break-inside: avoid;
+      padding-bottom: var(--espace-3);
+    }
+  }
+
+  /* ——— Tarifs ——— */
+  .section-v :global(.tarifs-v) + p {
+    margin-top: var(--espace-1);
+  }
+
+  /* ——— Réalisation ——— */
+  .realisation-une {
+    display: grid;
+    gap: var(--espace-3);
+  }
+
+  .realisation-texte h3 {
+    font-size: var(--taille-2);
+  }
+
+  .realisation-texte > * + * {
+    margin-top: var(--espace-1);
+  }
+
+  @media (min-width: 64rem) {
+    .realisation-une {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      gap: var(--espace-4);
+      align-items: end;
+    }
+  }
+
+  /* ——— Confiance ——— */
+  .confiance-grille {
+    display: grid;
+    gap: var(--espace-3);
+  }
+
+  .confiance-photo {
+    max-width: 24rem;
+  }
+
+  .confiance-texte h3 {
+    font-size: var(--taille-3);
+  }
+
+  .confiance-texte > * + * {
+    margin-top: var(--espace-2);
+  }
+
+  .confiance-texte h3 + .note-v {
+    margin-top: 0.25rem;
+  }
+
+  .confiance-presentation {
+    max-width: 34rem;
+    font-size: var(--taille-1);
+    line-height: 1.45;
+  }
+
+  .confiance-preuves {
+    max-width: 34rem;
+    border-top: 1px solid var(--couleur-trait);
+  }
+
+  .confiance-preuves > div {
+    display: grid;
+    gap: 0.15rem;
+    padding-block: 0.65rem;
+    border-bottom: 1px solid var(--couleur-trait);
+  }
+
+  .confiance-preuves dt {
+    font-weight: 700;
+  }
+
+  .confiance-preuves dd {
+    margin: 0;
+  }
+
+  .section-v :global(.confiance-avis) {
+    margin-top: var(--espace-4);
+  }
+
+  @media (min-width: 48rem) {
+    .confiance-grille {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      gap: var(--espace-4);
+      align-items: end;
+    }
+  }
+
+  /* ——— Contact ——— */
+  .contact-grille {
+    display: grid;
+    gap: var(--espace-4);
+  }
+
+  @media (min-width: 64rem) {
+    .contact-grille {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--espace-5);
+    }
+  }
+</style>

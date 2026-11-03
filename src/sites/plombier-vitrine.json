@@ -75,7 +75,12 @@
   "urgences": {
     "actif": true,
     "plage": "Du lundi au samedi, 7 h – 21 h",
-    "delai": "[À VÉRIFIER] délai d'intervention réel annoncé par l'artisan"
+    "delai": "[À VÉRIFIER] délai d'intervention réel annoncé par l'artisan",
+    "cas": [
+      "Fuite d'eau",
+      "WC ou évier bouché",
+      "Plus d'eau chaude"
+    ]
   },
   "fermetureExceptionnelle": null,
   "zone": {
@@ -96,7 +101,8 @@
         "Débouchage WC, évier, canalisations",
         "Remplacement de robinetterie",
         "Chasse d'eau qui coule"
-      ]
+      ],
+      "image": "detail2"
     },
     {
       "groupe": "Installation",
@@ -104,7 +110,8 @@
         "Chauffe-eau électrique et thermodynamique",
         "Adoucisseur d'eau",
         "Raccordement électroménager"
-      ]
+      ],
+      "image": "detail1"
     },
     {
       "groupe": "Rénovation",
@@ -145,6 +152,7 @@
   "tarifs": {
     "mention": "Prix TTC indicatifs, confirmés par devis avant toute intervention.",
     "devisGratuit": true,
+    "infoPrix": "[À VÉRIFIER] information préalable sur les prix des dépannages à domicile (arrêté du 24 janvier 2017) : affichage des taux horaires, frais de déplacement et devis obligatoire au-delà de 150 € TTC, à confirmer par l'artisan.",
     "lignes": [
       {
         "libelle": "Déplacement (zone d'intervention)",
@@ -170,6 +178,12 @@
       "avant": "avant1",
       "apres": "apres1",
       "description": "Baignoire remplacée par une douche à l'italienne, 6 jours de travaux."
+    },
+    {
+      "titre": "Chauffe-eau remplacé à Bourg-Démo",
+      "avant": "avant2",
+      "apres": "apres2",
+      "description": "Ancien chauffe-eau électrique remplacé par un modèle thermodynamique, dans un cellier. [À VÉRIFIER] durée des travaux."
     }
   ],
   "images": {
@@ -196,6 +210,18 @@
       "format": "4:3",
       "alt": "Salle de bain après travaux, douche à l'italienne",
       "prompt": "La même pièce, même cadrage depuis la porte : douche à l'italienne avec paroi vitrée, carrelage blanc grand format, robinetterie laiton brossé."
+    },
+    "avant2": {
+      "fichier": "realisation-2-avant.webp",
+      "format": "4:3",
+      "alt": "Cellier avec l'ancien chauffe-eau électrique",
+      "prompt": "Cellier carrelé avec un ancien chauffe-eau électrique blanc jauni, tuyauterie apparente un peu entartrée, cadrage de face à hauteur d'homme."
+    },
+    "apres2": {
+      "fichier": "realisation-2-apres.webp",
+      "format": "4:3",
+      "alt": "Même cellier avec le chauffe-eau thermodynamique neuf",
+      "prompt": "Le même cellier, même cadrage de face : chauffe-eau thermodynamique neuf, raccords en cuivre propres et alignés, groupe de sécurité neuf."
     },
     "detail1": {
       "fichier": "detail-1.webp",

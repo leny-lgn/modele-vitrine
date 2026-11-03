@@ -1,0 +1,141 @@
+---
+// Page Services : un bloc par groupe (Dépannage, Installation, Rénovation…), avec sa photo.
+import Vitrine from './Vitrine.astro';
+import TetePage from '../../components/vitrine/TetePage.astro';
+import TitreSection from '../../components/vitrine/TitreSection.astro';
+import Urgences from '../../components/vitrine/Urgences.astro';
+import CadreImage from '../../components/demo/CadreImage.astro';
+import type { Site } from '../../lib/schema';
+import { lienSite } from '../../lib/liens';
+
+interface Props {
+  site: Site;
+}
+const { site } = Astro.props;
+const ancre = (groupe: string) =>
+  groupe
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+const groupes = site.services.map((g) => ({ ...g, id: ancre(g.groupe) }));
+---
+
+<Vitrine site={site} page="services" titre="Services">
+  <TetePage site={site} titre="Services">
+    {
+      groupes.length > 1 && (
+        <ul class="sommaire" aria-label="Groupes de services">
+          {groupes.map((g) => (
+            <li>
+              <a href={`#${g.id}`}>{g.groupe}</a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </TetePage>
+
+  {
+    groupes.map((g, i) => {
+      const image = g.image ? site.images[g.image] : undefined;
+      return (
+        <>
+          <section class="section-v groupe" id={g.id} aria-labelledby={`titre-${g.id}`}>
+            <div class:list={['page-v', 'groupe-grille', { 'avec-image': image }]}>
+              <div>
+                <TitreSection id={`titre-${g.id}`}>{g.groupe}</TitreSection>
+                <ul class="liste-v groupe-liste">
+                  {g.items.map((item) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              </div>
+              {image && (
+                <div class="groupe-photo">
+                  <CadreImage site={site} image={image} sizes="(min-width: 64rem) 26rem, 100vw" />
+                </div>
+              )}
+            </div>
+          </section>
+          {i === 0 && <Urgences site={site} id="urgences-services" />}
+        </>
+      );
+    })
+  }
+
+  <section class="section-v" aria-labelledby="titre-suite">
+    <div class="page-v">
+      <TitreSection id="titre-suite">Combien ça coûte ?</TitreSection>
+      {site.tarifs?.mention && <p class="suite-texte">{site.tarifs.mention}</p>}
+      <p class="suite-liens">
+        {site.pages.includes('tarifs') && <a class="lien-v" href={lienSite(site, 'tarifs')}>Voir les tarifs</a>}
+        {
+          site.pages.includes('contact') && (
+            <a class="lien-v" href={`${lienSite(site, 'contact')}#devis`}>
+              Demander un devis
+            </a>
+          )
+        }
+      </p>
+    </div>
+  </section>
+</Vitrine>
+
+<style>
+  .sommaire {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--espace-3);
+    margin-top: var(--espace-2);
+    list-style: none;
+    padding: 0;
+  }
+
+  .sommaire a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--couleur-lien);
+    font-weight: 600;
+  }
+
+  .groupe-grille {
+    display: grid;
+    gap: var(--espace-3);
+  }
+
+  .groupe-liste li {
+    font-size: var(--taille-1);
+    line-height: 1.35;
+  }
+
+  .groupe-photo {
+    max-width: 26rem;
+  }
+
+  @media (min-width: 64rem) {
+    .groupe-grille.avec-image {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: var(--espace-5);
+      align-items: start;
+    }
+
+    .groupe-liste {
+      max-width: 36rem;
+    }
+  }
+
+  .suite-texte {
+    max-width: 36rem;
+    font-size: var(--taille-1);
+  }
+
+  .suite-liens {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--espace-3);
+    margin-top: var(--espace-1);
+  }
+</style>

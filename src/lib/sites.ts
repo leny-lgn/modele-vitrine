@@ -20,6 +20,7 @@ const CLES_TECHNIQUES = new Set([
   'reseaux',
   'avant',
   'apres',
+  'image',
   'page',
   'prompt',
   'du',
@@ -76,6 +77,10 @@ function valider(fichier: string, brut: unknown): Site {
       const ref = r[cle];
       if (ref && !site.images[ref]) erreurs.push(`realisations[${i}].${cle} : image « ${ref} » absente de « images »`);
     }
+  });
+
+  site.services.forEach((g, i) => {
+    if (g.image && !site.images[g.image]) erreurs.push(`services[${i}].image : image « ${g.image} » absente de « images »`);
   });
 
   if (!site.demo) {

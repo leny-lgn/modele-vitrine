@@ -1,0 +1,220 @@
+---
+// En-tête de la gamme Vitrine : nom, pages, téléphone. Fixé en haut sur bureau.
+// Mobile : menu dépliant sans JavaScript (<details>) ; l'appel passe par la barre du bas.
+import type { Site, CleePage } from '../../lib/schema';
+import type { CibleLien } from '../../lib/liens';
+import { lienSite } from '../../lib/liens';
+import { LIBELLES_PAGES } from '../../lib/secteurs';
+import { telephoneFr, telHref } from '../../lib/typo-fr';
+
+interface Props {
+  site: Site;
+  page: CibleLien;
+}
+const { site, page } = Astro.props;
+const pages = site.pages as CleePage[];
+const courant = (p: CleePage) => (p === page ? 'page' : undefined);
+---
+
+<header class="entete-v">
+  <div class="page-v ev-grille">
+    <a class="ev-nom" href={lienSite(site)}>{site.nom}</a>
+    <nav class="ev-nav" aria-label="Pages du site">
+      <ul class="ev-liste">
+        {
+          pages.map((p) => (
+            <li>
+              <a href={lienSite(site, p)} aria-current={courant(p)}>
+                {LIBELLES_PAGES[p]}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <details class="ev-menu">
+        <summary>Menu</summary>
+        <ul>
+          {
+            pages.map((p) => (
+              <li>
+                <a href={lienSite(site, p)} aria-current={courant(p)}>
+                  {LIBELLES_PAGES[p]}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </details>
+    </nav>
+    <a class="ev-tel chiffres" href={telHref(site.telephone)}>
+      <span class="ev-tel-libelle">Appeler le&nbsp;</span>{telephoneFr(site.telephone)}
+    </a>
+  </div>
+</header>
+
+<style>
+  .entete-v {
+    position: relative;
+    z-index: 40;
+    background: var(--couleur-fond);
+    border-bottom: 1px solid var(--couleur-trait);
+  }
+
+  .ev-grille {
+    display: flex;
+    align-items: center;
+    gap: var(--espace-2);
+    min-height: 3.5rem;
+  }
+
+  .ev-nom {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    margin-right: auto;
+    font-stretch: var(--largeur-titres);
+    font-weight: 800;
+    font-size: var(--taille-1);
+    line-height: 1;
+    text-transform: uppercase;
+    text-decoration: none;
+    hyphens: manual;
+  }
+
+  .ev-nav a {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+    text-decoration: none;
+  }
+
+  .ev-nav a[aria-current='page'] {
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: var(--cuivre);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.35em;
+  }
+
+  .ev-liste {
+    display: none;
+  }
+
+  .ev-nav ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  /* Menu mobile */
+  .ev-menu {
+    position: relative;
+  }
+
+  .ev-menu summary {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding-inline: 0.75rem;
+    border: 1px solid var(--couleur-texte);
+    border-radius: 2px;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .ev-menu summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Deux traits : « menu », sans icône générique */
+  .ev-menu summary::before {
+    content: '';
+    width: 0.875rem;
+    height: 0.5rem;
+    border-block: 2px solid currentColor;
+  }
+
+  .ev-menu[open] summary::before {
+    height: 2px;
+    border-bottom: 0;
+  }
+
+  .ev-menu ul {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.5rem);
+    min-width: 13rem;
+    padding: 0.5rem 0;
+    background: var(--couleur-fond);
+    border: 1px solid var(--couleur-texte);
+    box-shadow: 0 6px 16px rgb(31 42 48 / 0.12);
+  }
+
+  .ev-menu a {
+    padding-inline: 1rem;
+    font-size: var(--taille-1);
+  }
+
+  .ev-tel {
+    display: none;
+  }
+
+  @media (min-width: 48rem) {
+    .ev-menu {
+      display: none;
+    }
+
+    .ev-liste {
+      display: flex;
+      gap: 0 1.25rem;
+    }
+
+    .ev-tel {
+      display: inline-flex;
+      align-items: center;
+      min-height: 2.75rem;
+      padding-inline: 1rem;
+      background: var(--couleur-accent);
+      color: var(--couleur-accent-texte);
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+      border-radius: 2px;
+      transition: background-color 150ms ease-out;
+    }
+
+    .ev-tel:hover {
+      background: var(--ardoise);
+    }
+
+    .ev-tel-libelle {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .entete-v {
+      position: sticky;
+      top: 0;
+    }
+
+    .ev-grille {
+      gap: var(--espace-3);
+      min-height: 4rem;
+    }
+
+    .ev-tel-libelle {
+      position: static;
+      width: auto;
+      height: auto;
+      overflow: visible;
+      clip: auto;
+    }
+  }
+</style>

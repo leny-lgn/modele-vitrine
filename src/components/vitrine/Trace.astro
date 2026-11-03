@@ -1,0 +1,179 @@
+---
+// Élément signature de la gamme Vitrine : le tracé de tuyauterie (docs/briefs/plombier.md).
+// Une conduite cuivre de 2 px qui arrive par la gauche, fait un coude à 90° et descend
+// le long de la page jusqu'au dernier bloc, où elle se termine par un coude et un bouchon.
+// Les piquages vers chaque titre sont dessinés par TitreSection.
+// Sur mobile : un simple trait vertical à gauche.
+//
+// Animation (une seule fois par visite, jamais avec prefers-reduced-motion) :
+//   entrée horizontale  0 → 380 ms   transform scaleX, cubic-bezier(0.32, 0, 0.67, 0)
+//   coude               380 → 460 ms stroke-dashoffset, linear
+//   descente            460 → 1200 ms clip-path, cubic-bezier(0.33, 1, 0.68, 1)
+// Pourquoi : c'est l'eau qui entre dans le réseau. La courbe d'ensemble est une
+// accélération puis un freinage (ease-in sur l'entrée, vitesse constante dans le coude,
+// ease-out sur la descente) : la vitesse ne casse pas aux raccords et le tracé se pose
+// doucement au lieu de s'arrêter net. 1,2 s : c'est une animation explicative vue une
+// fois, rien n'attend sa fin (textes et boutons sont affichés tout de suite), et la
+// descente ne se dessine que sur la hauteur de l'écran ; le reste est déjà en place.
+// Propriétés animées : transform, clip-path et le tracé d'un coude de 24 px (peinture minime).
+interface Props {
+  slug: string;
+}
+const { slug } = Astro.props;
+const cle = `trace-${slug}`;
+---
+
+<script is:inline define:vars={{ cle }}>
+  // Déjà dessiné pendant cette visite : tracé immédiatement en place.
+  try {
+    if (sessionStorage.getItem(cle)) document.documentElement.dataset.trace = 'vu';
+    else sessionStorage.setItem(cle, '1');
+  } catch (e) {}
+</script>
+
+<div class="trace" aria-hidden="true">
+  <svg class="trace-entree" viewBox="0 0 10 2" preserveAspectRatio="none" focusable="false">
+    <line x1="0" y1="1" x2="10" y2="1" vector-effect="non-scaling-stroke"></line>
+  </svg>
+  <svg class="trace-coude" viewBox="0 0 24 24" width="24" height="24" focusable="false">
+    <path d="M0 1 H11 A12 12 0 0 1 23 13 V24" pathLength="1"></path>
+  </svg>
+  <div class="trace-descente">
+    <svg class="trace-colonne" viewBox="0 0 2 10" preserveAspectRatio="none" focusable="false">
+      <line x1="1" y1="0" x2="1" y2="10" vector-effect="non-scaling-stroke"></line>
+    </svg>
+    <svg class="trace-fin" viewBox="0 0 52 32" width="52" height="32" focusable="false">
+      <path d="M1 0 V7 A12 12 0 0 0 13 19 H40"></path>
+      <rect class="trace-raccord" x="40" y="14" width="10" height="10" rx="2.5"></rect>
+    </svg>
+  </div>
+</div>
+
+<style>
+  .trace {
+    /* Abscisse du tracé : bord gauche de la colonne de page + décalage de la gamme */
+    --x: calc(max(0px, (100% - var(--largeur-page)) / 2) + var(--marge-page) + var(--decalage-trace));
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .trace svg {
+    position: absolute;
+    overflow: visible;
+    fill: none;
+    stroke: var(--cuivre);
+    stroke-width: 2;
+  }
+
+  .trace-raccord {
+    fill: var(--couleur-fond);
+  }
+
+  /* Mobile : un trait vertical, rien d'autre */
+  .trace-entree,
+  .trace-coude,
+  .trace-fin {
+    display: none;
+  }
+
+  .trace-descente {
+    position: absolute;
+    top: var(--depart-trace);
+    bottom: var(--fin-trace);
+    left: calc(var(--x) - 1px);
+    width: 4rem;
+  }
+
+  .trace-colonne {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 2px;
+    height: 100%;
+  }
+
+  @media (min-width: 48rem) {
+    .trace-entree,
+    .trace-coude,
+    .trace-fin {
+      display: block;
+    }
+
+    .trace-entree {
+      top: var(--depart-trace);
+      left: 0;
+      width: calc(var(--x) - 22px);
+      height: 2px;
+    }
+
+    .trace-coude {
+      top: var(--depart-trace);
+      left: calc(var(--x) - 23px);
+    }
+
+    .trace-descente {
+      top: calc(var(--depart-trace) + 24px);
+    }
+
+    .trace-colonne {
+      bottom: auto;
+      height: calc(100% - 19px);
+    }
+
+    .trace-fin {
+      bottom: -13px;
+      left: 0;
+    }
+  }
+
+  /* ——— Dessin au chargement ——— */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html:not([data-trace='vu'])) .trace-descente {
+      animation: trace-descendre 900ms cubic-bezier(0.33, 1, 0.68, 1) backwards;
+    }
+
+    @media (min-width: 48rem) {
+      :global(html:not([data-trace='vu'])) .trace-entree {
+        transform-origin: left center;
+        animation: trace-entrer 380ms cubic-bezier(0.32, 0, 0.67, 0) backwards;
+      }
+
+      :global(html:not([data-trace='vu'])) .trace-coude path {
+        stroke-dasharray: 1;
+        animation: trace-couder 80ms linear 380ms backwards;
+      }
+
+      :global(html:not([data-trace='vu'])) .trace-descente {
+        animation-duration: 740ms;
+        animation-delay: 460ms;
+      }
+    }
+  }
+
+  @keyframes trace-entrer {
+    from {
+      transform: scaleX(0);
+    }
+  }
+
+  @keyframes trace-couder {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  /* Ne dessine que la hauteur d'un écran ; au-delà, le tracé est déjà en place à la fin. */
+  @keyframes trace-descendre {
+    from {
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      clip-path: inset(0 0 max(0px, 100% - 100vh) 0);
+    }
+  }
+</style>

@@ -1,0 +1,57 @@
+---
+// Titre de section relié au tracé par un piquage : un té sur la conduite, une courte
+// dérivation horizontale et un bouchon. Visible à partir de 64rem (bureau) seulement.
+interface Props {
+  id: string;
+  niveau?: 1 | 2;
+  class?: string;
+}
+const { id, niveau = 2, class: classe } = Astro.props;
+const Balise = niveau === 1 ? 'h1' : 'h2';
+---
+
+<Balise id={id} class:list={['titre-v', { 'titre-v-page': niveau === 1 }, classe]}>
+  <svg class="piquage" viewBox="-8 0 48 16" width="48" height="16" aria-hidden="true" focusable="false">
+    <path d="M5 8 H31"></path>
+    <rect x="-5" y="2" width="10" height="12" rx="3"></rect>
+    <rect x="31" y="4" width="8" height="8" rx="2"></rect>
+  </svg>
+  <slot />
+</Balise>
+
+<style>
+  .titre-v {
+    position: relative;
+  }
+
+  .piquage {
+    display: none;
+    position: absolute;
+    /* x = 0 du dessin posé sur le tracé : 4rem de gouttière − 1rem de décalage */
+    right: calc(100% + 0.5rem);
+    top: calc(0.55em - 8px);
+    overflow: visible;
+    fill: var(--couleur-fond);
+    stroke: var(--cuivre);
+    stroke-width: 2;
+  }
+
+  @media (min-width: 64rem) {
+    .piquage {
+      display: block;
+    }
+  }
+
+  /* Le piquage apparaît quand le tracé a fini de descendre */
+  @media (prefers-reduced-motion: no-preference) and (min-width: 64rem) {
+    :global(html:not([data-trace='vu'])) .piquage {
+      animation: piquage-apparaitre 200ms ease-out 1000ms backwards;
+    }
+  }
+
+  @keyframes piquage-apparaitre {
+    from {
+      opacity: 0;
+    }
+  }
+</style>

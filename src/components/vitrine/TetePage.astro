@@ -1,0 +1,66 @@
+---
+// Tête des pages internes : titre relié au tracé, phrase d'introduction,
+// disponibilité et bouton Appeler visibles sans défiler sur mobile.
+import type { Site } from '../../lib/schema';
+import TitreSection from './TitreSection.astro';
+import Appeler from '../commun/Appeler.astro';
+import Disponibilite from '../commun/Disponibilite.astro';
+
+interface Props {
+  site: Site;
+  titre: string;
+  intro?: string;
+}
+const { site, titre, intro } = Astro.props;
+---
+
+<section class="tete-page" aria-labelledby="titre-page">
+  <div class="page-v tp-grille">
+    <div class="tp-texte">
+      <TitreSection id="titre-page" niveau={1}>{titre}</TitreSection>
+      {intro && <p class="tp-intro">{intro}</p>}
+      <slot />
+    </div>
+    <div class="tp-contact">
+      <Disponibilite site={site} />
+      <Appeler site={site} class="bouton-v" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .tete-page {
+    padding-block: var(--espace-4);
+    border-bottom: 1px solid var(--couleur-trait);
+  }
+
+  .tp-grille {
+    display: grid;
+    gap: var(--espace-3);
+  }
+
+  .tp-intro {
+    margin-top: var(--espace-2);
+    max-width: 38rem;
+    font-size: var(--taille-1);
+    line-height: 1.4;
+  }
+
+  .tp-contact {
+    display: grid;
+    gap: var(--espace-2);
+    justify-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .tete-page {
+      padding-block: var(--espace-5) var(--espace-4);
+    }
+
+    .tp-grille {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      column-gap: var(--espace-5);
+      align-items: end;
+    }
+  }
+</style>

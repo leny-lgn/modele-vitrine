@@ -1,0 +1,197 @@
+---
+// Gamme Vitrine : « on vous choisit plutôt qu'un autre ». Cinq pages, structure complète
+// du brief, et l'élément signature : le tracé de tuyauterie qui relie les sections.
+// Toutes les sections d'une page sont posées dans `.circuit`, au-dessus duquel court le tracé.
+import Base from '../Base.astro';
+import Entete from '../../components/vitrine/Entete.astro';
+import Trace from '../../components/vitrine/Trace.astro';
+import type { Site } from '../../lib/schema';
+import type { CibleLien } from '../../lib/liens';
+
+interface Props {
+  site: Site;
+  page: CibleLien;
+  titre?: string;
+  description?: string;
+}
+const { site, page, titre, description } = Astro.props;
+---
+
+<Base site={site} page={page} titre={titre} description={description}>
+  <Entete slot="entete" site={site} page={page} />
+  <div class="circuit">
+    <Trace slug={site.slug} />
+    <slot />
+  </div>
+</Base>
+
+<style is:global>
+  :root[data-gamme='vitrine'] {
+    /* Gouttière gauche réservée au tracé, et position du tracé par rapport à la marge */
+    --gouttiere: 0.5rem;
+    --decalage-trace: -0.5rem;
+    --depart-trace: 0px;
+    --fin-trace: var(--espace-4);
+  }
+
+  @media (min-width: 48rem) {
+    :root[data-gamme='vitrine'] {
+      --gouttiere: 3rem;
+      --decalage-trace: 0.75rem;
+      --depart-trace: var(--espace-3);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    :root[data-gamme='vitrine'] {
+      --gouttiere: 4rem;
+      --decalage-trace: 1rem;
+      --depart-trace: var(--espace-4);
+      scroll-padding-top: 5rem;
+    }
+  }
+
+  [data-gamme='vitrine'] .circuit {
+    position: relative;
+    overflow-x: clip;
+  }
+
+  [data-gamme='vitrine'] .page-v {
+    width: 100%;
+    max-width: var(--largeur-page);
+    margin-inline: auto;
+    padding-inline: var(--marge-page);
+  }
+
+  [data-gamme='vitrine'] .circuit .page-v {
+    padding-left: calc(var(--marge-page) + var(--gouttiere));
+  }
+
+  /* ——— Sections ——— */
+  [data-gamme='vitrine'] .section-v {
+    padding-block: var(--espace-4);
+  }
+
+  [data-gamme='vitrine'] .section-v + .section-v:not(.surface-ardoise, .section-v-suite) {
+    border-top: 1px solid var(--couleur-trait);
+  }
+
+  [data-gamme='vitrine'] .surface-ardoise + .section-v {
+    border-top: 0;
+  }
+
+  [data-gamme='vitrine'] .titre-v {
+    font-size: var(--taille-3);
+    line-height: 1.05;
+    max-width: 22ch;
+  }
+
+  [data-gamme='vitrine'] .titre-v-page {
+    font-size: var(--taille-4);
+    line-height: 1;
+  }
+
+  [data-gamme='vitrine'] .section-v .titre-v + * {
+    margin-top: var(--espace-3);
+  }
+
+  @media (min-width: 64rem) {
+    [data-gamme='vitrine'] .section-v {
+      padding-block: var(--espace-5);
+    }
+
+    [data-gamme='vitrine'] .titre-v {
+      font-size: var(--taille-4);
+    }
+
+    [data-gamme='vitrine'] .titre-v-page {
+      font-size: var(--taille-5);
+    }
+  }
+
+  /* ——— Boutons ——— */
+  [data-gamme='vitrine'] .bouton-v,
+  [data-gamme='vitrine'] .bouton-contour {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.5rem;
+    padding: 0.5rem 1.5rem;
+    border-radius: 2px;
+    font-size: var(--taille-1);
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background-color 150ms ease-out,
+      transform 120ms ease-out;
+  }
+
+  [data-gamme='vitrine'] .bouton-contour {
+    min-height: 3rem;
+    border: 2px solid currentColor;
+    font-size: var(--taille-texte);
+  }
+
+  [data-gamme='vitrine'] .bouton-v:active,
+  [data-gamme='vitrine'] .bouton-contour:active {
+    transform: scale(0.98);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    [data-gamme='vitrine'] .bouton-v:hover {
+      background: var(--ardoise);
+    }
+
+    [data-gamme='vitrine'] .surface-ardoise .bouton-v:hover {
+      background: #e8a578;
+    }
+
+    [data-gamme='vitrine'] .bouton-contour:hover {
+      background: rgb(31 42 48 / 0.06);
+    }
+  }
+
+  /* ——— Petits éléments communs ——— */
+  [data-gamme='vitrine'] .note-v {
+    color: var(--couleur-texte-secondaire);
+    font-size: var(--taille-petit);
+  }
+
+  [data-gamme='vitrine'] .lien-v {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--couleur-lien);
+    font-weight: 700;
+  }
+
+  [data-gamme='vitrine'] .liste-v {
+    list-style: none;
+    padding: 0;
+    border-top: 1px solid var(--couleur-trait);
+  }
+
+  [data-gamme='vitrine'] .liste-v li {
+    padding-block: 0.65rem;
+    border-bottom: 1px solid var(--couleur-trait);
+  }
+
+  /* Adresses e-mail et identifiants : jamais de césure */
+  [data-gamme='vitrine'] .sans-cesure,
+  [data-gamme='vitrine'] a[href^='mailto:'] {
+    hyphens: none;
+    overflow-wrap: anywhere;
+  }
+
+  /* Pied de page commun aligné sur la colonne de texte */
+  :root[data-gamme='vitrine'] .pied-de-page {
+    padding-inline: max(
+      var(--marge-page),
+      (100% - var(--largeur-page)) / 2 + var(--marge-page)
+    );
+    padding-left: calc(
+      max(var(--marge-page), (100% - var(--largeur-page)) / 2 + var(--marge-page)) + var(--gouttiere)
+    );
+  }
+</style>

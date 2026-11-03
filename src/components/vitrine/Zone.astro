@@ -1,0 +1,73 @@
+---
+// Zone d'intervention : communes en texte (lisibles par les moteurs) + carte statique.
+import type { Site } from '../../lib/schema';
+import Carte from '../commun/Carte.astro';
+
+interface Props {
+  site: Site;
+  class?: string;
+}
+const { site, class: classe } = Astro.props;
+---
+
+<div class:list={['zone-v', classe]}>
+  <div class="zv-texte">
+    {
+      site.zone.rayonKm && (
+        <p class="zv-rayon chiffres">
+          {site.zone.rayonKm}&nbsp;km autour de {site.adresse.ville}
+        </p>
+      )
+    }
+    <ul class="zv-communes">
+      {site.zone.communes.map((c) => <li>{c}</li>)}
+    </ul>
+    <p class="zv-note">Votre commune n’est pas dans la liste ? Appelez pour vérifier.</p>
+  </div>
+  <Carte site={site} class="zv-carte" />
+</div>
+
+<style>
+  .zone-v {
+    display: grid;
+    gap: var(--espace-4);
+  }
+
+  .zv-rayon {
+    font-weight: 600;
+  }
+
+  .zv-communes {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--espace-2);
+    columns: 2;
+    column-gap: var(--espace-3);
+    border-top: 1px solid var(--couleur-trait);
+  }
+
+  .zv-communes li {
+    break-inside: avoid;
+    padding-block: 0.55rem;
+    border-bottom: 1px solid var(--couleur-trait);
+    font-stretch: var(--largeur-titres);
+    font-weight: 700;
+    font-size: var(--taille-1);
+    line-height: 1.2;
+    hyphens: manual;
+  }
+
+  .zv-note {
+    margin-top: var(--espace-2);
+    color: var(--couleur-texte-secondaire);
+    font-size: var(--taille-petit);
+  }
+
+  @media (min-width: 64rem) {
+    .zone-v {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      gap: var(--espace-5);
+      align-items: start;
+    }
+  }
+</style>
