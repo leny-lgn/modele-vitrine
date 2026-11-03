@@ -340,11 +340,11 @@
     }
   },
   "objet3d": {
-    "actif": false,
+    "actif": true,
     "fichier": "raccord-cuivre.glb",
     "poster": "raccord-cuivre-poster.webp",
     "page": "artisan",
-    "alt": "Raccord coudé en cuivre, à manipuler du doigt",
+    "alt": "Raccord en T en cuivre, à manipuler du doigt",
     "credit": ""
   },
   "description": "Plomberie Lemoine, plombier chauffagiste à Ville-Exemple et 15 km autour : dépannage, chauffe-eau, salle de bain. Prix donné avant de commencer.",

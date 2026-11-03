@@ -120,6 +120,8 @@ if (o && actif) {
   model-viewer {
     display: block;
     width: 100%;
+    /* model-viewer impose height: 150px par défaut, ce qui annulerait aspect-ratio */
+    height: auto;
     aspect-ratio: 1;
     background: #e6e8e5;
     --poster-color: transparent;
