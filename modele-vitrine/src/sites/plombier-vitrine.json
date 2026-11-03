@@ -1,0 +1,219 @@
+{
+  "slug": "plombier-vitrine",
+  "gamme": "vitrine",
+  "demo": true,
+  "secteur": "plombier",
+  "nom": "Plomberie Lemoine",
+  "artisan": {
+    "prenom": "Julien",
+    "nom": "Lemoine",
+    "depuis": 2012,
+    "presentation": "Plombier chauffagiste installé à Ville-Exemple. Je travaille seul, je réponds moi-même au téléphone et je donne le prix avant de commencer."
+  },
+  "accroche": "Plombier à Ville-Exemple et 15 km autour",
+  "telephone": "02 00 00 00 00",
+  "email": "contact@plomberie-lemoine.example",
+  "adresse": {
+    "rue": "8 rue des Artisans",
+    "codePostal": "00000",
+    "ville": "Ville-Exemple"
+  },
+  "horaires": {
+    "lundi": [
+      [
+        "08:00",
+        "12:00"
+      ],
+      [
+        "13:30",
+        "18:30"
+      ]
+    ],
+    "mardi": [
+      [
+        "08:00",
+        "12:00"
+      ],
+      [
+        "13:30",
+        "18:30"
+      ]
+    ],
+    "mercredi": [
+      [
+        "08:00",
+        "12:00"
+      ],
+      [
+        "13:30",
+        "18:30"
+      ]
+    ],
+    "jeudi": [
+      [
+        "08:00",
+        "12:00"
+      ],
+      [
+        "13:30",
+        "18:30"
+      ]
+    ],
+    "vendredi": [
+      [
+        "08:00",
+        "12:00"
+      ],
+      [
+        "13:30",
+        "17:30"
+      ]
+    ],
+    "samedi": [],
+    "dimanche": []
+  },
+  "urgences": {
+    "actif": true,
+    "plage": "Du lundi au samedi, 7 h – 21 h",
+    "delai": "[À VÉRIFIER] délai d'intervention réel annoncé par l'artisan"
+  },
+  "fermetureExceptionnelle": null,
+  "zone": {
+    "rayonKm": 15,
+    "communes": [
+      "Ville-Exemple",
+      "Saint-Exemple",
+      "Bourg-Démo",
+      "Le Village",
+      "Vallée-Fictive"
+    ]
+  },
+  "services": [
+    {
+      "groupe": "Dépannage",
+      "items": [
+        "Recherche et réparation de fuite",
+        "Débouchage WC, évier, canalisations",
+        "Remplacement de robinetterie",
+        "Chasse d'eau qui coule"
+      ]
+    },
+    {
+      "groupe": "Installation",
+      "items": [
+        "Chauffe-eau électrique et thermodynamique",
+        "Adoucisseur d'eau",
+        "Raccordement électroménager"
+      ]
+    },
+    {
+      "groupe": "Rénovation",
+      "items": [
+        "Salle de bain complète",
+        "Douche à l'italienne",
+        "Mise aux normes de l'installation"
+      ]
+    }
+  ],
+  "confiance": {
+    "qualifications": [],
+    "assuranceDecennale": "[À VÉRIFIER] assureur et zone de couverture",
+    "avis": []
+  },
+  "reseaux": {
+    "facebook": "",
+    "instagram": ""
+  },
+  "mentionsLegales": {
+    "formeJuridique": "Entreprise individuelle",
+    "siret": "[À VÉRIFIER]",
+    "rcsOuRm": "[À VÉRIFIER]",
+    "directeurPublication": "Julien Lemoine",
+    "hebergeur": {
+      "nom": "Cloudflare, Inc.",
+      "adresse": "[À VÉRIFIER] adresse postale de l'hébergeur",
+      "telephone": "[À VÉRIFIER]"
+    }
+  },
+  "pages": [
+    "accueil",
+    "services",
+    "tarifs",
+    "realisations",
+    "contact"
+  ],
+  "tarifs": {
+    "mention": "Prix TTC indicatifs, confirmés par devis avant toute intervention.",
+    "devisGratuit": true,
+    "lignes": [
+      {
+        "libelle": "Déplacement (zone d'intervention)",
+        "prix": "[À VÉRIFIER]"
+      },
+      {
+        "libelle": "Main-d'œuvre, l'heure",
+        "prix": "[À VÉRIFIER]"
+      },
+      {
+        "libelle": "Débouchage simple",
+        "prix": "à partir de [À VÉRIFIER]"
+      },
+      {
+        "libelle": "Remplacement mitigeur (hors fourniture)",
+        "prix": "à partir de [À VÉRIFIER]"
+      }
+    ]
+  },
+  "realisations": [
+    {
+      "titre": "Salle de bain refaite à Saint-Exemple",
+      "avant": "avant1",
+      "apres": "apres1",
+      "description": "Baignoire remplacée par une douche à l'italienne, 6 jours de travaux."
+    }
+  ],
+  "images": {
+    "hero": {
+      "fichier": "hero.webp",
+      "format": "16:9",
+      "alt": "Mains d'un plombier serrant un raccord en cuivre sous un évier",
+      "prompt": "Mains d'un plombier serrant un raccord en cuivre sous un évier, caisse à outils ouverte au premier plan flou, carrelage blanc en fond."
+    },
+    "artisan": {
+      "fichier": "artisan.webp",
+      "format": "4:5",
+      "alt": "L'artisan de dos devant sa camionnette",
+      "prompt": "Plombier de dos, en tenue de travail sobre gris foncé, devant une camionnette utilitaire blanche sans inscription, début de matinée."
+    },
+    "avant1": {
+      "fichier": "realisation-1-avant.webp",
+      "format": "4:3",
+      "alt": "Salle de bain avant travaux",
+      "prompt": "Salle de bain des années 1980 un peu vétuste : baignoire, carrelage beige à motifs, robinetterie chromée datée. Cadrage depuis la porte."
+    },
+    "apres1": {
+      "fichier": "realisation-1-apres.webp",
+      "format": "4:3",
+      "alt": "Salle de bain après travaux, douche à l'italienne",
+      "prompt": "La même pièce, même cadrage depuis la porte : douche à l'italienne avec paroi vitrée, carrelage blanc grand format, robinetterie laiton brossé."
+    },
+    "detail1": {
+      "fichier": "detail-1.webp",
+      "format": "1:1",
+      "alt": "Tuyaux en cuivre neufs alignés",
+      "prompt": "Gros plan sur des tuyaux en cuivre neufs soudés, alignés sur un mur, lumière rasante."
+    },
+    "detail2": {
+      "fichier": "detail-2.webp",
+      "format": "1:1",
+      "alt": "Mitigeur en laiton brossé",
+      "prompt": "Gros plan sur un mitigeur laiton brossé neuf avec quelques gouttes d'eau."
+    },
+    "partage": {
+      "fichier": "partage.webp",
+      "format": "1200x630",
+      "alt": "Aperçu du site Plomberie Lemoine",
+      "prompt": "Même sujet que l'image principale, cadrage plus serré, espace libre à gauche."
+    }
+  }
+}
