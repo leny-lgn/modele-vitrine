@@ -378,16 +378,19 @@ const sansCesure = (t: string) =>
     .hp-plaque {
       grid-area: 2 / 1 / 3 / 2;
       justify-self: start;
-      width: calc((100% - var(--pI)) / 2 + var(--pI) * 0.74);
-      padding: var(--espace-4) var(--espace-4) var(--espace-4) calc((100% - var(--pI)) / 2);
+      /* Plaque limitée à un peu plus de la moitié de la colonne : la photo reste lisible */
+      width: calc((100% - var(--pI)) / 2 + var(--pI) * 0.56);
+      padding: var(--espace-3) var(--espace-4) var(--espace-3) calc((100% - var(--pI)) / 2);
     }
 
     .hp-titre {
       max-width: none;
+      /* L'accroche est une phrase, pas un mot : taille plafonnée pour tenir en trois lignes */
+      font-size: clamp(2.6rem, 0.6rem + 4.2vw, 4.5rem);
     }
 
     .hp-actions {
-      margin-top: var(--espace-4);
+      margin-top: var(--espace-3);
     }
 
     .hero-attente {

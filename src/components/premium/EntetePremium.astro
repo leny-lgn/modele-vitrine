@@ -95,6 +95,9 @@ const courant = (p: CleePage) => (p === page ? 'page' : undefined);
     align-items: center;
     min-height: 2.75rem;
     text-decoration: none;
+    /* Libellés de menu : jamais coupés ni renvoyés à la ligne */
+    white-space: nowrap;
+    hyphens: none;
   }
 
   .ep-nav a[aria-current='page'] {
@@ -120,6 +123,12 @@ const courant = (p: CleePage) => (p === page ? 'page' : undefined);
     font-weight: 600;
     cursor: pointer;
     list-style: none;
+    transition: transform 120ms ease-out;
+  }
+
+  /* Appui : le bouton se tasse, le doigt sent la prise en compte */
+  .ep-menu summary:active {
+    transform: scale(0.97);
   }
 
   .ep-menu summary::-webkit-details-marker {
@@ -131,6 +140,7 @@ const courant = (p: CleePage) => (p === page ? 'page' : undefined);
     width: 0.875rem;
     height: 0.5rem;
     border-block: 2px solid currentColor;
+    transition: height 150ms cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   .ep-menu[open] summary::before {
@@ -147,6 +157,7 @@ const courant = (p: CleePage) => (p === page ? 'page' : undefined);
     background: var(--ardoise);
     border: 1px solid var(--gris-joint);
     box-shadow: 0 8px 24px rgb(0 0 0 / 0.25);
+    transform-origin: top right;
   }
 
   .ep-menu a {
@@ -154,11 +165,71 @@ const courant = (p: CleePage) => (p === page ? 'page' : undefined);
     font-size: var(--taille-1);
   }
 
+  /* Ouverture : le panneau sort du bouton (200 ms, ease-out marqué), puis les liens
+     arrivent en cascade (30 ms d'écart). Fermeture instantanée, sans JS. */
+  .ep-menu[open] ul {
+    animation: ep-panneau 200ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .ep-menu[open] li {
+    animation: ep-lien 180ms cubic-bezier(0.23, 1, 0.32, 1) both;
+    animation-delay: calc(40ms + var(--rang, 0) * 30ms);
+  }
+
+  .ep-menu li:nth-child(2) { --rang: 1; }
+  .ep-menu li:nth-child(3) { --rang: 2; }
+  .ep-menu li:nth-child(4) { --rang: 3; }
+  .ep-menu li:nth-child(5) { --rang: 4; }
+  .ep-menu li:nth-child(6) { --rang: 5; }
+  .ep-menu li:nth-child(7) { --rang: 6; }
+  .ep-menu li:nth-child(n + 8) { --rang: 7; }
+
+  @keyframes ep-panneau {
+    from {
+      opacity: 0;
+      transform: translateY(-6px) scale(0.97);
+    }
+  }
+
+  @keyframes ep-lien {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+  }
+
+  /* Mouvement réduit : fondu seul, sans déplacement ni cascade */
+  @media (prefers-reduced-motion: reduce) {
+    .ep-menu summary,
+    .ep-menu summary::before {
+      transition: none;
+    }
+
+    .ep-menu summary:active {
+      transform: none;
+    }
+
+    .ep-menu[open] ul {
+      animation: ep-fondu 150ms ease-out;
+    }
+
+    .ep-menu[open] li {
+      animation: none;
+    }
+
+    @keyframes ep-fondu {
+      from {
+        opacity: 0;
+      }
+    }
+  }
+
   .ep-tel {
     display: none;
   }
 
-  @media (min-width: 56rem) {
+  /* Liste complète seulement quand elle tient sur une ligne (≈ 1 060 px mesurés) */
+  @media (min-width: 68rem) {
     .ep-menu {
       display: none;
     }
@@ -167,7 +238,9 @@ const courant = (p: CleePage) => (p === page ? 'page' : undefined);
       display: flex;
       gap: 0 1.25rem;
     }
+  }
 
+  @media (min-width: 56rem) {
     .ep-nav a:hover {
       color: var(--cuivre-clair);
     }
@@ -215,7 +288,10 @@ const courant = (p: CleePage) => (p === page ? 'page' : undefined);
       gap: var(--espace-3);
       min-height: 4rem;
     }
+  }
 
+  /* « Appeler le » en toutes lettres seulement quand tout tient (≈ 1 165 px mesurés) */
+  @media (min-width: 74rem) {
     .ep-tel-libelle {
       position: static;
       width: auto;
