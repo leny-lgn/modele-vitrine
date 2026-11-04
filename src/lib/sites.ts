@@ -108,6 +108,11 @@ function valider(fichier: string, brut: unknown): Site {
         `demo: false mais il reste ${restants.length} ${A_VERIFIER} :\n${restants.map((c) => `      · ${c}`).join('\n')}`,
       );
     }
+    // Avis fictifs de démonstration : interdits sur un vrai site.
+    const exemples = (site.confiance as { avisExemples?: unknown[] } | undefined)?.avisExemples;
+    if (exemples?.length) {
+      erreurs.push('demo: false mais confiance.avisExemples contient des avis fictifs : les supprimer');
+    }
   }
 
   if (erreurs.length) {

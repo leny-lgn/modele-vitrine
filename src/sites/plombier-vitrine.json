@@ -125,7 +125,27 @@
   "confiance": {
     "qualifications": [],
     "assuranceDecennale": "[À VÉRIFIER] assureur et zone de couverture",
-    "avis": []
+    "avis": [],
+    "avisExemples": [
+      {
+        "texte": "Fuite sous l'évier un samedi matin. Il a décroché tout de suite, m'a donné le prix au téléphone et c'était le même sur la facture.",
+        "auteur": "Claire M.",
+        "commune": "Saint-Exemple",
+        "date": "septembre 2026"
+      },
+      {
+        "texte": "Remplacement du chauffe-eau. Ancien appareil emporté, chantier laissé propre, et il a pris le temps de m'expliquer le réglage.",
+        "auteur": "Marc D.",
+        "commune": "Ville-Exemple",
+        "date": "juin 2026"
+      },
+      {
+        "texte": "Douche à l'italienne à la place de la baignoire chez ma mère. Devis détaillé, travaux faits aux dates prévues.",
+        "auteur": "Sophie L.",
+        "commune": "Bourg-Démo",
+        "date": "avril 2026"
+      }
+    ]
   },
   "reseaux": {
     "facebook": "",

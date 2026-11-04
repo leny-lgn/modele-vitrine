@@ -1,7 +1,8 @@
 ---
 // Avis clients. Uniquement de vrais avis, tirés du JSON (confiance.avis).
-// En démo sans avis : trois emplacements marqués « Exemple d'avis », sans texte inventé.
-// Hors démo sans avis : rien n'est affiché.
+// En démo sans avis réels : les avis fictifs de `confiance.avisExemples`, chacun marqué
+// « Avis fictif », ou à défaut trois emplacements vides. Hors démo : jamais d'avis fictif
+// (la construction échoue s'il en reste, voir src/lib/sites.ts).
 import type { Site } from '../../lib/schema';
 
 interface Avis {
@@ -17,8 +18,11 @@ interface Props {
   class?: string;
 }
 const { site, class: classe } = Astro.props;
-const avis = (((site.confiance ?? {}) as { avis?: Avis[] }).avis ?? []).filter((a) => a?.texte && a?.auteur);
-const exemples = avis.length === 0 && site.demo;
+const confiance = (site.confiance ?? {}) as { avis?: Avis[]; avisExemples?: Avis[] };
+const valides = (liste?: Avis[]) => (liste ?? []).filter((a) => a?.texte && a?.auteur);
+const avis = valides(confiance.avis);
+const fictifs = avis.length === 0 && site.demo ? valides(confiance.avisExemples) : [];
+const exemples = avis.length === 0 && fictifs.length === 0 && site.demo;
 ---
 
 {
@@ -40,6 +44,33 @@ const exemples = avis.length === 0 && site.demo;
         </li>
       ))}
     </ul>
+  )
+}
+{
+  fictifs.length > 0 && (
+    <div class:list={['avis-fictifs', classe]}>
+      <p class="af-avertissement">
+        Avis fictifs, rédigés pour la démonstration. Sur le site réel&nbsp;: vos avis Google, recopiés mot pour mot.
+      </p>
+      <ul class="avis-v">
+        {fictifs.map((a) => (
+          <li>
+            <p class="af-marque">Avis fictif</p>
+            <figure>
+              <blockquote>
+                <p>{a.texte}</p>
+              </blockquote>
+              <figcaption>
+                <span class="av-auteur">{a.auteur}</span>
+                {[a.commune, a.date].filter(Boolean).map((x) => (
+                  <span class="av-meta"> · {x}</span>
+                ))}
+              </figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }
 {
@@ -98,6 +129,25 @@ const exemples = avis.length === 0 && site.demo;
 
   .av-marque {
     font-weight: 700;
+  }
+
+  /* Démo : avis fictifs, signalés en tête de liste et sur chaque avis */
+  .af-avertissement {
+    margin-bottom: var(--espace-2);
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font-size: var(--taille-petit);
+    color: var(--couleur-texte-secondaire);
+  }
+
+  .af-marque {
+    display: inline-block;
+    margin-bottom: var(--espace-1);
+    padding: 0.15em 0.5em;
+    border: 1px dashed currentColor;
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font-size: var(--taille-petit);
+    font-weight: 700;
+    color: var(--couleur-texte-secondaire);
   }
 
   .av-consigne,
