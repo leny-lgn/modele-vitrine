@@ -1,7 +1,8 @@
 ---
 // Barre « Modèles » fixée en bas d'écran, générée depuis src/sites/. Démo uniquement.
 import { sitesParSecteur } from '../../lib/sites';
-import { lienSite, LIEN_GRILLE } from '../../lib/liens';
+import { lienSite, LIEN_GRILLE, LIEN_ACCUEIL } from '../../lib/liens';
+import { NOM } from '../../lib/moi';
 import { infosSecteur, LIBELLES_GAMMES } from '../../lib/secteurs';
 import { GAMMES, type Site } from '../../lib/schema';
 
@@ -25,6 +26,9 @@ const autresSecteurs = [...groupes.entries()].filter(([s]) => s !== site.secteur
       </script>
       <nav class="menu-modeles" aria-label="Modèles de démonstration">
         <div class="mm-barre">
+          <a class="mm-retour" href={LIEN_ACCUEIL}>
+            Retour<span class="mm-retour-suite">{"\u00a0"}au site de {NOM}</span>
+          </a>
           {autresSecteurs.length > 0 ? (
             <details class="mm-secteur">
               <summary>{infosSecteur(site.secteur).libelle}</summary>
@@ -153,6 +157,11 @@ const autresSecteurs = [...groupes.entries()].filter(([s]) => s !== site.secteur
     font-weight: 600;
   }
 
+  .mm-retour {
+    border-right: 1px solid #45484b;
+    margin-right: 0.25rem;
+  }
+
   .mm-secteur summary {
     cursor: pointer;
     list-style: none;
@@ -238,6 +247,21 @@ const autresSecteurs = [...groupes.entries()].filter(([s]) => s !== site.secteur
 
     .mm-secteur-seul {
       display: none;
+    }
+
+    .mm-barre .mm-retour {
+      margin-right: 0;
+      padding-inline: 0.4rem;
+    }
+
+    /* « Retour » seul à l'écran ; le nom reste lu par les lecteurs d'écran. */
+    .mm-retour-suite {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
     }
 
     .mm-gammes {

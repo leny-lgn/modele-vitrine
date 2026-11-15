@@ -1,10 +1,10 @@
 ---
-import Base from '../../layouts/Base.astro';
-import PageLegale from '../../components/commun/PageLegale.astro';
-import { tousLesSites } from '../../lib/sites';
-import { telephoneFr } from '../../lib/typo-fr';
-import { contientAVerifier } from '../../lib/texte';
-import type { Site } from '../../lib/schema';
+import Base from '../../../layouts/Base.astro';
+import PageLegale from '../../../components/commun/PageLegale.astro';
+import { tousLesSites } from '../../../lib/sites';
+import { telephoneFr } from '../../../lib/typo-fr';
+import { contientAVerifier } from '../../../lib/texte';
+import type { Site } from '../../../lib/schema';
 
 export function getStaticPaths() {
   return tousLesSites().map((site) => ({ params: { site: site.slug }, props: { site } }));

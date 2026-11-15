@@ -1,0 +1,79 @@
+{
+  "publie": false,
+  "nom": "[À COMPLÉTER] Prénom Nom",
+  "nomCommercial": "[À COMPLÉTER ou vide]",
+  "accroche": "Je crée des sites internet pour les commerçants et artisans de [À COMPLÉTER : ville] et alentours.",
+  "telephone": "[À COMPLÉTER]",
+  "email": "[À COMPLÉTER]",
+  "ville": "[À COMPLÉTER]",
+  "zone": "[À COMPLÉTER] ex. Ville et 30 km autour, rendez-vous sur place",
+  "disponibilites": "[À COMPLÉTER] ex. Du lundi au samedi, réponse dans la journée",
+  "presentation": [
+    "[À COMPLÉTER] 3 à 4 phrases simples : qui tu es, pourquoi tu fais ça, pourquoi local.",
+    "Exemple de ton : Je suis étudiant en informatique à [ville]. Je crée des sites simples, rapides et faits pour être trouvés sur Google. Je viens vous voir, je m'occupe de tout, et le site vous appartient."
+  ],
+  "photo": "",
+  "mentionsLegales": {
+    "statut": "Entrepreneur individuel (EI)",
+    "adresse": "[À COMPLÉTER]",
+    "siret": "[À COMPLÉTER]",
+    "tva": "TVA non applicable, art. 293 B du CGI",
+    "hebergeur": "Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, États-Unis [À COMPLÉTER : vérifier sur cloudflare.com]"
+  },
+  "gammes": [
+    {
+      "id": "essentiel",
+      "nom": "Essentiel",
+      "pourQui": "Être trouvé et appelé facilement",
+      "prix": "[À COMPLÉTER]",
+      "pages": "1 page",
+      "delai": "1 semaine",
+      "inclus": ["Adapté au téléphone", "Bouton Appeler, horaires, carte", "Mentions légales et confidentialité", "Référencement Google de base", "2 allers-retours de modifications"]
+    },
+    {
+      "id": "vitrine",
+      "nom": "Vitrine",
+      "pourQui": "Se démarquer de la concurrence",
+      "prix": "[À COMPLÉTER]",
+      "pages": "4 à 5 pages",
+      "delai": "2 à 3 semaines",
+      "inclus": ["Tout l'Essentiel", "Tarifs, réalisations avant/après, avis", "Indicateur « ouvert maintenant »", "2 allers-retours de modifications"]
+    },
+    {
+      "id": "premium",
+      "nom": "Premium",
+      "pourQui": "Une image haut de gamme et mémorable",
+      "prix": "[À COMPLÉTER]",
+      "pages": "5 à 7 pages + réalisations",
+      "delai": "3 à 4 semaines",
+      "inclus": ["Tout le Vitrine", "Mise en page sur mesure", "Formulaire de demande de devis", "Pages de chantiers détaillées", "3 allers-retours de modifications"]
+    }
+  ],
+  "abonnement": {
+    "prix": "[À COMPLÉTER]",
+    "inclus": ["Hébergement et nom de domaine", "Certificat de sécurité et sauvegardes", "Mises à jour techniques", "Petites modifications : [À COMPLÉTER] par mois"],
+    "conditions": "Sans engagement, résiliable avec un mois de préavis. Le site et le nom de domaine restent à vous."
+  },
+  "options": [
+    { "nom": "Séance photo sur place", "prix": "[À COMPLÉTER]" },
+    { "nom": "Rédaction complète des textes", "prix": "[À COMPLÉTER]" },
+    { "nom": "Page supplémentaire", "prix": "[À COMPLÉTER]" },
+    { "nom": "Modifications hors abonnement", "prix": "[À COMPLÉTER] € de l'heure" }
+  ],
+  "etapes": [
+    { "titre": "On se rencontre", "texte": "Je passe vous voir, 20 minutes, pour comprendre votre activité." },
+    { "titre": "Devis", "texte": "Vous recevez un devis clair le jour même. Acompte de [À COMPLÉTER] % à la signature." },
+    { "titre": "Contenus", "texte": "Vous me donnez photos et informations, ou je m'en occupe en option." },
+    { "titre": "Première version", "texte": "Vous la voyez en ligne et demandez vos modifications." },
+    { "titre": "Mise en ligne", "texte": "Le site est publié, relié à votre fiche Google, et il vous appartient." }
+  ],
+  "faq": [
+    { "q": "Combien de temps pour avoir mon site ?", "r": "[À COMPLÉTER]" },
+    { "q": "Est-ce que le site m'appartient ?", "r": "Oui. Après paiement, le site et le nom de domaine sont à votre nom." },
+    { "q": "Que comprend l'abonnement, et puis-je l'arrêter ?", "r": "[À COMPLÉTER]" },
+    { "q": "Je n'ai ni photos ni textes, comment on fait ?", "r": "[À COMPLÉTER]" },
+    { "q": "J'ai déjà une page Facebook, à quoi sert un site ?", "r": "[À COMPLÉTER]" },
+    { "q": "Pourrai-je modifier mes horaires ou mes tarifs ?", "r": "[À COMPLÉTER]" }
+  ],
+  "realisations": []
+}

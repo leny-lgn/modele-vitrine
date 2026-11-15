@@ -28,3 +28,6 @@ pnpm-debug.log*
 
 # variantes d’images générées au build (srcset)
 public/images/*/_variantes/
+
+# état local de wrangler dev
+.wrangler/

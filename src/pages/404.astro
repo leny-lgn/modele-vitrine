@@ -1,6 +1,6 @@
 ---
 import Neutre from '../layouts/Neutre.astro';
-import { LIEN_GRILLE } from '../lib/liens';
+import { LIEN_ACCUEIL, LIEN_GRILLE } from '../lib/liens';
 ---
 
 <Neutre titre="Page introuvable">
@@ -8,7 +8,10 @@ import { LIEN_GRILLE } from '../lib/liens';
     <p class="code chiffres">404</p>
     <h1>Cette page n’existe pas</h1>
     <p>L’adresse est peut-être mal saisie, ou la page a été déplacée.</p>
-    <p><a href={LIEN_GRILLE}>Revenir à la liste des modèles</a></p>
+    <p class="liens">
+      <a href={LIEN_ACCUEIL}>Revenir à l’accueil</a>
+      <a href={LIEN_GRILLE}>Voir les modèles</a>
+    </p>
   </div>
 </Neutre>
 
@@ -24,6 +27,12 @@ import { LIEN_GRILLE } from '../lib/liens';
 
   h1 {
     font-size: clamp(1.75rem, 5vw, 2.5rem);
+  }
+
+  .liens {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.5rem;
   }
 
   a {

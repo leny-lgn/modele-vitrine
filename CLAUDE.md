@@ -25,9 +25,14 @@ Premier secteur : **plombier** (brief : `docs/briefs/plombier.md`).
 - `src/components/commun/` : Appeler, Horaires, Disponibilite, Carte, PiedDePage, SEO.
 - `src/components/vitrine/` et `src/components/premium/` : composants propres à une gamme.
 - `src/components/demo/` : MenuModeles, BandeauDemo, CadreImage. Jamais rendus si `demo: false`.
-- `src/pages/[site]/` : pages de chaque site (index, pages internes selon la gamme,
-  mentions-legales, confidentialite). Liens internes toujours relatifs au site.
-- `src/pages/index.astro` : grille de tous les modèles, groupés par secteur (démo uniquement).
+- `src/pages/modeles/[site]/` : pages de chaque modèle, servies sous `/modeles/<slug>/`
+  (index, pages internes selon la gamme, mentions-legales, confidentialite).
+  Toutes les URL internes passent par `src/lib/liens.ts`, jamais écrites à la main.
+- `src/pages/modeles/index.astro` : grille de tous les modèles, groupés par secteur.
+- `src/pages/index.astro` (et pages perso à venir) : site personnel, données dans
+  `src/data/moi.json`, brief `docs/briefs/accueil.md`.
+- `dist/_redirects` : généré à chaque build par `scripts/redirections.mjs` (301 depuis
+  les anciennes adresses `/<slug>/`). Adresse publique : `site` dans `astro.config.mjs`.
 - `public/images/<slug>/`, `public/models/<slug>/` (fichiers .glb), `public/fonts/`.
 
 ## Les trois gammes
