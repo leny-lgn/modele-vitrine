@@ -9,15 +9,14 @@ import Apercus from '../components/perso/Apercus.astro';
 import Etapes from '../components/perso/Etapes.astro';
 import QuiJeSuis from '../components/perso/QuiJeSuis.astro';
 import Faq from '../components/perso/Faq.astro';
-import Coordonnees from '../components/perso/Coordonnees.astro';
+import Offres from '../components/perso/Offres.astro';
 import T from '../components/perso/T.astro';
-import { MOI, NOM, aCompleter, prixFr, prixPlancher, villesFr } from '../lib/moi';
-import { telephoneFr, telHref, typoFr } from '../lib/typo-fr';
+import { MOI, NOM, aCompleter, prixPlancher, villesFr } from '../lib/moi';
+import { typoFr } from '../lib/typo-fr';
 import { LIEN_GRILLE, LIEN_TARIFS } from '../lib/liens';
 
 const description = MOI.accroche;
-const telConnu = !aCompleter(MOI.telephone);
-const tel = telConnu ? telephoneFr(MOI.telephone) : MOI.telephone;
+const email = aCompleter(MOI.email) ? undefined : MOI.email;
 const autreMetier = typoFr(
   'Votre métier n’est pas encore dans les modèles ? Le site se construit de la même façon : appelez-moi pour en parler.',
 );
@@ -39,13 +38,14 @@ const autreMetier = typoFr(
       </div>
       <div class="ap-contact">
         {
-          telConnu ? (
-            <a class="ap-tel mono" href={telHref(MOI.telephone)} aria-label={`Appeler le ${tel}`}>
-              {tel}
+          email ? (
+            <a class="ap-email" href={`mailto:${email}`}>
+              {email.split('@')[0]}
+              <wbr />@{email.split('@')[1]}
             </a>
           ) : (
-            <p class="ap-tel mono">
-              <T texte={tel} />
+            <p class="ap-email">
+              <T texte={MOI.email} />
             </p>
           )
         }
@@ -82,31 +82,7 @@ const autreMetier = typoFr(
   <section id="tarifs" class="section bande bande-bois" aria-labelledby="titre-tarifs">
     <div class="page page-large">
     <h2 id="titre-tarifs" class="titre-section">Tarifs</h2>
-    <div class="tarifs-grille">
-    <ul class="points tarifs-courts">
-      {
-        MOI.gammes.map((g) => (
-          <li>
-            <strong class="tc-nom">{g.nom}</strong>
-            <span class="conduite" aria-hidden="true" />
-            <span class="valeur mono">
-              <T texte={prixFr(g.prix)} />
-            </span>
-            <span class="tc-detail">
-              {g.pages}, {g.delai}
-            </span>
-          </li>
-        ))
-      }
-      <li>
-        <strong class="tc-nom">Abonnement</strong>
-        <span class="conduite" aria-hidden="true" />
-        <span class="valeur">
-          <span class="mono"><T texte={prixFr(MOI.abonnement.prix)} /></span> par mois
-        </span>
-        <span class="tc-detail">hébergement et entretien, sans engagement</span>
-      </li>
-    </ul>
+    <Offres illustre />
     <aside class="tarifs-aide" aria-label="Choisir une gamme">
       <p class="ta-titre">{typoFr('Vous hésitez entre deux gammes ?')}</p>
       <p>
@@ -115,7 +91,6 @@ const autreMetier = typoFr(
       </p>
       <Appeler />
     </aside>
-    </div>
     <p class="suite"><a href={LIEN_TARIFS}>Ce que comprend chaque gamme, options et conditions</a></p>
     </div>
   </section>
@@ -154,12 +129,6 @@ const autreMetier = typoFr(
     <Faq />
   </section>
 
-  <section id="contact" class="section bande bande-sombre" aria-labelledby="titre-contact">
-    <div class="page page-large">
-      <h2 id="titre-contact" class="titre-section">Contact</h2>
-      <Coordonnees />
-    </div>
-  </section>
 </Perso>
 
 <style>
@@ -210,11 +179,14 @@ const autreMetier = typoFr(
     line-height: 1.4;
   }
 
-  .ap-tel {
-    font-size: clamp(1.5rem, 3vw, 2rem);
-    font-weight: 600;
-    line-height: 1.1;
-    white-space: nowrap;
+  /* L'adresse e-mail au premier plan (le numéro est dans le bouton Appeler, à côté).
+     Taille calée pour que l'adresse tienne sur une ligne à 375 px. */
+  .ap-email {
+    font-size: clamp(1.25rem, 5.4vw, 1.875rem);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    hyphens: none;
   }
 
   .ap-prix {
@@ -241,7 +213,7 @@ const autreMetier = typoFr(
     color: var(--encre-2);
   }
 
-  a.ap-tel {
+  a.ap-email {
     display: inline-block;
     color: inherit;
     text-decoration: none;
@@ -253,15 +225,9 @@ const autreMetier = typoFr(
     max-width: 40rem;
   }
 
-  .tarifs-grille {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 2.5rem;
-    margin-top: 1.5rem;
-  }
-
   .tarifs-aide {
-    align-self: start;
+    max-width: 44rem;
+    margin-top: 2rem;
     padding: 1.25rem;
     border: 3px solid var(--encre);
   }
@@ -278,51 +244,6 @@ const autreMetier = typoFr(
     font-size: 1.375rem;
     font-weight: 800;
     line-height: 1.2;
-  }
-
-  @media (min-width: 60rem) {
-    .tarifs-grille {
-      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-      gap: 4rem;
-    }
-  }
-
-  /* Tarifs de l'accueil : une liste d'annuaire, le détail est sur /tarifs/. */
-  .tarifs-courts {
-    max-width: 48rem;
-    border-top: 1px solid var(--encre);
-  }
-
-  /* Ligne d'annuaire « Nom ······ prix », le détail dessous sur toute la largeur. */
-  .tarifs-courts > li {
-    display: grid;
-    grid-template-columns: auto minmax(1.5rem, 1fr) auto;
-    column-gap: 0.4rem;
-    align-items: baseline;
-    padding-block: 0.75rem;
-    border-bottom: 1px solid var(--encre);
-  }
-
-  .tc-nom {
-    font-size: 1.25rem;
-    font-weight: 800;
-    hyphens: manual;
-  }
-
-  .tc-detail {
-    grid-column: 1 / -1;
-    color: var(--encre-2);
-    font-size: 0.9375rem;
-  }
-
-  /* « 690 € » ne se coupe pas (espace insécable) ; « par mois » peut passer à la ligne. */
-  .tarifs-courts .valeur {
-    text-align: right;
-  }
-
-  .tarifs-courts .mono {
-    font-size: 1.25rem;
-    font-weight: 600;
   }
 
   .suite {
@@ -344,15 +265,6 @@ const autreMetier = typoFr(
   @media (max-width: 29.99rem) {
     .ap-actions > :global(*) {
       flex: 1 1 100%;
-    }
-  }
-
-  /* Sous 48rem, la barre « Appeler » fixe est toujours visible : le bouton du haut ferait doublon.
-     Tant que le numéro manque, on le garde (il mène à la page Contact). */
-  @media (max-width: 47.99rem) {
-    .ap-actions :global(.ap-appeler[href^='tel:']),
-    .tarifs-aide :global(.appeler[href^='tel:']) {
-      display: none;
     }
   }
 
@@ -425,6 +337,11 @@ const autreMetier = typoFr(
       padding: 1.5rem 2rem 2rem;
       border-left: 0;
       border-top: 1px solid var(--encre);
+    }
+
+    /* Colonne étroite à côté des boutons : l'adresse ne passe à la ligne qu'avant « @ ». */
+    .ap-email {
+      font-size: 1.5rem;
     }
 
     .ap-actions {

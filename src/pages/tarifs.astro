@@ -5,7 +5,6 @@ import BandeauPage from '../components/perso/BandeauPage.astro';
 import Offres from '../components/perso/Offres.astro';
 import Etapes from '../components/perso/Etapes.astro';
 import Faq from '../components/perso/Faq.astro';
-import Appeler from '../components/perso/Appeler.astro';
 import { LIEN_GRILLE } from '../lib/liens';
 ---
 
@@ -19,7 +18,7 @@ import { LIEN_GRILLE } from '../lib/liens';
   <div class="suite-page">
 
   <section class="page page-large gammes" aria-label="Gammes, abonnement et options">
-    <Offres complet niveau={2} />
+    <Offres complet illustre niveau={2} />
   </section>
 
   <section class="page page-large section" aria-labelledby="titre-etapes">
@@ -30,7 +29,6 @@ import { LIEN_GRILLE } from '../lib/liens';
   <section class="page page-large section" aria-labelledby="titre-faq">
     <h2 id="titre-faq" class="titre-section">Questions fréquentes</h2>
     <Faq />
-    <div class="action"><Appeler /></div>
   </section>
   </div>
 </Perso>
@@ -38,9 +36,5 @@ import { LIEN_GRILLE } from '../lib/liens';
 <style>
   .gammes {
     padding-top: 2.5rem;
-  }
-
-  .action {
-    margin-top: 2rem;
   }
 </style>

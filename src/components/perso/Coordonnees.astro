@@ -3,16 +3,14 @@
 // Le mode de rendez-vous (sur place, téléphone, visio) n'est pas répété ici : il figure dans l'accroche
 // de l'accueil et dans la première étape, affichée sous la fiche sur la page Contact.
 import { MOI, aCompleter } from '../../lib/moi';
-import { telephoneFr } from '../../lib/typo-fr';
 import Appeler from './Appeler.astro';
 import T from './T.astro';
 
 const email = aCompleter(MOI.email) ? undefined : MOI.email;
-const tel = aCompleter(MOI.telephone) ? MOI.telephone : telephoneFr(MOI.telephone);
 ---
 
 <div class="coord">
-  <p class="co-tel mono"><T texte={tel} /></p>
+  <p class="co-nom"><T texte={MOI.nom} /></p>
   <dl class="points co-faits">
     <div>
       <dt>E-mail</dt>
@@ -42,14 +40,23 @@ const tel = aCompleter(MOI.telephone) ? MOI.telephone : telephoneFr(MOI.telephon
     max-width: 44rem;
   }
 
-  .co-tel {
+  .co-nom {
     font-size: clamp(1.75rem, 7vw, 3rem);
-    font-weight: 600;
+    font-weight: 800;
+    letter-spacing: -0.02em;
     line-height: 1.1;
+    hyphens: none;
   }
 
   .co-faits {
     margin-top: 1rem;
+  }
+
+  /* Valeurs longues (disponibilités) : retour à la ligne entre les mots, jamais au milieu d'un mot,
+     lignes équilibrées. */
+  .co-faits dd {
+    hyphens: none;
+    text-wrap: balance;
   }
 
   .co-actions {

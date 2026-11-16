@@ -1,7 +1,8 @@
 ---
 // Les trois gammes côte à côte (colonnes d'annuaire), l'abonnement et les options.
-// `complet` : ajoute les listes « inclus » détaillées et les options (page Tarifs), une illustration
-// par gamme et, sur mobile, un sélecteur qui montre une gamme à la fois (boutons radio + CSS, sans JS).
+// `complet` : ajoute les options, autres services et conditions de paiement (page Tarifs).
+// `illustre` : une illustration par gamme et, sur mobile, un sélecteur qui montre une gamme à la fois
+// (boutons radio + CSS, sans JS). Accueil et page Tarifs.
 import { MOI, prixFr } from '../../lib/moi';
 import { sitesParSecteur } from '../../lib/sites';
 import { lienSite } from '../../lib/liens';
@@ -12,10 +13,11 @@ import PilePages from './PilePages.astro';
 
 interface Props {
   complet?: boolean;
+  illustre?: boolean;
   /** Niveau du titre de chaque gamme. */
   niveau?: 2 | 3;
 }
-const { complet = false, niveau = 3 } = Astro.props;
+const { complet = false, illustre = false, niveau = 3 } = Astro.props;
 const Titre = `h${niveau}` as 'h2' | 'h3';
 
 // Un modèle d'exemple par gamme : celui du premier secteur qui l'a.
@@ -25,9 +27,9 @@ for (const sites of sitesParSecteur().values()) {
 }
 ---
 
-<div class:list={['offres-bloc', { 'offres-choix': complet }]}>
+<div class:list={['offres-bloc', { 'offres-choix': illustre }]}>
 {
-  complet && (
+  illustre && (
     <fieldset class="of-choix">
       <legend class="visuellement-cache">Gamme affichée</legend>
       {MOI.gammes.map((g, i) => (
@@ -64,7 +66,7 @@ for (const sites of sitesParSecteur().values()) {
                 <T texte={prixFr(g.prix)} />
               </p>
             </div>
-            {complet && <PilePages pages={g.pages} class="of-pile" />}
+            {illustre && <PilePages pages={g.pages} class="of-pile" />}
           </div>
           <dl class="points of-faits">
             <div>
