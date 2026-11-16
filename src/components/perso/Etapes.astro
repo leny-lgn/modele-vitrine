@@ -1,5 +1,7 @@
 ---
-// « Comment ça se passe » : les étapes dans l'ordre (la numérotation porte l'information).
+// Déroulement d'un projet : les étapes dans l'ordre (la numérotation porte l'information).
+// Chaque numéro est relié au suivant par des points de conduite, qui se tracent au défilement
+// (même mécanique que partout ailleurs sur le site perso, voir perso.css).
 import { MOI } from '../../lib/moi';
 import T from './T.astro';
 
@@ -13,8 +15,9 @@ const Titre = `h${Astro.props.niveau ?? 3}` as 'h3' | 'h4';
   {
     MOI.etapes.map((e, i) => (
       <li>
-        <span class="et-num mono" aria-hidden="true">
-          {i + 1}
+        <span class="et-repere" aria-hidden="true">
+          <span class="et-num mono">{i + 1}</span>
+          {i < MOI.etapes.length - 1 && <span class="et-lien" />}
         </span>
         <div>
           <Titre class="et-titre">
@@ -37,47 +40,122 @@ const Titre = `h${Astro.props.niveau ?? 3}` as 'h3' | 'h4';
     list-style: none;
   }
 
+  /* Mobile : numéros en colonne, reliés par un filet pointillé vertical. */
   li {
     display: grid;
-    grid-template-columns: 2.25rem minmax(0, 1fr);
-    gap: 0.75rem;
-    padding-block: 1rem;
-    border-top: 1px solid var(--encre);
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+    gap: 0.9rem;
+  }
+
+  .et-repere {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .et-num {
-    font-size: 1.5rem;
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 2px solid var(--dore);
+    border-radius: 50%;
+    font-size: 1.25rem;
     font-weight: 600;
-    line-height: 1.1;
+    line-height: 1;
     color: var(--dore);
+  }
+
+  .et-lien {
+    flex: 1 1 auto;
+    min-height: 1.25rem;
+    margin-block: 0.35rem;
+    border-bottom: 0;
+    border-left: 2px dotted var(--encre-2);
+  }
+
+  li > div {
+    padding-bottom: 1.5rem;
   }
 
   .et-titre {
     font-size: 1.125rem;
     font-weight: 800;
+    padding-top: 0.55rem;
   }
 
   p {
     margin-top: 0.2rem;
   }
 
+  /* Grand écran : une frise horizontale, chaque numéro relié au suivant. */
   @media (min-width: 60rem) {
     .etapes {
       grid-template-columns: repeat(var(--n, 5), minmax(0, 1fr));
-      border-top: 3px solid var(--encre);
     }
 
     li {
       grid-template-columns: 1fr;
       align-content: start;
-      padding: 1rem 1rem 0 1rem;
-      border-top: 0;
-      border-left: 1px solid var(--encre);
+      gap: 0.75rem;
     }
 
-    li:first-child {
-      padding-left: 0;
+    .et-repere {
+      flex-direction: row;
+    }
+
+    .et-lien {
+      min-height: 0;
+      margin: 0 0.5rem;
       border-left: 0;
+      border-bottom: 2px dotted var(--encre-2);
+    }
+
+    li > div {
+      padding: 0 1.25rem 0 0;
+    }
+
+    .et-titre {
+      padding-top: 0;
+    }
+  }
+
+  /* Tracé au défilement : même courbe et même plage que les points de conduite (perso.css),
+     du haut vers le bas sur mobile, de gauche à droite sur grand écran. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .et-lien {
+        transform-origin: top center;
+        animation: et-trace-v linear both;
+        animation-timeline: view();
+        animation-range: entry 10% cover 30%;
+      }
+
+      @media (min-width: 60rem) {
+        .et-lien {
+          transform-origin: left center;
+          animation-name: et-trace-h;
+        }
+      }
+    }
+  }
+
+  @keyframes et-trace-v {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  @keyframes et-trace-h {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
     }
   }
 </style>

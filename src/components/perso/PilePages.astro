@@ -1,0 +1,99 @@
+---
+// Illustration d'une gamme : une pile de pages, autant de feuilles que de pages au maximum
+// (lu dans `pages` du JSON, ex. « 4 à 5 pages » → 5). La feuille de devant est une maquette
+// au trait : bandeau, titre, bouton doré ; une photo en plus à partir de 4 pages.
+// Décor seul (aria-hidden) : le nombre de pages est déjà écrit dans le texte de l'offre.
+interface Props {
+  pages: string;
+  class?: string;
+}
+const { pages, class: classe } = Astro.props;
+const nombres = (pages.match(/\d+/g) ?? ['1']).map(Number);
+const n = Math.min(Math.max(...nombres, 1), 8);
+
+const L = 72; // largeur d'une feuille
+const H = 96; // hauteur d'une feuille
+const pas = 6; // décalage entre deux feuilles
+const largeur = L + pas * (n - 1) + 4;
+const hauteur = H + pas * (n - 1) + 4;
+// Feuilles du fond vers l'avant : la dernière dessinée est devant, en bas à gauche.
+const feuilles = Array.from({ length: n }, (_, i) => n - 1 - i);
+const photo = n >= 4;
+---
+
+<svg
+  class:list={['pile', classe]}
+  viewBox={`0 0 ${largeur} ${hauteur}`}
+  width={largeur}
+  height={hauteur}
+  aria-hidden="true"
+  focusable="false"
+>
+  {
+    feuilles.map((k) => (
+      <rect
+        class:list={['pile-feuille', { 'pile-devant': k === 0 }]}
+        x={2 + pas * k}
+        y={2 + pas * (n - 1 - k)}
+        width={L}
+        height={H}
+      />
+    ))
+  }
+  <g class="pile-maquette" transform={`translate(2 ${2 + pas * (n - 1)})`}>
+    <line class="pile-trait" x1="8" y1="11" x2="64" y2="11" />
+    <rect class="pile-plein" x="8" y="20" width="40" height="6" />
+    <rect class="pile-plein" x="8" y="30" width="28" height="6" />
+    {
+      photo ? (
+        <rect class="pile-photo" x="8" y="44" width="56" height="26" />
+      ) : (
+        <>
+          <line class="pile-trait" x1="8" y1="48" x2="60" y2="48" />
+          <line class="pile-trait" x1="8" y1="56" x2="52" y2="56" />
+          <line class="pile-trait" x1="8" y1="64" x2="56" y2="64" />
+        </>
+      )
+    }
+    <rect class="pile-bouton" x="8" y="78" width="34" height="9" />
+  </g>
+</svg>
+
+<style>
+  .pile {
+    display: block;
+    height: auto;
+    overflow: visible;
+  }
+
+  .pile-feuille {
+    fill: var(--feuille);
+    stroke: var(--encre-2);
+    stroke-width: 1.5;
+  }
+
+  .pile-devant {
+    stroke: var(--encre);
+    stroke-width: 2;
+  }
+
+  .pile-trait {
+    stroke: var(--encre-2);
+    stroke-width: 2;
+    stroke-dasharray: 2 3;
+  }
+
+  .pile-plein {
+    fill: var(--encre);
+  }
+
+  .pile-photo {
+    fill: var(--filet-doux);
+    stroke: var(--encre-2);
+    stroke-width: 1;
+  }
+
+  .pile-bouton {
+    fill: var(--dore);
+  }
+</style>

@@ -364,7 +364,7 @@ mark.a-completer {
    quand il entre à l'écran. Liée au défilement, courbe ease-out marquée ; un bloc déjà visible
    au chargement est simplement là. Sans support ou « réduire les animations » : rien ne bouge.
    Jamais sur un élément placé dans des colonnes CSS (columns) : dans Chrome, son déplacement
-   modifie sa propre progression et il vibre. La FAQ (en colonnes) apparaît donc d'un bloc. */
+   modifie sa propre progression et il vibre. La FAQ (accordéon) apparaît d'un bloc. */
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
     [data-site='perso'] .titre-section,

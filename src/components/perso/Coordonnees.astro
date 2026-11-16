@@ -1,5 +1,7 @@
 ---
 // Coordonnées : la même annonce encadrée qu'en tête de l'accueil, pour conclure.
+// Le mode de rendez-vous (sur place, téléphone, visio) n'est pas répété ici : il figure dans l'accroche
+// de l'accueil et dans la première étape, affichée sous la fiche sur la page Contact.
 import { MOI, aCompleter } from '../../lib/moi';
 import { telephoneFr } from '../../lib/typo-fr';
 import Appeler from './Appeler.astro';
@@ -17,12 +19,14 @@ const tel = aCompleter(MOI.telephone) ? MOI.telephone : telephoneFr(MOI.telephon
       <dd class="valeur">{email ? <a href={`mailto:${email}`}>{email}</a> : <T texte={MOI.email} />}</dd>
     </div>
     <div>
-      <dt>Villes</dt>
-      <dd class="valeur"><T texte={MOI.villes.join(', ')} /></dd>
+      <dt>Zone</dt>
+      <dd class="valeur"><T texte={MOI.zone} /></dd>
+    </div>
+    <div>
+      <dt>Disponible</dt>
+      <dd class="valeur"><T texte={MOI.disponibilites} /></dd>
     </div>
   </dl>
-  <p class="co-texte"><T texte={MOI.zone} /></p>
-  <p class="co-texte"><T texte={MOI.disponibilites} /></p>
   <div class="co-actions">
     <Appeler />
     {email && <a class="bouton bouton-trait" href={`mailto:${email}`}>Écrire un e-mail</a>}
@@ -46,10 +50,6 @@ const tel = aCompleter(MOI.telephone) ? MOI.telephone : telephoneFr(MOI.telephon
 
   .co-faits {
     margin-top: 1rem;
-  }
-
-  .co-texte {
-    margin-top: 0.6rem;
   }
 
   .co-actions {

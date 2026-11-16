@@ -1,12 +1,14 @@
 ---
 // Les trois gammes côte à côte (colonnes d'annuaire), l'abonnement et les options.
-// `complet` : ajoute les listes « inclus » détaillées et les options (page Tarifs).
+// `complet` : ajoute les listes « inclus » détaillées et les options (page Tarifs), une illustration
+// par gamme et, sur mobile, un sélecteur qui montre une gamme à la fois (boutons radio + CSS, sans JS).
 import { MOI, prixFr } from '../../lib/moi';
 import { sitesParSecteur } from '../../lib/sites';
 import { lienSite } from '../../lib/liens';
 import { infosSecteur } from '../../lib/secteurs';
 import type { Site } from '../../lib/schema';
 import T from './T.astro';
+import PilePages from './PilePages.astro';
 
 interface Props {
   complet?: boolean;
@@ -23,19 +25,47 @@ for (const sites of sitesParSecteur().values()) {
 }
 ---
 
+<div class:list={['offres-bloc', { 'offres-choix': complet }]}>
+{
+  complet && (
+    <fieldset class="of-choix">
+      <legend class="visuellement-cache">Gamme affichée</legend>
+      {MOI.gammes.map((g, i) => (
+        <label class="of-onglet">
+          <input
+            class="visuellement-cache"
+            type="radio"
+            name="of-gamme"
+            value={g.id}
+            checked={i === Math.min(1, MOI.gammes.length - 1)}
+          />
+          <span class="of-o-nom">{g.nom}</span>
+          <span class="of-o-prix mono">
+            <T texte={prixFr(g.prix)} />
+          </span>
+        </label>
+      ))}
+    </fieldset>
+  )
+}
 <div class="offres">
   {
     MOI.gammes.map((g) => {
       const exemple = exemples.get(g.id);
       return (
-        <article class:list={['offre', `offre-${g.id}`]}>
-          <Titre class="of-nom">{g.nom}</Titre>
-          <p class="of-pourqui">
-            <T texte={g.pourQui} />
-          </p>
-          <p class="of-prix mono">
-            <T texte={prixFr(g.prix)} />
-          </p>
+        <article class:list={['offre', `offre-${g.id}`]} data-gamme={g.id}>
+          <div class="of-tete">
+            <div>
+              <Titre class="of-nom">{g.nom}</Titre>
+              <p class="of-pourqui">
+                <T texte={g.pourQui} />
+              </p>
+              <p class="of-prix mono">
+                <T texte={prixFr(g.prix)} />
+              </p>
+            </div>
+            {complet && <PilePages pages={g.pages} class="of-pile" />}
+          </div>
           <dl class="points of-faits">
             <div>
               <dt>Pages</dt>
@@ -63,6 +93,7 @@ for (const sites of sitesParSecteur().values()) {
       );
     })
   }
+</div>
 </div>
 <p class="of-note"><T texte={MOI.noteDelais} /></p>
 
@@ -152,6 +183,99 @@ for (const sites of sitesParSecteur().values()) {
   .offre {
     padding-block: 1.25rem 1.5rem;
     border-top: 1px solid var(--encre);
+  }
+
+  .of-tete {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+  }
+
+  .of-tete :global(.of-pile) {
+    flex: none;
+    width: 4.5rem;
+  }
+
+  /* Sélecteur de gamme (page Tarifs, mobile) : mêmes onglets que « Taille du site » de l'accueil. */
+  .of-choix {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    min-width: 0;
+    margin: 2rem 0 0;
+    padding: 0;
+    border: 2px solid var(--encre);
+  }
+
+  .of-onglet {
+    display: grid;
+    align-content: center;
+    gap: 0.1rem;
+    min-height: 3.5rem;
+    padding: 0.45rem 0.6rem;
+    cursor: pointer;
+    background: var(--feuille);
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      transform 120ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .of-onglet + .of-onglet {
+    border-left: 1px solid var(--encre);
+  }
+
+  .of-onglet:active {
+    transform: scale(0.97);
+  }
+
+  .of-o-nom {
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .of-o-prix {
+    font-size: 0.875rem;
+    line-height: 1.2;
+  }
+
+  .of-onglet:has(input:checked) {
+    background: var(--dore);
+    color: var(--sur-dore);
+  }
+
+  .of-onglet:has(input:focus-visible) {
+    outline: 3px solid var(--dore);
+    outline-offset: 3px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .of-onglet:not(:has(input:checked)):hover {
+      background: rgb(201 164 76 / 0.14);
+    }
+  }
+
+  /* Une gamme à la fois sous 60 rem ; sans :has(), les trois restent affichées. */
+  @media (max-width: 59.99rem) {
+    .offres-choix .offres {
+      margin-top: 0;
+    }
+
+    .offres-choix .offre {
+      border-top: 0;
+    }
+
+    .offres-choix:has(input[value='essentiel']:checked) .offre:not(.offre-essentiel),
+    .offres-choix:has(input[value='vitrine']:checked) .offre:not(.offre-vitrine),
+    .offres-choix:has(input[value='premium']:checked) .offre:not(.offre-premium) {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .of-onglet:active {
+      transform: none;
+    }
   }
 
   .of-nom {
@@ -288,6 +412,10 @@ for (const sites of sitesParSecteur().values()) {
 
   /* Trois colonnes seulement quand les listes y tiennent sans coupures à chaque ligne. */
   @media (min-width: 60rem) {
+    .of-choix {
+      display: none;
+    }
+
     .offres {
       grid-template-columns: repeat(3, minmax(0, 1fr));
       border-top: 1px solid var(--encre);
