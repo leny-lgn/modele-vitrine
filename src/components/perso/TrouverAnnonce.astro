@@ -445,9 +445,11 @@ function nbPages(site: Site): string {
     gap: 0.4rem;
   }
 
+  /* Le numéro et « (n° fictif) » sont insécables chacun : sur une colonne étroite (Essentiel
+     sur mobile), la mention passe à la ligne au lieu de déborder sur la capture. */
   .tr-tel {
+    min-width: 0;
     font-size: 0.9375rem;
-    white-space: nowrap;
   }
 
   .tr-fictif,

@@ -67,7 +67,7 @@ const groupes = site.services.map((g) => ({ ...g, id: ancre(g.groupe) }));
 
   <section class="section-v" aria-labelledby="titre-suite">
     <div class="page-v">
-      <TitreSection id="titre-suite">Combien ça coûte ?</TitreSection>
+      <TitreSection id="titre-suite">Quel prix prévoir ?</TitreSection>
       {site.tarifs?.mention && <p class="suite-texte">{site.tarifs.mention}</p>}
       <p class="suite-liens">
         {site.pages.includes('tarifs') && <a class="lien-v" href={lienSite(site, 'tarifs')}>Voir les tarifs</a>}

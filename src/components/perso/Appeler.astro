@@ -1,5 +1,5 @@
 ---
-// Bouton « Appeler le … » du site personnel. Variante « barre » : fixée en bas d'écran sur mobile.
+// Bouton « Appeler le … » du site personnel.
 // Tant que le numéro n'est pas renseigné, le bouton mène à la page Contact et le signale.
 import { MOI, aCompleter } from '../../lib/moi';
 import { telephoneFr, telHref } from '../../lib/typo-fr';
@@ -7,28 +7,17 @@ import { LIEN_CONTACT } from '../../lib/liens';
 import T from './T.astro';
 
 interface Props {
-  variante?: 'bouton' | 'barre';
   class?: string;
 }
-const { variante = 'bouton', class: classe } = Astro.props;
+const { class: classe } = Astro.props;
 const manquant = aCompleter(MOI.telephone);
 const href = manquant ? LIEN_CONTACT : telHref(MOI.telephone);
 const numero = manquant ? MOI.telephone : telephoneFr(MOI.telephone);
 ---
 
-{
-  variante === 'barre' ? (
-    <div class="appeler-barre">
-      <a class="bouton bouton-plein appeler" href={href}>
-        <span class="appeler-libelle">Appeler le&nbsp;<span class="mono"><T texte={numero} /></span></span>
-      </a>
-    </div>
-  ) : (
-    <a class:list={['bouton bouton-plein appeler', classe]} href={href}>
-      <span class="appeler-libelle">Appeler le&nbsp;<span class="mono"><T texte={numero} /></span></span>
-    </a>
-  )
-}
+<a class:list={['bouton bouton-plein appeler', classe]} href={href}>
+  <span class="appeler-libelle">Appeler le&nbsp;<span class="mono"><T texte={numero} /></span></span>
+</a>
 
 <style>
   .appeler {
@@ -44,37 +33,5 @@ const numero = manquant ? MOI.telephone : telephoneFr(MOI.telephone);
   .appeler .mono {
     font-weight: 600;
     vertical-align: baseline;
-  }
-
-  .appeler-barre {
-    position: fixed;
-    inset-inline: 0;
-    bottom: 0;
-    z-index: 60;
-    padding-bottom: var(--bas-securite);
-    /* Même habillage que le menu du haut : bois foncé, ligne noire, texte ivoire (7,5:1). */
-    border-top: 2px solid #000000;
-    background: var(--bois);
-  }
-
-  .appeler-barre .appeler {
-    display: flex;
-    width: 100%;
-    min-height: 3.5rem;
-    border: 0;
-    background: var(--bois);
-    color: var(--ivoire);
-  }
-
-  .appeler-barre .appeler:hover,
-  .appeler-barre .appeler:active {
-    background: var(--bois);
-    color: var(--dore-vif);
-  }
-
-  @media (min-width: 48rem) {
-    .appeler-barre {
-      display: none;
-    }
   }
 </style>

@@ -34,7 +34,7 @@
   "disponibilites": "7/7, réponse dans la journée (le plus souvent après 18h en semaine)",
   "presentation": [
     "Je suis étudiant à Lannion et alternant à Brest. Je crée des sites internet pour les commerçants et artisans de la région : simples, rapides et faits pour être trouvés sur Google.",
-    "Je m'occupe de tout, des textes à la mise en ligne, et le site vous appartient. Quand c'est possible, je viens vous voir ; sinon, on se parle au téléphone ou en visio."
+    "Je m'occupe de tout, des textes à la mise en ligne, et le site vous appartient. Quand c'est possible, je viens vous rencontrer ; sinon, nous échangeons par téléphone ou en visio."
   ],
   "photo": "",
   "mentionsLegales": {
@@ -162,7 +162,7 @@
   ],
   "etapes": [
     {
-      "titre": "On fait connaissance",
+      "titre": "Premier échange",
       "texte": "20 minutes pour comprendre votre activité : sur place quand c'est possible, sinon au téléphone ou en visio."
     },
     {
@@ -200,12 +200,12 @@
       "r": "L'hébergement, le nom de domaine, la sécurité, les sauvegardes et jusqu'à 30 minutes de petites modifications par mois. Il est sans engagement : vous pouvez l'arrêter avec un mois de préavis, je vous remets alors les fichiers et vous aide à transférer le nom de domaine."
     },
     {
-      "q": "Je n'ai ni photos ni textes, comment on fait ?",
+      "q": "Je n'ai ni photos ni textes, que faire ?",
       "r": "Je peux faire les photos (séance sur place, si je peux venir) et écrire les textes après un entretien avec vous, sur place, au téléphone ou en visio. Ce sont deux options, indiquées dans le devis."
     },
     {
       "q": "J'ai déjà une page Facebook, à quoi sert un site ?",
-      "r": "Votre page Facebook reste utile. Le site, lui, vous appartient, se consulte sans compte Facebook et apparaît sur Google quand on cherche votre métier dans votre ville."
+      "r": "Votre page Facebook reste utile. Le site, lui, vous appartient, se consulte sans compte Facebook et apparaît sur Google quand un client cherche votre métier dans votre ville."
     },
     {
       "q": "Pourrai-je modifier mes horaires ou mes tarifs ?",

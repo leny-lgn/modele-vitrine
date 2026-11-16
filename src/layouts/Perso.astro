@@ -5,7 +5,6 @@ import '../styles/base.css';
 import '../styles/perso.css';
 import EnTete from '../components/perso/EnTete.astro';
 import PiedPerso from '../components/perso/PiedPerso.astro';
-import Appeler from '../components/perso/Appeler.astro';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { MOI, NOM, PUBLIE, aCompleter, urlLogo } from '../lib/moi';
@@ -127,7 +126,6 @@ const jsonLd = estAccueil
       <slot />
     </main>
     <PiedPerso />
-    <Appeler variante="barre" />
   </body>
 </html>
 

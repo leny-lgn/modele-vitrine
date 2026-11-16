@@ -153,10 +153,11 @@ function nbPages(site: Site): string {
     transform: translateY(-0.3em);
   }
 
-  /* Numéro de l'entreprise fictive : en texte courant, jamais dans la police réservée au vrai numéro. */
+  /* Numéro de l'entreprise fictive : en texte courant, jamais dans la police réservée au vrai numéro.
+     Numéro et « (n° fictif) » insécables chacun : la mention passe à la ligne plutôt que déborder sur la capture. */
   .an-tel {
+    min-width: 0;
     font-size: 0.9375rem;
-    white-space: nowrap;
   }
 
   .an-fictif {
