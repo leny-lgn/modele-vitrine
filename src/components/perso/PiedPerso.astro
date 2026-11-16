@@ -122,19 +122,8 @@ const surContact = Astro.url.pathname.replace(/\/?$/, '/') === LIEN_CONTACT;
   }
 
   /* L'adresse e-mail au premier plan, le numéro dessous en lien simple. */
-  /* Même habillage que le numéro auparavant : police des chiffres, 600, sur une ligne.
-     Taille plafonnée par la largeur d'écran pour que l'adresse tienne à 375 px. */
-  .pd-email {
-    display: inline-flex;
-    align-items: center;
-    min-height: 2.75rem;
-    font-size: clamp(1.125rem, 6.4vw, 2.25rem);
-    font-weight: 600;
-    line-height: 1.1;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-
+  /* E-mail et numéro : même lien, même police (chiffres), même taille, soulignés. */
+  .pd-email,
   .pd-tel {
     display: inline-flex;
     align-items: center;
