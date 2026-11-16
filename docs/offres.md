@@ -15,7 +15,7 @@ Prix en euros, TVA non applicable (art. 293 B du CGI) : ce sont les prix finaux 
 
 ## Positionnement
 Je crée des sites vitrines simples, rapides et faits pour être trouvés sur Google, pour
-les commerçants et artisans de [VILLE] et alentours. Je me déplace, je m'occupe de tout,
+les commerçants et artisans de [VILLE] et alentours. Je viens sur place quand c'est possible (sinon téléphone ou visio), je m'occupe de tout,
 et le site appartient au client. Pas d'engagement de longue durée.
 
 ## 1. Création du site (paiement unique)
@@ -64,6 +64,7 @@ Variante possible : paiement annuel avec un mois offert (11 mois payés).
 | Création ou optimisation de la fiche Google | 50 – 100 € | Photos, horaires, catégories, description |
 | Intégration d'un outil de réservation existant (Planity, etc.) | 50 – 150 € | Abonnement à l'outil à la charge du client |
 | Version dans une autre langue | 100 – 200 € par langue | Traduction fournie ou relue par le client |
+| Création de logo (2 propositions, 2 allers-retours, fichiers SVG et PNG, versions claire et foncée) | 120 – 250 € | Prix choisi pour le site : 150 € (début d'activité) |
 | Modifications hors abonnement | 30 – 40 € de l'heure | Sur devis au-delà d'une heure |
 
 ## 4. Autres services à proposer
@@ -94,7 +95,6 @@ Variante possible : paiement annuel avec un mois offert (11 mois payés).
 - Application mobile
 - Gestion des réseaux sociaux au quotidien
 - Publicité payante (Google Ads, Meta)
-- Création de logo complète
 
 Si un client le demande : le dire simplement et, si possible, l'orienter vers quelqu'un d'autre.
 

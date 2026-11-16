@@ -21,12 +21,14 @@ Succès : en 10 secondes sur mobile, on sait qui, quoi, combien, et on peut appe
 
 ## Positioning
 Un étudiant qui crée, à côté de ses études, des sites vitrines pour les commerces de son
-coin : il se déplace, s'occupe de tout, et le site appartient au client. Preuve unique :
+coin : il vient sur place quand c'est possible (sinon téléphone ou visio), s'occupe de tout,
+et le site appartient au client. Preuve unique :
 des modèles complets par métier, en trois gammes, consultables en vrai.
 
 ## Operating Context
-Premier contact par appel, SMS, carte de visite ou Google. Rendez-vous sur place
-(20 minutes), devis le jour même, puis contenus, première version, mise en ligne.
+Premier contact par appel, SMS, carte de visite ou Google. Premier échange de 20 minutes,
+sur place quand c'est possible, sinon au téléphone ou en visio ; devis gratuit valable 30 jours,
+puis contenus, première version, mise en ligne.
 Abonnement mensuel sans engagement pour l'hébergement et les petites modifications.
 
 ## Capabilities and Constraints
@@ -54,4 +56,4 @@ Abonnement mensuel sans engagement pour l'hébergement et les petites modificati
 1. Montrer plutôt que promettre : les modèles sont la preuve.
 2. Le prix et le téléphone ne se cherchent jamais.
 3. Honnêteté totale : étudiant, débutant, entreprises fictives assumées.
-4. Proximité réelle : il vient sur place.
+4. Proximité réelle : il vient sur place quand c'est possible, sinon téléphone ou visio.

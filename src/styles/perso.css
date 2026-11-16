@@ -445,8 +445,9 @@ mark.a-completer {
 
 /* Passage entre Modèles, Tarifs et Contact : seul le bandeau de titre change de taille, en douceur,
    et le contenu dessous glisse avec lui. Tout le reste (menu, pied) change sans animation.
-   240 ms, ease-out marqué : un redimensionnement court qui accompagne le clic, sans attente.
-   Vers ou depuis l'accueil (pas de bandeau d'un des deux côtés) : aucune animation. */
+   170 ms, ease-out marqué : un redimensionnement bref qui accompagne le clic, sans attente.
+   Vers ou depuis l'accueil (pas de bandeau d'un des deux côtés) : la transition est annulée
+   par Perso.astro, la page change d'un coup. */
 @view-transition {
   navigation: auto;
 }
@@ -476,9 +477,14 @@ mark.a-completer {
   animation: none;
 }
 
+::view-transition-group(root),
 ::view-transition-group(bandeau),
-::view-transition-group(suite) {
-  animation-duration: 240ms;
+::view-transition-group(suite),
+::view-transition-old(bandeau),
+::view-transition-new(bandeau),
+::view-transition-old(suite),
+::view-transition-new(suite) {
+  animation-duration: 170ms;
   animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
 }
 

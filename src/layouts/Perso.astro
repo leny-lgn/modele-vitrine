@@ -11,7 +11,7 @@ import { join } from 'node:path';
 import { MOI, NOM, PUBLIE, aCompleter, urlLogo } from '../lib/moi';
 import { RACINE } from '../lib/images.mjs';
 import { telInternational } from '../lib/typo-fr';
-import { LIEN_ACCUEIL, IMAGE_PARTAGE_PERSO } from '../lib/liens';
+import { LIEN_ACCUEIL, LIEN_GRILLE, LIEN_TARIFS, LIEN_CONTACT, IMAGE_PARTAGE_PERSO } from '../lib/liens';
 
 interface Props {
   /** Titre de la page ; absent sur l'accueil. */
@@ -80,6 +80,22 @@ const jsonLd = estAccueil
     }
     {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
     <slot name="tete" />
+    <!-- Redimensionnement du bandeau : seulement entre deux pages qui en ont un (Modèles, Tarifs,
+         Contact). Vers ou depuis l'accueil, la transition est annulée : changement immédiat. -->
+    <script is:inline define:vars={{ pagesBandeau: [LIEN_GRILLE, LIEN_TARIFS, LIEN_CONTACT] }}>
+      window.addEventListener('pagereveal', (e) => {
+        if (!e.viewTransition) return;
+        const avecBandeau = (url) => {
+          try {
+            return pagesBandeau.includes(new URL(url, location.href).pathname);
+          } catch {
+            return false;
+          }
+        };
+        const depart = window.navigation?.activation?.from?.url;
+        if (!depart || !avecBandeau(depart) || !avecBandeau(location.href)) e.viewTransition.skipTransition();
+      });
+    </script>
     <!-- Première page vue de la session : l'accueil peut jouer son animation d'arrivée.
          Ensuite, plus d'animation au retour sur l'accueil (évite le sursaut). -->
     <script is:inline>

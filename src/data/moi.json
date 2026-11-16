@@ -8,7 +8,7 @@
     "favicon": "favicon.svg"
   },
   "accroche": "Je crée des sites internet pour les commerçants et artisans de Lannion, Brest, Nantes et alentours.",
-  "enBref": "Étudiant à Lannion, alternant à Brest. Je viens vous voir, le site est à vous.",
+  "enBref": "Étudiant à Lannion, alternant à Brest. Rendez-vous sur place quand c'est possible, sinon par téléphone ou en visio.",
   "telephone": "0676380169",
   "email": "leny_langon@yahoo.com",
   "metiers": [
@@ -30,11 +30,11 @@
     "Brest",
     "Nantes"
   ],
-  "zone": "[À COMPLÉTER] ex. Ville et 30 km autour, rendez-vous sur place",
-  "disponibilites": "[À COMPLÉTER] ex. Du lundi au samedi, réponse dans la journée",
+  "zone": "Lannion, Brest, Nantes et alentours. Rendez-vous sur place quand c'est possible, sinon par téléphone ou en visio.",
+  "disponibilites": "7/7, réponse dans la journée (le plus souvent après 18h en semaine)",
   "presentation": [
-    "[À COMPLÉTER] 3 à 4 phrases simples : qui tu es, pourquoi tu fais ça, pourquoi local.",
-    "Exemple de ton : Je suis étudiant en informatique à [ville]. Je crée des sites simples, rapides et faits pour être trouvés sur Google. Je viens vous voir, je m'occupe de tout, et le site vous appartient."
+    "Je suis étudiant à Lannion et alternant à Brest. Je crée des sites internet pour les commerçants et artisans de la région : simples, rapides et faits pour être trouvés sur Google.",
+    "Je m'occupe de tout, des textes à la mise en ligne, et le site vous appartient. Quand c'est possible, je viens vous voir ; sinon, on se parle au téléphone ou en visio."
   ],
   "photo": "",
   "mentionsLegales": {
@@ -130,6 +130,10 @@
       "prix": 100
     },
     {
+      "nom": "Création de logo (2 propositions, 2 allers-retours, fichiers web et impression)",
+      "prix": 150
+    },
+    {
       "nom": "Modifications hors abonnement (par heure)",
       "prix": 30
     }
@@ -158,8 +162,8 @@
   ],
   "etapes": [
     {
-      "titre": "On se rencontre",
-      "texte": "Je passe vous voir, 20 minutes, pour comprendre votre activité."
+      "titre": "On fait connaissance",
+      "texte": "20 minutes pour comprendre votre activité : sur place quand c'est possible, sinon au téléphone ou en visio."
     },
     {
       "titre": "Devis",
@@ -197,7 +201,7 @@
     },
     {
       "q": "Je n'ai ni photos ni textes, comment on fait ?",
-      "r": "Je peux venir faire les photos sur place et écrire les textes après un entretien avec vous. Ce sont deux options, indiquées dans le devis."
+      "r": "Je peux faire les photos (séance sur place, si je peux venir) et écrire les textes après un entretien avec vous, sur place, au téléphone ou en visio. Ce sont deux options, indiquées dans le devis."
     },
     {
       "q": "J'ai déjà une page Facebook, à quoi sert un site ?",
@@ -209,7 +213,7 @@
     },
     {
       "q": "Que ne faites-vous pas ?",
-      "r": "Pour l'instant, je ne fais pas de boutique en ligne avec paiement, d'application mobile, de gestion quotidienne des réseaux sociaux, de publicité payante ni de création de logo complète. Si vous en avez besoin, je vous oriente vers quelqu'un d'autre quand c'est possible."
+      "r": "Pour l'instant, je ne fais pas de boutique en ligne avec paiement, d'application mobile, de gestion quotidienne des réseaux sociaux ni de publicité payante. Si vous en avez besoin, je vous oriente vers quelqu'un d'autre quand c'est possible."
     }
   ],
   "realisations": []
