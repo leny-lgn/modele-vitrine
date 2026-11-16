@@ -30,11 +30,11 @@ const surContact = Astro.url.pathname.replace(/\/?$/, '/') === LIEN_CONTACT;
         <p class="pd-titre">Un projet de site&#8239;?</p>
         {
           email ? (
-            <a class="pd-email" href={`mailto:${email}`}>
+            <a class="pd-email mono" href={`mailto:${email}`}>
               {email}
             </a>
           ) : (
-            <p class="pd-email">
+            <p class="pd-email mono">
               <T texte={MOI.email} />
             </p>
           )
@@ -122,17 +122,17 @@ const surContact = Astro.url.pathname.replace(/\/?$/, '/') === LIEN_CONTACT;
   }
 
   /* L'adresse e-mail au premier plan, le numéro dessous en lien simple. */
+  /* Même habillage que le numéro auparavant : police des chiffres, 600, sur une ligne.
+     Taille plafonnée par la largeur d'écran pour que l'adresse tienne à 375 px. */
   .pd-email {
     display: inline-flex;
     align-items: center;
     min-height: 2.75rem;
-    font-size: clamp(1.25rem, 5.4vw, 2.25rem);
-    font-weight: 800;
-    letter-spacing: -0.01em;
+    font-size: clamp(1.125rem, 6.4vw, 2.25rem);
+    font-weight: 600;
     line-height: 1.1;
     text-decoration: none;
-    overflow-wrap: anywhere;
-    hyphens: none;
+    white-space: nowrap;
   }
 
   .pd-tel {

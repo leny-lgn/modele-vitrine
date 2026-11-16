@@ -160,6 +160,23 @@ function nbPages(site: Site): string {
     font-size: 0.9375rem;
   }
 
+  /* Mobile : le numéro passe sous le nom, sur sa propre ligne (points de conduite devant),
+     et « (n° fictif) » toujours à la ligne dessous : même coupure dans les trois annonces,
+     jamais de débordement sur la capture. */
+  @media (max-width: 47.99rem) {
+    .an-suite {
+      flex-basis: 100%;
+    }
+
+    .an-tel {
+      white-space: nowrap;
+    }
+
+    .an-fictif {
+      display: block;
+    }
+  }
+
   .an-fictif {
     color: var(--encre-2);
   }

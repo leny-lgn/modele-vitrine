@@ -1,7 +1,9 @@
 ---
 // « Votre métier, votre taille d'annonce » : une page d'annuaire où l'annonce du modèle
 // grandit selon la gamme choisie (une ligne, un encadré, une pleine annonce).
-// Sans JS : le choix de gamme marche (CSS :has) ; le choix du métier est masqué.
+// À côté de l'annonce : ce que la gamme ajoute à la précédente et les gammes au-dessus
+// (un clic les sélectionne). Seulement la différence : le détail complet reste dans Tarifs.
+// Sans JS : le choix de gamme marche (CSS :has, labels) ; le choix du métier est masqué.
 // Générée depuis src/sites/ et moi.json : chaque nouveau secteur apparaît seul.
 import type { Gamme, Site } from '../../lib/schema';
 import { infosSecteur, LIBELLES_GAMMES } from '../../lib/secteurs';
@@ -10,7 +12,6 @@ import { MOI, gamme, prixFr, villesFr } from '../../lib/moi';
 import { telephoneFr } from '../../lib/typo-fr';
 import { sitesParSecteur } from '../../lib/sites';
 import Capture from './Capture.astro';
-import FondAnnuaire from './FondAnnuaire.astro';
 import T from './T.astro';
 
 const GAMMES_ORDRE = ['essentiel', 'vitrine', 'premium'] as const;
@@ -18,6 +19,21 @@ const secteurs = [...sitesParSecteur().entries()];
 const [secteurDefaut] = secteurs[0];
 const avecModele = new Set(secteurs.map(([s]) => infosSecteur(s).libelle.toLowerCase()));
 const sansModele = MOI.metiers.filter((m) => !avecModele.has(m.toLowerCase()));
+
+// Ce qu'une gamme ajoute aux précédentes : ses points « inclus », sans « Tout l'Essentiel… »
+// ni ce qui figure déjà, mot pour mot, dans une gamme inférieure.
+function ajouts(id: Gamme): string[] {
+  const i = GAMMES_ORDRE.indexOf(id);
+  const dessous = new Set(GAMMES_ORDRE.slice(0, i).flatMap((g) => gamme(g).inclus));
+  return gamme(id).inclus.filter((x) => !/^Tout /.test(x) && !dessous.has(x));
+}
+const precedente = (id: Gamme) => GAMMES_ORDRE[GAMMES_ORDRE.indexOf(id) - 1] as Gamme | undefined;
+const audessus = (id: Gamme) => GAMMES_ORDRE.slice(GAMMES_ORDRE.indexOf(id) + 1) as Gamme[];
+// Gamme la plus haute : on propose les autres, de la plus proche à la plus simple.
+const autres = (id: Gamme) =>
+  audessus(id).length > 0 ? audessus(id) : (GAMMES_ORDRE.filter((g) => g !== id).reverse() as Gamme[]);
+const titreAutres = (id: Gamme) =>
+  audessus(id).length === 0 ? 'Les autres gammes' : audessus(id).length > 1 ? 'Les gammes au-dessus' : 'La gamme au-dessus';
 
 const pluriel = (n: number, mot: string) => `${n} ${mot}${n > 1 ? 's' : ''}`;
 function nbPages(site: Site): string {
@@ -62,9 +78,17 @@ function nbPages(site: Site): string {
         {
           GAMMES_ORDRE.map((g) => (
             <label class="tr-gamme">
-              <input class="visuellement-cache" type="radio" name="tr-gamme" value={g} checked={g === 'vitrine'} />
-              <span class="tr-g-nom">{LIBELLES_GAMMES[g]}</span>
-              <span class="tr-g-prix mono">
+              <input
+                class="visuellement-cache"
+                type="radio"
+                name="tr-gamme"
+                id={`tr-g-${g}`}
+                value={g}
+                checked={g === 'vitrine'}
+                aria-labelledby={`tr-gn-${g} tr-gp-${g}`}
+              />
+              <span class="tr-g-nom" id={`tr-gn-${g}`}>{LIBELLES_GAMMES[g]}</span>
+              <span class="tr-g-prix mono" id={`tr-gp-${g}`}>
                 <T texte={prixFr(gamme(g).prix)} />
               </span>
             </label>
@@ -82,7 +106,6 @@ function nbPages(site: Site): string {
     <p class="tr-note" data-note aria-live="polite" hidden></p>
 
     <div class="tr-feuille">
-      <FondAnnuaire lignes={36} graine={11} />
       {
         secteurs.map(([secteur, sites], i) => (
           <div class="tr-annonces" data-secteur={secteur} hidden={i > 0}>
@@ -92,41 +115,103 @@ function nbPages(site: Site): string {
               const libelle = infosSecteur(secteur).libelle;
               return (
                 <article class:list={['tr-annonce', `tr-${g}`]} data-gamme={g}>
-                  {g === 'premium' && (
-                    <Capture
-                      slug={site.slug}
-                      vue="bureau"
-                      alt={`Page d’accueil du modèle ${libelle} Premium, sur ordinateur`}
-                      sizes="(min-width: 64rem) 640px, 90vw"
-                    />
-                  )}
-                  {g !== 'premium' && (
+                  <div class="tr-carte">
                     <Capture
                       slug={site.slug}
                       vue="bureau"
                       class="tr-capture"
                       alt={`Page d’accueil du modèle ${libelle} ${LIBELLES_GAMMES[g]}, sur ordinateur`}
-                      sizes={g === 'vitrine' ? '(min-width: 48rem) 45vw, 90vw' : '(min-width: 48rem) 24vw, 50vw'}
+                      sizes={
+                        g === 'premium'
+                          ? '(min-width: 64rem) 640px, 90vw'
+                          : g === 'vitrine'
+                            ? '(min-width: 48rem) 45vw, 90vw'
+                            : '(min-width: 48rem) 24vw, 50vw'
+                      }
                     />
-                  )}
-                  <div class="tr-texte">
-                    <p class="tr-ligne">
-                      <strong class="tr-nom">{site.nom}</strong>
-                      <span class="tr-suite">
-                        <span class="conduite" aria-hidden="true" />
-                        <span class="tr-tel">
-                          {telephoneFr(site.telephone)} <span class="tr-fictif">(n°&nbsp;fictif)</span>
+                    <div class="tr-texte">
+                      <p class="tr-ligne">
+                        <strong class="tr-nom">{site.nom}</strong>
+                        <span class="tr-suite">
+                          <span class="conduite" aria-hidden="true" />
+                          <span class="tr-tel">
+                            {telephoneFr(site.telephone)} <span class="tr-fictif">(n°&nbsp;fictif)</span>
+                          </span>
                         </span>
-                      </span>
-                    </p>
-                    {g !== 'essentiel' && <p class="tr-accroche">{site.accroche}</p>}
-                    <p class="tr-details">
-                      {LIBELLES_GAMMES[g]} · {nbPages(site)} · <span class="mono"><T texte={prixFr(gamme(g).prix)} /></span>
-                    </p>
-                    <a class="tr-lien" href={lienSite(site)}>
-                      Ouvrir le modèle {LIBELLES_GAMMES[g]}
-                      <span class="visuellement-cache"> ({libelle}, entreprise fictive)</span>
-                    </a>
+                      </p>
+                      {g !== 'essentiel' && <p class="tr-accroche">{site.accroche}</p>}
+                      <p class="tr-details">
+                        {LIBELLES_GAMMES[g]} · {nbPages(site)} · <span class="mono"><T texte={prixFr(gamme(g).prix)} /></span>
+                      </p>
+                      <a class="tr-lien" href={lienSite(site)}>
+                        Ouvrir le modèle {LIBELLES_GAMMES[g]}
+                        <span class="visuellement-cache"> ({libelle}, entreprise fictive)</span>
+                      </a>
+                    </div>
+                  </div>
+
+                  <div class="tr-plus">
+                    {g !== 'essentiel' && (
+                      <div class="tr-plus-bloc">
+                        <p class="tr-fiche-pourqui">
+                          <T texte={`${gamme(g).pourQui}.`} />
+                        </p>
+                        <dl class="points tr-fiche-faits">
+                          <div>
+                            <dt>Pages</dt>
+                            <dd class="valeur">
+                              <T texte={gamme(g).pages} />
+                            </dd>
+                          </div>
+                          <div>
+                            <dt>Délai</dt>
+                            <dd class="valeur">
+                              <T texte={gamme(g).delai} />
+                            </dd>
+                          </div>
+                        </dl>
+                        <p class="tr-fiche-note">
+                          <T texte={MOI.noteDelais} />
+                        </p>
+                      </div>
+                    )}
+                    {precedente(g) && ajouts(g).length > 0 && (
+                      <div class="tr-plus-bloc">
+                        <p class="tr-plus-titre">
+                          <T texte={`En plus de la gamme ${LIBELLES_GAMMES[precedente(g)!]} :`} />
+                        </p>
+                        <ul class="tr-plus-liste">
+                          {ajouts(g).map((x) => (
+                            <li>
+                              <T texte={x} />
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {autres(g).length > 0 && (
+                      <div class="tr-plus-bloc">
+                        <p class="tr-plus-titre">{titreAutres(g)}</p>
+                        <ul class="tr-options">
+                          {autres(g).map((h) => (
+                            <li>
+                              <label class="tr-option" for={`tr-g-${h}`}>
+                                <span class="tr-o-tete">
+                                  <span class="tr-o-nom">{LIBELLES_GAMMES[h]}</span>
+                                  <span class="conduite" aria-hidden="true" />
+                                  <span class="mono">
+                                    <T texte={prixFr(gamme(h).prix)} />
+                                  </span>
+                                </span>
+                                <span class="tr-o-detail">
+                                  <T texte={audessus(g).includes(h) ? ajouts(h).join(' · ') : gamme(h).pourQui} />
+                                </span>
+                              </label>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 </article>
               );
@@ -310,21 +395,10 @@ function nbPages(site: Site): string {
     display: none;
   }
 
-  .tr-feuille {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-  }
-
-  .tr-feuille > :global(.fond-annuaire) {
-    z-index: -1;
-  }
-
-  /* Les trois annonces occupent la même place : la feuille garde la hauteur de la plus grande. */
-  /* Marge du bas : quelques lignes d'annuaire restent visibles, même sous la pleine annonce. */
+  /* Une seule annonce affichée : la feuille prend sa hauteur. Fond uni, sans lignes d'annuaire. */
   .tr-annonces {
     display: grid;
-    padding: 1rem 1rem 4.5rem;
+    padding: 1rem;
   }
 
   .tr-annonces[hidden] {
@@ -332,41 +406,39 @@ function nbPages(site: Site): string {
   }
 
   .tr-annonce {
-    grid-area: 1 / 1;
-    align-self: start;
-    position: relative;
-    background: var(--feuille);
-    /* Sortie : rapide */
-    opacity: 0;
-    visibility: hidden;
-    transform: scale(0.98);
-    filter: blur(2px);
-    transform-origin: top left;
-    transition:
-      opacity 120ms ease-out,
-      transform 120ms ease-out,
-      filter 120ms ease-out,
-      border-color 150ms ease,
-      visibility 0s linear 120ms;
+    display: none;
   }
 
-  /* Entrée : 220 ms, ease-out marqué */
+  /* Changement de gamme : l'annonce choisie entre en 220 ms, ease-out marqué (légère mise au
+     point : fondu, 98 % → 100 %, flou de 2 px). L'ancienne disparaît aussitôt : rien à regarder. */
   .trouver:has(input[value='essentiel']:checked) .tr-essentiel,
   .trouver:has(input[value='vitrine']:checked) .tr-vitrine,
   .trouver:has(input[value='premium']:checked) .tr-premium {
-    opacity: 1;
-    visibility: visible;
-    transform: none;
-    filter: none;
+    display: grid;
+    gap: 1rem;
+    align-items: start;
+    animation: tr-entree 220ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  @keyframes tr-entree {
+    from {
+      opacity: 0;
+      transform: scale(0.98);
+      filter: blur(2px);
+    }
+  }
+
+  .tr-carte {
+    position: relative;
+    background: var(--feuille);
+    transform-origin: top left;
     transition:
-      opacity 220ms cubic-bezier(0.23, 1, 0.32, 1),
-      transform 220ms cubic-bezier(0.23, 1, 0.32, 1),
-      filter 220ms cubic-bezier(0.23, 1, 0.32, 1),
-      visibility 0s;
+      background-color 150ms ease,
+      border-color 150ms ease;
   }
 
   /* Survol de l'annonce : léger éclaircissement, cadre doré */
-  .tr-annonce:has(.tr-lien:hover) {
+  .tr-carte:has(.tr-lien:hover) {
     background: rgb(239 232 216 / 0.06);
     border-color: var(--dore);
   }
@@ -378,8 +450,8 @@ function nbPages(site: Site): string {
   }
 
   /* Les captures ordinateur sont lisibles : la taille croît avec la gamme
-     (Essentiel : vignette ; Vitrine : largeur de l'annonce ; Premium : toute la page). */
-  .tr-annonce :global(.capture) {
+     (Essentiel : vignette ; Vitrine : largeur de l'annonce ; Premium : plus large encore). */
+  .tr-carte :global(.capture) {
     display: block;
     width: 100%;
     height: auto;
@@ -387,7 +459,7 @@ function nbPages(site: Site): string {
   }
 
   /* Essentiel : une ligne parmi les autres, un peu plus appuyée, vignette à droite */
-  .tr-essentiel {
+  .tr-essentiel .tr-carte {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 50%;
     gap: 1rem;
@@ -406,24 +478,135 @@ function nbPages(site: Site): string {
     grid-row: 1;
   }
 
-  /* Vitrine : encadré au filet fin, capture sur toute la largeur de l'annonce */
-  .tr-vitrine {
+  /* Vitrine : encadré au filet fin ; Premium : cadre épais. Capture en tête, texte dessous. */
+  .tr-vitrine .tr-carte,
+  .tr-premium .tr-carte {
     padding: 0.9rem;
     border: 1px solid var(--encre);
   }
 
-  .tr-vitrine .tr-texte {
-    margin-top: 0.9rem;
+  .tr-premium .tr-carte {
+    border-width: 3px;
   }
 
-  /* Premium : pleine annonce, cadre épais, capture en tête */
-  .tr-premium {
-    padding: 0.9rem;
-    border: 3px solid var(--encre);
-  }
-
+  .tr-vitrine .tr-texte,
   .tr-premium .tr-texte {
     margin-top: 0.9rem;
+  }
+
+  /* À côté de l'annonce : ce que la gamme ajoute, puis les gammes au-dessus.
+     Cadre en tirets : un renvoi d'annuaire, pas une annonce. */
+  .tr-plus {
+    padding: 1rem;
+    border: 1px dashed var(--encre-2);
+    background: var(--feuille);
+  }
+
+  .tr-plus-bloc + .tr-plus-bloc {
+    margin-top: 1.25rem;
+  }
+
+  .tr-plus-titre {
+    font-weight: 800;
+  }
+
+  /* Vitrine et Premium (annonces hautes) : en tête du renvoi, à qui sert la gamme,
+     puis pages et délai, en lignes à points de conduite. Tout vient de moi.json. */
+  .tr-fiche-pourqui {
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .tr-fiche-faits {
+    margin-top: 0.5rem;
+  }
+
+  .tr-fiche-note {
+    margin-top: 0.35rem;
+    color: var(--encre-2);
+    font-size: 0.875rem;
+  }
+
+  .tr-plus-liste {
+    margin-top: 0.4rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tr-plus-liste li {
+    position: relative;
+    padding-block: 0.15rem;
+    padding-left: 1.1rem;
+  }
+
+  .tr-plus-liste li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.8em;
+    width: 0.55rem;
+    border-top: 2px solid var(--dore);
+  }
+
+  .tr-options {
+    margin-top: 0.25rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tr-options li + li {
+    border-top: 1px solid var(--filet-doux);
+  }
+
+  /* Une gamme au-dessus : un clic la sélectionne dans les onglets (label du bouton radio). */
+  .tr-option {
+    display: grid;
+    gap: 0.15rem;
+    min-height: 2.75rem;
+    padding-block: 0.6rem;
+    cursor: pointer;
+  }
+
+  .tr-o-tete {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-weight: 700;
+  }
+
+  .tr-o-nom {
+    color: var(--dore);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  /* Pas de césure dans les renvois : des points courts, coupés entre les mots seulement. */
+  .tr-plus {
+    hyphens: none;
+  }
+
+  .tr-o-detail {
+    color: var(--encre-2);
+    font-size: 0.9375rem;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .tr-o-nom {
+      transition: color 150ms ease;
+    }
+
+    .tr-option:hover .tr-o-nom {
+      color: var(--dore-vif);
+    }
+  }
+
+  /* Points de conduite : « Nom ······ numéro », « Gamme ······ prix » */
+  .conduite {
+    flex: 1 1 1.5rem;
+    min-width: 1.5rem;
+    border-bottom: 2px dotted var(--encre);
+    transform: translateY(-0.3em);
   }
 
   .tr-ligne {
@@ -482,35 +665,32 @@ function nbPages(site: Site): string {
     }
 
     .tr-annonces {
+      padding: 1.25rem;
+    }
+
+    /* L'annonce à gauche, le renvoi à droite, à la même hauteur (pas de lignes grises à côté) ;
+       le Premium prend un peu plus de place. */
+    .trouver:has(input[value='essentiel']:checked) .tr-essentiel,
+    .trouver:has(input[value='vitrine']:checked) .tr-vitrine {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      column-gap: 2.5rem;
-      padding: 1.25rem 1.25rem 5rem;
+      gap: 2.5rem;
+      align-items: stretch;
     }
 
-    /* Essentiel et Vitrine tiennent dans une colonne ; Premium prend la page. */
-    .tr-essentiel,
-    .tr-vitrine {
-      grid-column: 1;
+    .trouver:has(input[value='premium']:checked) .tr-premium {
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: stretch;
     }
 
-    .tr-premium {
-      grid-column: 1 / -1;
-      display: grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-      gap: 1.25rem;
-      align-items: end;
-    }
-
-    .tr-premium .tr-texte {
-      margin-top: 0;
+    .tr-plus {
+      padding: 1.25rem;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .tr-annonce,
     .trouver:has(input:checked) .tr-annonce {
-      transform: none;
-      filter: none;
+      animation: none;
     }
 
     .tr-gamme:active {
