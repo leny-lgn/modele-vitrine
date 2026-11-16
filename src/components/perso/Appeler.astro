@@ -52,8 +52,9 @@ const numero = manquant ? MOI.telephone : telephoneFr(MOI.telephone);
     bottom: 0;
     z-index: 60;
     padding-bottom: var(--bas-securite);
-    border-top: 2px solid var(--feuille); /* reste distincte quand elle passe sur la bande verte */
-    background: var(--dore);
+    /* Même habillage que le menu du haut : bois foncé, ligne noire, texte ivoire (7,5:1). */
+    border-top: 2px solid #000000;
+    background: var(--bois);
   }
 
   .appeler-barre .appeler {
@@ -61,6 +62,14 @@ const numero = manquant ? MOI.telephone : telephoneFr(MOI.telephone);
     width: 100%;
     min-height: 3.5rem;
     border: 0;
+    background: var(--bois);
+    color: var(--ivoire);
+  }
+
+  .appeler-barre .appeler:hover,
+  .appeler-barre .appeler:active {
+    background: var(--bois);
+    color: var(--dore-vif);
   }
 
   @media (min-width: 48rem) {
