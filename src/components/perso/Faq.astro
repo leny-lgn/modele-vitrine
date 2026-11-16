@@ -1,6 +1,7 @@
 ---
 // Questions fréquentes : liste de questions dépliables (<details>), fonctionne sans JS.
 // Seules les questions s'affichent d'emblée ; la réponse s'ouvre au clic ou au clavier.
+// Avec JS : la réponse se déplie en douceur (hauteur animée, tous navigateurs). Sans JS : ouverture nette.
 import { MOI } from '../../lib/moi';
 import T from './T.astro';
 ---
@@ -87,17 +88,21 @@ import T from './T.astro';
     transform: rotate(90deg);
   }
 
-  .faq-item[open] .faq-signe {
+  .faq-item[open]:not(.se-ferme) .faq-signe {
     background: var(--dore);
   }
 
-  .faq-item[open] .faq-signe::before,
-  .faq-item[open] .faq-signe::after {
+  .faq-item[open]:not(.se-ferme) .faq-signe::before,
+  .faq-item[open]:not(.se-ferme) .faq-signe::after {
     background: var(--sur-dore);
   }
 
-  .faq-item[open] .faq-signe::after {
+  .faq-item[open]:not(.se-ferme) .faq-signe::after {
     transform: rotate(0deg);
+  }
+
+  .faq-r {
+    overflow: hidden;
   }
 
   .faq-r p {
@@ -106,42 +111,70 @@ import T from './T.astro';
     padding-right: 3rem;
   }
 
-  /* Mouvement à l'ouverture, déclenché par l'utilisateur : la réponse se déplie en 220 ms,
-     ease-out marqué (réponse immédiate, arrivée douce), la barre du + se couche en même temps.
-     Fermeture plus brève (160 ms) : on range, rien à regarder. Navigateurs sans ::details-content :
-     ouverture instantanée, identique sans animation. */
+  /* Le signe suit le geste : la barre du + se couche (≈ même durée que le dépliement). */
   @media (prefers-reduced-motion: no-preference) {
     .faq-signe,
     .faq-signe::before,
     .faq-signe::after {
       transition:
-        transform 220ms cubic-bezier(0.23, 1, 0.32, 1),
-        background-color 160ms ease;
-    }
-
-    @supports selector(::details-content) {
-      .faq {
-        interpolate-size: allow-keywords;
-      }
-
-      .faq-item::details-content {
-        height: 0;
-        overflow: clip;
-        opacity: 0;
-        transition:
-          height 160ms ease-in,
-          opacity 120ms ease-in,
-          content-visibility 160ms allow-discrete;
-      }
-
-      .faq-item[open]::details-content {
-        height: auto;
-        opacity: 1;
-        transition:
-          height 220ms cubic-bezier(0.23, 1, 0.32, 1),
-          opacity 220ms cubic-bezier(0.23, 1, 0.32, 1) 40ms,
-          content-visibility 220ms allow-discrete;
-      }
+        transform 300ms cubic-bezier(0.32, 0.72, 0, 1),
+        background-color 200ms ease;
     }
   }
 </style>
+
+<script>
+  // Dépliement des réponses. Ouverture : 340 ms, courbe « tiroir » (départ franc, arrivée très douce),
+  // le texte apparaît en fondu et remonte de 6 px. Fermeture plus brève (260 ms) : on range.
+  // Un clic pendant le mouvement repart de la hauteur actuelle, sans à-coup.
+  // « Réduire les animations » : ouverture et fermeture immédiates.
+  const COURBE = 'cubic-bezier(0.32, 0.72, 0, 1)';
+  const calme = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  for (const item of document.querySelectorAll<HTMLDetailsElement>('.faq-item')) {
+    const question = item.querySelector('summary');
+    const reponse = item.querySelector<HTMLElement>('.faq-r');
+    if (!question || !reponse) continue;
+    let animation: Animation | null = null;
+    let texte: Animation | null = null;
+
+    question.addEventListener('click', (e) => {
+      if (calme.matches) return;
+      e.preventDefault();
+      // Fermée, la réponse garde sa taille dans Chrome (contenu caché, pas retiré) : on part de 0.
+      const depart = item.open ? reponse.getBoundingClientRect().height : 0;
+      animation?.cancel();
+      texte?.cancel();
+      const ouvrir = !item.open || item.classList.contains('se-ferme');
+
+      if (ouvrir) {
+        item.classList.remove('se-ferme');
+        item.open = true;
+        const fin = reponse.scrollHeight;
+        animation = reponse.animate({ height: [`${depart}px`, `${fin}px`] }, { duration: 340, easing: COURBE });
+        texte = reponse.animate(
+          { opacity: [depart > 0 ? 1 : 0, 1], transform: [depart > 0 ? 'none' : 'translateY(-6px)', 'none'] },
+          { duration: 300, delay: 40, easing: COURBE, fill: 'backwards' },
+        );
+        animation.onfinish = () => {
+          animation = null;
+        };
+      } else {
+        item.classList.add('se-ferme');
+        // fill: 'forwards' : la réponse reste à 0 jusqu'à la fermeture du <details>, sans flash.
+        animation = reponse.animate(
+          { height: [`${depart}px`, '0px'] },
+          { duration: 260, easing: COURBE, fill: 'forwards' },
+        );
+        texte = reponse.animate({ opacity: [1, 0] }, { duration: 180, easing: 'ease-out', fill: 'forwards' });
+        animation.onfinish = () => {
+          item.open = false;
+          item.classList.remove('se-ferme');
+          texte?.cancel();
+          animation?.cancel();
+          animation = null;
+        };
+      }
+    });
+  }
+</script>
