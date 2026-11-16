@@ -1,0 +1,106 @@
+---
+// Fond décoratif : des lignes d'annuaire abstraites (barres grises, points de conduite).
+// Aucun texte : ni faux nom, ni faux numéro. Masqué aux lecteurs d'écran.
+// Les largeurs viennent d'une suite pseudo-aléatoire fixe : le rendu est identique à chaque build.
+interface Props {
+  lignes?: number;
+  graine?: number;
+  class?: string;
+}
+const { lignes = 40, graine = 7, class: classe } = Astro.props;
+
+let etat = graine;
+const hasard = () => {
+  etat = (etat * 9301 + 49297) % 233280;
+  return etat / 233280;
+};
+const items = Array.from({ length: lignes }, () => ({
+  nom: Math.round(28 + hasard() * 38),
+  num: Math.round(14 + hasard() * 8),
+  gras: hasard() > 0.82,
+}));
+---
+
+<div class:list={['fond-annuaire', classe]} aria-hidden="true">
+  <div class="fa-defile">
+    {
+      items.map((l) => (
+        <span class:list={['fa-ligne', { 'fa-gras': l.gras }]}>
+          <span class="fa-nom" style={`--l:${l.nom}%`} />
+          <span class="fa-conduite" />
+          <span class="fa-num" style={`--l:${l.num}%`} />
+        </span>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .fond-annuaire {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    --barre: #2b3438; /* décor seul, jamais du texte */
+    --barre-forte: #354045;
+  }
+
+  .fa-defile {
+    columns: 1;
+    column-gap: 2.5rem;
+    padding: 1rem;
+  }
+
+  .fa-ligne {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    height: 1.75rem;
+    break-inside: avoid;
+  }
+
+  .fa-nom,
+  .fa-num {
+    flex: none;
+    width: var(--l);
+    height: 0.45rem;
+    border-radius: 1px;
+    background: var(--barre);
+  }
+
+  .fa-gras .fa-nom {
+    height: 0.6rem;
+    background: var(--barre-forte);
+  }
+
+  .fa-conduite {
+    flex: 1;
+    border-bottom: 2px dotted var(--barre);
+  }
+
+  @media (min-width: 48rem) {
+    .fa-defile {
+      columns: 2;
+    }
+  }
+
+  /* Le fond glisse un peu plus lentement que la page (parallaxe), là où le navigateur le permet. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .fa-defile {
+        animation: fa-parallaxe linear both;
+        animation-timeline: view();
+        animation-range: cover;
+      }
+    }
+  }
+
+  @keyframes fa-parallaxe {
+    from {
+      transform: translateY(1.5rem);
+    }
+    to {
+      transform: translateY(-1.5rem);
+    }
+  }
+</style>

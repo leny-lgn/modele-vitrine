@@ -1,0 +1,78 @@
+---
+// Capture d'écran d'un modèle, générée par `npm run captures` dans public/images/accueil/.
+// Absente : cadre en pointillés qui indique la commande à lancer.
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { RACINE, LARGEURS, nomVariante, urlImage, cheminRelatif } from '../../lib/images.mjs';
+
+interface Props {
+  slug: string;
+  vue: 'bureau' | 'mobile';
+  alt: string;
+  sizes: string;
+  class?: string;
+}
+const { slug, vue, alt, sizes, class: classe } = Astro.props;
+
+const DOSSIER = 'accueil';
+/** Dimensions produites par scripts/captures.mjs */
+const DIMENSIONS = { bureau: { l: 1600, h: 1000 }, mobile: { l: 750, h: 1200 } } as const;
+
+const fichier = `${slug}-${vue}.webp`;
+const existe = existsSync(join(RACINE, cheminRelatif(DOSSIER, fichier)));
+const { l, h } = DIMENSIONS[vue];
+const srcset = existe
+  ? [
+      ...LARGEURS.filter((w) => w < l && existsSync(join(RACINE, cheminRelatif(DOSSIER, nomVariante(fichier, w))))).map(
+        (w) => `${urlImage(DOSSIER, nomVariante(fichier, w))} ${w}w`,
+      ),
+      `${urlImage(DOSSIER, fichier)} ${l}w`,
+    ].join(', ')
+  : '';
+---
+
+{
+  existe ? (
+    <img
+      class:list={['capture', `capture-${vue}`, classe]}
+      src={urlImage(DOSSIER, fichier)}
+      srcset={srcset}
+      sizes={sizes}
+      width={l}
+      height={h}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+    />
+  ) : (
+    <div class:list={['capture', 'capture-absente', `capture-${vue}`, classe]} style={`aspect-ratio: ${l} / ${h}`}>
+      <p>
+        Capture manquante : <code>{cheminRelatif(DOSSIER, fichier)}</code>. Lancer <code>npm run captures</code>.
+      </p>
+    </div>
+  )
+}
+
+<style>
+  .capture {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--encre);
+    background: var(--feuille);
+  }
+
+  .capture-absente {
+    display: grid;
+    place-items: center;
+    padding: 0.75rem;
+    border: 2px dashed var(--encre-2);
+    font-size: 0.8125rem;
+    color: var(--encre-2);
+    text-align: center;
+  }
+
+  code {
+    overflow-wrap: anywhere;
+  }
+</style>

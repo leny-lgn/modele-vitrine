@@ -13,6 +13,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "images": "node scripts/images.mjs",
+    "captures": "node scripts/captures.mjs",
     "variantes": "node scripts/variantes.mjs",
     "check": "astro check"
   },
@@ -23,6 +24,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
     "@types/node": "^24.19.2",
+    "playwright-core": "^1.65.1",
     "sharp": "^0.35.5",
     "typescript": "^6.0.3",
     "wrangler": "^4.157.0"

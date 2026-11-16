@@ -19,8 +19,10 @@ THESIS : le site est une page d'annuaire professionnel. Les secteurs sont des ru
 les trois gammes sont les trois tailles d'annonce (ligne, encadré, pleine annonce avec
 capture). Refuse le gabarit « héros + 3 cartes de prix + témoignages ».
 
-OWN-WORLD : blanc #FCFCFA, encre #111, filets noirs fins, colonnes d'annuaire. Accent
-unique vert sapin #1E5E3B (rubriques, bouton Appeler). Libre Franklin (titres lourds,
+OWN-WORLD (révisé le 16 novembre 2026, « la devanture ») : façade gris anthracite bleuté
+#151A1C (bandes #0E1214, panneaux #1F2629), boiseries #5B4325 (menu, bande Tarifs), texte ivoire
+#EFE8D8, filets ivoire fins, colonnes d'annuaire. Accent unique doré #C9A44C en aplat
+(rubriques en lettres d'enseigne, bouton Appeler, cadre de l'annonce personnelle). Libre Franklin (titres lourds,
 rubriques en capitales de rubrique, texte) ; Overpass Mono réservé aux numéros et prix.
 Annonces encadrées au trait, sans ombre ni arrondi. Pas de jaune, pas de pastiche rétro
 (pas de papier jauni, pas de vieilles réclames).

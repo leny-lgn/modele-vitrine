@@ -1,0 +1,71 @@
+---
+// Bouton « Appeler le … » du site personnel. Variante « barre » : fixée en bas d'écran sur mobile.
+// Tant que le numéro n'est pas renseigné, le bouton mène à la page Contact et le signale.
+import { MOI, aCompleter } from '../../lib/moi';
+import { telephoneFr, telHref } from '../../lib/typo-fr';
+import { LIEN_CONTACT } from '../../lib/liens';
+import T from './T.astro';
+
+interface Props {
+  variante?: 'bouton' | 'barre';
+  class?: string;
+}
+const { variante = 'bouton', class: classe } = Astro.props;
+const manquant = aCompleter(MOI.telephone);
+const href = manquant ? LIEN_CONTACT : telHref(MOI.telephone);
+const numero = manquant ? MOI.telephone : telephoneFr(MOI.telephone);
+---
+
+{
+  variante === 'barre' ? (
+    <div class="appeler-barre">
+      <a class="bouton bouton-plein appeler" href={href}>
+        <span class="appeler-libelle">Appeler le&nbsp;<span class="mono"><T texte={numero} /></span></span>
+      </a>
+    </div>
+  ) : (
+    <a class:list={['bouton bouton-plein appeler', classe]} href={href}>
+      <span class="appeler-libelle">Appeler le&nbsp;<span class="mono"><T texte={numero} /></span></span>
+    </a>
+  )
+}
+
+<style>
+  .appeler {
+    white-space: nowrap;
+  }
+
+  /* Un seul bloc de texte : « Appeler le » et le numéro partagent la même ligne de base
+     (deux polices aux proportions différentes, centrées séparément, se décalaient). */
+  .appeler-libelle {
+    display: inline;
+  }
+
+  .appeler .mono {
+    font-weight: 600;
+    vertical-align: baseline;
+  }
+
+  .appeler-barre {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 60;
+    padding-bottom: var(--bas-securite);
+    border-top: 2px solid var(--feuille); /* reste distincte quand elle passe sur la bande verte */
+    background: var(--dore);
+  }
+
+  .appeler-barre .appeler {
+    display: flex;
+    width: 100%;
+    min-height: 3.5rem;
+    border: 0;
+  }
+
+  @media (min-width: 48rem) {
+    .appeler-barre {
+      display: none;
+    }
+  }
+</style>

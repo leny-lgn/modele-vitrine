@@ -274,7 +274,11 @@ const chantier = site.realisations.find((r) => r.avant && r.apres && site.images
   }
 
   @media (min-width: 64rem) {
+    /* Comme le Premium : le bandeau remplit la fenêtre sous l'en-tête (6 rem), plafonné à 64 rem.
+       La composition reste propre à la Vitrine : texte à gauche, photo à droite jusqu'au bord. */
     .hero-v {
+      display: grid;
+      min-height: min(calc(100svh - 6rem), 64rem);
       padding-top: 0;
     }
 
@@ -285,6 +289,7 @@ const chantier = site.realisations.find((r) => r.avant && r.apres && site.images
     }
 
     .hero-texte {
+      align-self: center;
       padding-block: calc(var(--espace-4) + 2.5rem) var(--espace-5);
     }
 

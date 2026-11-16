@@ -1,0 +1,69 @@
+---
+// Mentions légales du site personnel (loi pour la confiance dans l'économie numérique).
+import Perso from '../layouts/Perso.astro';
+import T from '../components/perso/T.astro';
+import { MOI, NOM, aCompleter } from '../lib/moi';
+import { telephoneFr } from '../lib/typo-fr';
+import { LIEN_CONFIDENTIALITE } from '../lib/liens';
+
+const ml = MOI.mentionsLegales;
+const tel = aCompleter(MOI.telephone) ? MOI.telephone : telephoneFr(MOI.telephone);
+---
+
+<Perso titre="Mentions légales" description="Éditeur, hébergeur et propriété du site.">
+  <div class="page tete">
+    <h1 class="rubrique rubrique-h1">Mentions légales</h1>
+    <div class="prose">
+      <h2>Éditeur du site</h2>
+      <dl class="points">
+        <div><dt>Nom</dt><dd class="valeur"><T texte={MOI.nom} /></dd></div>
+        <div><dt>Statut</dt><dd class="valeur"><T texte={ml.statut} /></dd></div>
+        <div><dt>Adresse</dt><dd class="valeur"><T texte={ml.adresse} /></dd></div>
+        <div><dt>SIRET</dt><dd class="valeur mono"><T texte={ml.siret} /></dd></div>
+        <div><dt>TVA</dt><dd class="valeur"><T texte={ml.tva} /></dd></div>
+        <div><dt>Téléphone</dt><dd class="valeur mono"><T texte={tel} /></dd></div>
+        <div><dt>E-mail</dt><dd class="valeur"><T texte={MOI.email} /></dd></div>
+      </dl>
+      <p>Directeur de la publication : <T texte={MOI.nom} />.</p>
+
+      <h2>Hébergement</h2>
+      <p><T texte={ml.hebergeur} /></p>
+
+      <h2>Propriété</h2>
+      <p>
+        Les textes, la mise en page et le code de ce site appartiennent à <T texte={NOM} />. Les modèles de démonstration
+        présentent des entreprises fictives : toute ressemblance avec une entreprise existante serait fortuite.
+      </p>
+      <p>
+        Polices de caractères : Libre Franklin, Overpass Mono et Archivo, sous licence SIL Open Font License 1.1.
+      </p>
+
+      <h2>Données personnelles</h2>
+      <p>Voir la <a href={LIEN_CONFIDENTIALITE}>politique de confidentialité</a>.</p>
+    </div>
+  </div>
+</Perso>
+
+<style>
+  .tete {
+    padding-top: 1.25rem;
+  }
+
+  .prose {
+    margin-top: 1.5rem;
+  }
+
+  .prose h2:first-child {
+    margin-top: 0;
+  }
+
+  .points dd {
+    overflow-wrap: anywhere;
+  }
+
+  @media (min-width: 48rem) {
+    .tete {
+      padding-top: 2rem;
+    }
+  }
+</style>

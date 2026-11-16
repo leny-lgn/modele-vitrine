@@ -1,0 +1,127 @@
+---
+// Mise en page du site personnel (accueil, modèles, tarifs, contact, pages légales).
+// Direction « annuaire » : voir .impeccable/surfaces/ et docs/briefs/accueil.md.
+import '../styles/base.css';
+import '../styles/perso.css';
+import EnTete from '../components/perso/EnTete.astro';
+import PiedPerso from '../components/perso/PiedPerso.astro';
+import Appeler from '../components/perso/Appeler.astro';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { MOI, NOM, PUBLIE, aCompleter, urlLogo } from '../lib/moi';
+import { RACINE } from '../lib/images.mjs';
+import { telInternational } from '../lib/typo-fr';
+import { LIEN_ACCUEIL, IMAGE_PARTAGE_PERSO } from '../lib/liens';
+
+interface Props {
+  /** Titre de la page ; absent sur l'accueil. */
+  titre?: string;
+  description: string;
+}
+const { titre, description } = Astro.props;
+const METIER = 'Sites internet pour commerçants et artisans';
+const nomConnu = !aCompleter(NOM);
+const nom = nomConnu ? NOM : METIER;
+const titreComplet = titre ? `${titre} — ${nom}` : nomConnu ? `${NOM} — ${METIER}` : METIER;
+const absolue = (chemin: string) => new URL(chemin, Astro.site).href;
+const canonique = absolue(Astro.url.pathname);
+const estAccueil = Astro.url.pathname === LIEN_ACCUEIL;
+
+// Image de partage : présente seulement si `npm run captures` l'a générée.
+const imagePartage = existsSync(join(RACINE, 'public', IMAGE_PARTAGE_PERSO)) ? absolue(IMAGE_PARTAGE_PERSO) : undefined;
+
+// Données structurées de l'accueil. Les champs encore « [À COMPLÉTER] » sont omis.
+const renseigne = (v: string) => (aCompleter(v) ? undefined : v);
+const jsonLd = estAccueil
+  ? JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'ProfessionalService',
+      name: renseigne(NOM) ?? 'Sites internet pour commerçants et artisans',
+      description: MOI.accroche,
+      url: absolue(LIEN_ACCUEIL),
+      telephone: renseigne(MOI.telephone) && telInternational(MOI.telephone),
+      email: renseigne(MOI.email),
+      image: imagePartage,
+      areaServed: MOI.villes.map((name) => ({ '@type': 'City', name })),
+      knowsLanguage: 'fr',
+    }).replace(/</g, '\\u003c')
+  : undefined;
+---
+
+<!doctype html>
+<html lang="fr" data-site="perso">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#151a1c" />
+    <link rel="preload" href="/fonts/libre-franklin-variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="icon" type="image/svg+xml" href={urlLogo('favicon') ?? '/favicon.svg'} />
+    <title>{titreComplet}</title>
+    <meta name="description" content={description} />
+    {!PUBLIE && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonique} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:site_name" content={nom} />
+    <meta property="og:title" content={titreComplet} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonique} />
+    {
+      imagePartage && (
+        <>
+          <meta property="og:image" content={imagePartage} />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:image:alt" content={`${nom} : sites internet pour commerçants et artisans`} />
+          <meta name="twitter:card" content="summary_large_image" />
+        </>
+      )
+    }
+    {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
+    <slot name="tete" />
+    <!-- Première page vue de la session : l'accueil peut jouer son animation d'arrivée.
+         Ensuite, plus d'animation au retour sur l'accueil (évite le sursaut). -->
+    <script is:inline>
+      try {
+        if (!sessionStorage.getItem('arrivee-vue')) {
+          document.documentElement.dataset.premiereVisite = '';
+          sessionStorage.setItem('arrivee-vue', '1');
+        }
+      } catch (e) {}
+    </script>
+    <!-- Navigation instantanée : quand la souris s'arrête sur un lien interne (ou au début du toucher),
+         le navigateur prépare la page en arrière-plan. Pas de JS, pas de traceur ; ignoré par les
+         navigateurs qui ne le gèrent pas. -->
+    <script type="speculationrules" is:inline>
+      { "prerender": [{ "where": { "href_matches": "/*" }, "eagerness": "moderate" }] }
+    </script>
+  </head>
+  <body>
+    <a class="lien-evitement" href="#contenu">Aller au contenu</a>
+    {
+      !PUBLIE && (
+        <p class="bandeau-preparation" role="note">
+          Site en préparation
+        </p>
+      )
+    }
+    <EnTete />
+    <main id="contenu" tabindex="-1">
+      <slot />
+    </main>
+    <PiedPerso />
+    <Appeler variante="barre" />
+  </body>
+</html>
+
+<style>
+  .bandeau-preparation {
+    padding: 0.35rem var(--marge);
+    /* Pas de trait ici : la ligne grise du menu, juste dessous, sépare déjà. */
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    text-align: center;
+    color: var(--encre-2);
+  }
+</style>

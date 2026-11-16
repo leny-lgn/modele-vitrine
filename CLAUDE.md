@@ -107,6 +107,11 @@ Suivre le brief du secteur à la lettre. Là où il laisse un choix libre, ne pa
 - Emojis, icônes génériques dans les titres.
 - Animations au défilement sur chaque section. Une seule animation orchestrée maximum
   (chargement du hero). Respecter `prefers-reduced-motion`.
+  Exception, site personnel uniquement (pas les démos) : en plus du chargement du hero,
+  trois mécaniques de mouvement liées au défilement, identiques sur toute la page :
+  apparition des blocs (montée de 1,5 rem + fondu), points de conduite qui se tracent,
+  fond d'annuaire en parallaxe. Jamais un effet différent par section. Survols discrets
+  (filet ou texte doré) réservés à la souris. CSS d'abord, page complète sans JS ni mouvement.
 
 ## Textes
 - Français, phrases courtes, ton du métier. Des faits plutôt que des adjectifs.

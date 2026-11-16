@@ -1,0 +1,67 @@
+---
+// Coordonnées : la même annonce encadrée qu'en tête de l'accueil, pour conclure.
+import { MOI, aCompleter } from '../../lib/moi';
+import { telephoneFr } from '../../lib/typo-fr';
+import Appeler from './Appeler.astro';
+import T from './T.astro';
+
+const email = aCompleter(MOI.email) ? undefined : MOI.email;
+const tel = aCompleter(MOI.telephone) ? MOI.telephone : telephoneFr(MOI.telephone);
+---
+
+<div class="coord">
+  <p class="co-tel mono"><T texte={tel} /></p>
+  <dl class="points co-faits">
+    <div>
+      <dt>E-mail</dt>
+      <dd class="valeur">{email ? <a href={`mailto:${email}`}>{email}</a> : <T texte={MOI.email} />}</dd>
+    </div>
+    <div>
+      <dt>Villes</dt>
+      <dd class="valeur"><T texte={MOI.villes.join(', ')} /></dd>
+    </div>
+  </dl>
+  <p class="co-texte"><T texte={MOI.zone} /></p>
+  <p class="co-texte"><T texte={MOI.disponibilites} /></p>
+  <div class="co-actions">
+    <Appeler />
+    {email && <a class="bouton bouton-trait" href={`mailto:${email}`}>Écrire un e-mail</a>}
+  </div>
+</div>
+
+<style>
+  .coord {
+    margin-top: 1.5rem;
+    padding: 1.1rem;
+    border: 3px solid var(--encre);
+    background: var(--feuille);
+    max-width: 44rem;
+  }
+
+  .co-tel {
+    font-size: clamp(1.75rem, 7vw, 3rem);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  .co-faits {
+    margin-top: 1rem;
+  }
+
+  .co-texte {
+    margin-top: 0.6rem;
+  }
+
+  .co-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  @media (min-width: 48rem) {
+    .coord {
+      padding: 1.75rem;
+    }
+  }
+</style>

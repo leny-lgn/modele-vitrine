@@ -1,6 +1,7 @@
 ---
 // Mise en page des pages du dépôt (grille des modèles, 404) : neutre, hors secteur.
 import '../styles/base.css';
+import { urlLogo } from '../lib/moi';
 
 interface Props {
   titre: string;
@@ -15,7 +16,7 @@ const { titre, description } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={urlLogo('favicon') ?? '/favicon.svg'} />
     <title>{titre}</title>
     {description && <meta name="description" content={description} />}
   </head>

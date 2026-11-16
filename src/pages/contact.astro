@@ -1,0 +1,66 @@
+---
+// Contact : téléphone, e-mail, villes, zone et disponibilités.
+import Perso from '../layouts/Perso.astro';
+import BandeauPage from '../components/perso/BandeauPage.astro';
+import Coordonnees from '../components/perso/Coordonnees.astro';
+import T from '../components/perso/T.astro';
+import { MOI } from '../lib/moi';
+
+const premiere = MOI.etapes[0];
+---
+
+<Perso titre="Contact" description={`Contact : téléphone, e-mail et zone d’intervention. ${MOI.accroche}`}>
+  <BandeauPage titre="Contact" />
+  <div class="suite-page">
+  <div class="page page-large tete">
+    <Coordonnees />
+    {
+      premiere && (
+        <div class="suite">
+          <h2 class="su-titre">Après votre appel</h2>
+          <p>
+            <T texte={premiere.texte} />
+          </p>
+        </div>
+      )
+    }
+  </div>
+  </div>
+</Perso>
+
+<style>
+  .tete {
+    padding-top: 1rem;
+  }
+
+  .suite {
+    margin-top: 2.5rem;
+    max-width: 40rem;
+  }
+
+  /* Grand écran : la fiche à gauche, la suite à droite, pour occuper toute la largeur. */
+  @media (min-width: 64rem) {
+    .tete {
+      display: grid;
+      grid-template-columns: minmax(0, 44rem) minmax(0, 1fr);
+      gap: 0 4rem;
+      align-items: start;
+    }
+
+    .suite {
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      border: 1px solid var(--encre);
+    }
+  }
+
+  .su-titre {
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+
+  .suite p {
+    margin-top: 0.3rem;
+  }
+
+</style>

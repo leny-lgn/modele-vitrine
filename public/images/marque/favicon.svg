@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="-14 -12 236 232"><rect x="-14" y="-12" width="236" height="232" rx="52" fill="#151a1c"/>
+<g transform="translate(8 8) scale(2.4) translate(-13.5 -5.5)"><defs>
+<radialGradient id="ghblanc" cx="50%" cy="50%" r="50%">
+<stop offset="0%" stop-color="#2347E8" stop-opacity="0.95"/>
+<stop offset="35%" stop-color="#2347E8" stop-opacity="0.45"/>
+<stop offset="100%" stop-color="#2347E8" stop-opacity="0"/>
+</radialGradient>
+<mask id="mhblanc" maskUnits="userSpaceOnUse" x="-10" y="-10" width="120" height="120">
+<rect x="-10" y="-10" width="120" height="120" fill="#fff"/>
+<path d="M62 37 C54 25 44 15 25 7 C38 20 44 33 46 47 Z" fill="none" stroke="#000" stroke-width="2.2" stroke-linejoin="round"/>
+<path d="M62 37 C54 25 44 15 25 7 C38 20 44 33 46 47 Z" fill="#fff"/>
+<path d="M69 33.1 Q74.8 33.5 80.4 36.4" fill="none" stroke="#000" stroke-width="0.8" stroke-linecap="round"/>
+</mask>
+<clipPath id="chblanc"><path d="M57 58 C65 67 74 76 85 84 C78 72 71 61 66 51 Z"/><path d="M90 37 C85 35 82 32 78 30 C70 27 61 31 55 39 C47 49 39 59 28 65 L15 71 L26 72 L19 81 C34 76 47 69 58 59 C66 53 74 45 80 41 C83 39.5 87 38.5 90 37 Z"/><path d="M62 37 C54 25 44 15 25 7 C38 20 44 33 46 47 Z"/></clipPath>
+</defs>
+<g mask="url(#mhblanc)" fill="#FFFFFF"><path d="M57 58 C65 67 74 76 85 84 C78 72 71 61 66 51 Z"/><path d="M90 37 C85 35 82 32 78 30 C70 27 61 31 55 39 C47 49 39 59 28 65 L15 71 L26 72 L19 81 C34 76 47 69 58 59 C66 53 74 45 80 41 C83 39.5 87 38.5 90 37 Z"/><path d="M62 37 C54 25 44 15 25 7 C38 20 44 33 46 47 Z"/></g>
+<g mask="url(#mhblanc)"><circle cx="75" cy="36.6" r="9" fill="url(#ghblanc)" clip-path="url(#chblanc)"/></g>
+<path d="M70 34.8 Q74.6 35.4 79.4 37.6 Q74.4 38.4 70 34.8 Z" fill="#2347E8"/>
+<path d="M73.4 36.3 Q74.8 36.6 76.2 37" fill="none" stroke="#fff" stroke-width="0.6" stroke-linecap="round" opacity="0.9"/></g>
+
+</svg>

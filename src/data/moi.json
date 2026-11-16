@@ -1,11 +1,35 @@
 {
   "publie": false,
-  "nom": "[À COMPLÉTER] Prénom Nom",
-  "nomCommercial": "[À COMPLÉTER ou vide]",
-  "accroche": "Je crée des sites internet pour les commerçants et artisans de [À COMPLÉTER : ville] et alentours.",
-  "telephone": "[À COMPLÉTER]",
-  "email": "[À COMPLÉTER]",
-  "ville": "[À COMPLÉTER]",
+  "nom": "Leny Langon",
+  "nomCommercial": "Blackbird",
+  "logo": {
+    "clair": "blackbird-blanc.svg",
+    "sombre": "blackbird-noir.svg",
+    "favicon": "favicon.svg"
+  },
+  "accroche": "Je crée des sites internet pour les commerçants et artisans de Lannion, Brest, Nantes et alentours.",
+  "enBref": "Étudiant à Lannion, alternant à Brest. Je viens vous voir, le site est à vous.",
+  "telephone": "0676380169",
+  "email": "leny_langon@yahoo.com",
+  "metiers": [
+    "Boulanger",
+    "Boucher",
+    "Coiffeur",
+    "Esthéticienne",
+    "Restaurant",
+    "Fleuriste",
+    "Garagiste",
+    "Électricien",
+    "Menuisier",
+    "Peintre en bâtiment",
+    "Couvreur",
+    "Paysagiste"
+  ],
+  "villes": [
+    "Lannion",
+    "Brest",
+    "Nantes"
+  ],
   "zone": "[À COMPLÉTER] ex. Ville et 30 km autour, rendez-vous sur place",
   "disponibilites": "[À COMPLÉTER] ex. Du lundi au samedi, réponse dans la journée",
   "presentation": [
@@ -18,62 +42,175 @@
     "adresse": "[À COMPLÉTER]",
     "siret": "[À COMPLÉTER]",
     "tva": "TVA non applicable, art. 293 B du CGI",
-    "hebergeur": "Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, États-Unis [À COMPLÉTER : vérifier sur cloudflare.com]"
+    "hebergeur": "Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, États-Unis [À COMPLÉTER : vérifier sur cloudflare.com]",
+    "conservation": "[À COMPLÉTER] ex. 3 ans après le dernier contact"
   },
   "gammes": [
     {
       "id": "essentiel",
       "nom": "Essentiel",
       "pourQui": "Être trouvé et appelé facilement",
-      "prix": "[À COMPLÉTER]",
+      "prix": 300,
       "pages": "1 page",
       "delai": "1 semaine",
-      "inclus": ["Adapté au téléphone", "Bouton Appeler, horaires, carte", "Mentions légales et confidentialité", "Référencement Google de base", "2 allers-retours de modifications"]
+      "inclus": [
+        "Adapté au téléphone",
+        "Bouton Appeler, horaires, carte",
+        "Mentions légales et confidentialité",
+        "Référencement Google de base",
+        "Lien avec votre fiche Google",
+        "Aperçu soigné quand le lien est partagé",
+        "QR code à imprimer pour votre vitrine",
+        "2 allers-retours de modifications"
+      ]
     },
     {
       "id": "vitrine",
       "nom": "Vitrine",
       "pourQui": "Se démarquer de la concurrence",
-      "prix": "[À COMPLÉTER]",
+      "prix": 500,
       "pages": "4 à 5 pages",
       "delai": "2 à 3 semaines",
-      "inclus": ["Tout l'Essentiel", "Tarifs, réalisations avant/après, avis", "Indicateur « ouvert maintenant »", "2 allers-retours de modifications"]
+      "inclus": [
+        "Tout l'Essentiel",
+        "Tarifs, réalisations avant/après, avis",
+        "Indicateur « ouvert maintenant »",
+        "2 allers-retours de modifications"
+      ]
     },
     {
       "id": "premium",
       "nom": "Premium",
       "pourQui": "Une image haut de gamme et mémorable",
-      "prix": "[À COMPLÉTER]",
+      "prix": 800,
       "pages": "5 à 7 pages + réalisations",
       "delai": "3 à 4 semaines",
-      "inclus": ["Tout le Vitrine", "Mise en page sur mesure", "Formulaire de demande de devis", "Pages de chantiers détaillées", "3 allers-retours de modifications"]
+      "inclus": [
+        "Tout le Vitrine",
+        "Mise en page dessinée pour votre commerce",
+        "Formulaire de demande de devis",
+        "Pages de chantiers détaillées",
+        "3 allers-retours de modifications"
+      ]
     }
   ],
+  "noteDelais": "Délais comptés à partir de la réception de vos photos et informations, à fournir dans les 15 jours.",
   "abonnement": {
-    "prix": "[À COMPLÉTER]",
-    "inclus": ["Hébergement et nom de domaine", "Certificat de sécurité et sauvegardes", "Mises à jour techniques", "Petites modifications : [À COMPLÉTER] par mois"],
-    "conditions": "Sans engagement, résiliable avec un mois de préavis. Le site et le nom de domaine restent à vous."
+    "prix": 20,
+    "inclus": [
+      "Hébergement et renouvellement du nom de domaine",
+      "Certificat de sécurité, sauvegardes, mises à jour techniques",
+      "Petites modifications : jusqu'à 30 minutes par mois (horaires, tarifs, photos, fermetures exceptionnelles), non reportables"
+    ],
+    "conditions": "Sans engagement, résiliable avec un mois de préavis. À l'arrêt, je vous remets les fichiers et vous aide à transférer le nom de domaine."
   },
   "options": [
-    { "nom": "Séance photo sur place", "prix": "[À COMPLÉTER]" },
-    { "nom": "Rédaction complète des textes", "prix": "[À COMPLÉTER]" },
-    { "nom": "Page supplémentaire", "prix": "[À COMPLÉTER]" },
-    { "nom": "Modifications hors abonnement", "prix": "[À COMPLÉTER] € de l'heure" }
+    {
+      "nom": "Séance photo sur place",
+      "prix": 80
+    },
+    {
+      "nom": "Rédaction complète des textes",
+      "prix": 80
+    },
+    {
+      "nom": "Page supplémentaire (par page)",
+      "prix": 50
+    },
+    {
+      "nom": "Création ou optimisation de la fiche Google",
+      "prix": 50
+    },
+    {
+      "nom": "Intégration d'un outil de réservation existant (Planity…)",
+      "prix": 50
+    },
+    {
+      "nom": "Version dans une autre langue (par langue)",
+      "prix": 100
+    },
+    {
+      "nom": "Modifications hors abonnement (par heure)",
+      "prix": 30
+    }
+  ],
+  "autresServices": [
+    {
+      "nom": "Refonte d'un site existant",
+      "pourQui": "Pour un site daté ou lent",
+      "prix": "Prix de la gamme équivalente"
+    },
+    {
+      "nom": "Reprise d'un site existant (hébergement et entretien seulement)",
+      "pourQui": "Pour changer de prestataire",
+      "prix": "Abonnement + 50 € de mise en place"
+    },
+    {
+      "nom": "Pack « Visibilité locale » : fiche Google, QR code à imprimer, demande d'avis",
+      "pourQui": "Pour un commerce qui ne veut pas encore de site",
+      "prix": 80
+    }
+  ],
+  "paiement": [
+    "Acompte de 40 % à la signature du devis, solde à la mise en ligne, payable sous 15 jours.",
+    "Abonnement payable à l'année : 11 mois payés au lieu de 12.",
+    "Premium payable en 2 ou 3 fois."
   ],
   "etapes": [
-    { "titre": "On se rencontre", "texte": "Je passe vous voir, 20 minutes, pour comprendre votre activité." },
-    { "titre": "Devis", "texte": "Vous recevez un devis clair le jour même. Acompte de [À COMPLÉTER] % à la signature." },
-    { "titre": "Contenus", "texte": "Vous me donnez photos et informations, ou je m'en occupe en option." },
-    { "titre": "Première version", "texte": "Vous la voyez en ligne et demandez vos modifications." },
-    { "titre": "Mise en ligne", "texte": "Le site est publié, relié à votre fiche Google, et il vous appartient." }
+    {
+      "titre": "On se rencontre",
+      "texte": "Je passe vous voir, 20 minutes, pour comprendre votre activité."
+    },
+    {
+      "titre": "Devis",
+      "texte": "Vous recevez un devis clair et gratuit, valable 30 jours. Acompte de 40 % à la signature."
+    },
+    {
+      "titre": "Contenus",
+      "texte": "Vous me donnez photos et informations, ou je m'en occupe en option."
+    },
+    {
+      "titre": "Première version",
+      "texte": "Vous la voyez en ligne et demandez vos modifications."
+    },
+    {
+      "titre": "Mise en ligne",
+      "texte": "Le site est publié, relié à votre fiche Google, et il vous appartient."
+    }
   ],
   "faq": [
-    { "q": "Combien de temps pour avoir mon site ?", "r": "[À COMPLÉTER]" },
-    { "q": "Est-ce que le site m'appartient ?", "r": "Oui. Après paiement, le site et le nom de domaine sont à votre nom." },
-    { "q": "Que comprend l'abonnement, et puis-je l'arrêter ?", "r": "[À COMPLÉTER]" },
-    { "q": "Je n'ai ni photos ni textes, comment on fait ?", "r": "[À COMPLÉTER]" },
-    { "q": "J'ai déjà une page Facebook, à quoi sert un site ?", "r": "[À COMPLÉTER]" },
-    { "q": "Pourrai-je modifier mes horaires ou mes tarifs ?", "r": "[À COMPLÉTER]" }
+    {
+      "q": "Combien de temps pour avoir mon site ?",
+      "r": "Une semaine pour l'Essentiel, 2 à 3 semaines pour la Vitrine, 3 à 4 semaines pour le Premium, à partir du moment où j'ai vos photos et vos informations."
+    },
+    {
+      "q": "Le devis est-il payant ?",
+      "r": "Non. Le devis est gratuit et valable 30 jours."
+    },
+    {
+      "q": "Est-ce que le site m'appartient ?",
+      "r": "Oui. Après paiement, le site et le nom de domaine sont à votre nom."
+    },
+    {
+      "q": "Que comprend l'abonnement, et puis-je l'arrêter ?",
+      "r": "L'hébergement, le nom de domaine, la sécurité, les sauvegardes et jusqu'à 30 minutes de petites modifications par mois. Il est sans engagement : vous pouvez l'arrêter avec un mois de préavis, je vous remets alors les fichiers et vous aide à transférer le nom de domaine."
+    },
+    {
+      "q": "Je n'ai ni photos ni textes, comment on fait ?",
+      "r": "Je peux venir faire les photos sur place et écrire les textes après un entretien avec vous. Ce sont deux options, indiquées dans le devis."
+    },
+    {
+      "q": "J'ai déjà une page Facebook, à quoi sert un site ?",
+      "r": "Votre page Facebook reste utile. Le site, lui, vous appartient, se consulte sans compte Facebook et apparaît sur Google quand on cherche votre métier dans votre ville."
+    },
+    {
+      "q": "Pourrai-je modifier mes horaires ou mes tarifs ?",
+      "r": "Oui. Envoyez-moi un message : horaires, tarifs, photos ou fermeture exceptionnelle, c'est compris dans l'abonnement, jusqu'à 30 minutes par mois."
+    },
+    {
+      "q": "Que ne faites-vous pas ?",
+      "r": "Pour l'instant, je ne fais pas de boutique en ligne avec paiement, d'application mobile, de gestion quotidienne des réseaux sociaux, de publicité payante ni de création de logo complète. Si vous en avez besoin, je vous oriente vers quelqu'un d'autre quand c'est possible."
+    }
   ],
   "realisations": []
 }

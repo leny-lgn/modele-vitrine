@@ -1,0 +1,71 @@
+---
+// Bandeau de titre des pages internes du site perso (Modèles, Tarifs, Contact) :
+// pleine largeur, nuit foncée, lignes d'annuaire en fond, titre en lettres d'enseigne dorées.
+// Le contenu passé en slot (intro, lien) s'affiche sous le titre, dans le bandeau.
+import FondAnnuaire from './FondAnnuaire.astro';
+
+interface Props {
+  titre: string;
+}
+const { titre } = Astro.props;
+---
+
+<div class="bandeau-page">
+  <FondAnnuaire class="bp-fond" lignes={60} graine={5} />
+  <div class="page page-large bp-contenu">
+    <h1 class="rubrique rubrique-h1 bp-titre">{titre}</h1>
+    <div class="bp-intro"><slot /></div>
+  </div>
+</div>
+
+<style>
+  .bandeau-page {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding-block: 1.75rem 2.25rem;
+    border-bottom: 2px solid var(--dore);
+    background: var(--nuit-fonce);
+  }
+
+  /* Lignes d'annuaire : décor gris bleuté sur anthracite, sans texte */
+  .bandeau-page :global(.bp-fond) {
+    z-index: -1;
+    --barre: #182023;
+    --barre-forte: #212a2e;
+  }
+
+  /* Titre et texte posés directement sur les lignes de fond, comme sur l'accueil
+     (les lignes sont assez discrètes pour ne pas gêner la lecture). */
+  .bp-titre {
+    display: inline-block;
+    padding: 0;
+    border-bottom: 0;
+    background: none;
+    font-size: clamp(2.25rem, 8vw, 4.5rem);
+  }
+
+  /* Largeur de lecture limitée */
+  .bp-intro {
+    max-width: 44rem;
+  }
+
+  .bp-intro:not(:empty) {
+    margin-top: 1rem;
+  }
+
+  .bp-intro :global(.intro-section) {
+    margin-top: 0;
+  }
+
+  @media (min-width: 48rem) {
+    .bandeau-page {
+      padding-block: 2.75rem 3.25rem;
+    }
+
+    .bandeau-page :global(.bp-fond .fa-defile) {
+      columns: 3;
+    }
+  }
+</style>
+

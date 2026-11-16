@@ -1,0 +1,110 @@
+---
+// Aperçu du travail, dans le bandeau d'accueil : la capture ordinateur du modèle Premium,
+// la capture téléphone du modèle Vitrine posée devant. Tout le bloc mène à la grille des modèles.
+// Généré depuis src/sites/ (premier secteur) ; les captures viennent de `npm run captures`.
+import { sitesParSecteur } from '../../lib/sites';
+import { infosSecteur, LIBELLES_GAMMES } from '../../lib/secteurs';
+import { LIEN_GRILLE } from '../../lib/liens';
+import Capture from './Capture.astro';
+
+const [secteur, sites] = [...sitesParSecteur().entries()][0];
+const libelle = infosSecteur(secteur).libelle;
+const grand = sites.premium ?? sites.vitrine ?? sites.essentiel!;
+const petit = sites.vitrine ?? sites.essentiel ?? grand;
+---
+
+<a class="apercus" href={LIEN_GRILLE}>
+  <span class="ap-ecran">
+    <Capture
+      slug={grand.slug}
+      vue="bureau"
+      alt={`Page d’accueil du modèle ${libelle} ${LIBELLES_GAMMES[grand.gamme]}, sur ordinateur`}
+      sizes="(min-width: 64rem) 34vw, 1px"
+    />
+  </span>
+  <span class="ap-telephone">
+    <Capture slug={petit.slug} vue="mobile" alt={`Page d’accueil du modèle ${libelle} ${LIBELLES_GAMMES[petit.gamme]}, sur téléphone`} sizes="9rem" />
+  </span>
+  <span class="ap-legende">Voir les modèles · entreprises fictives</span>
+</a>
+
+<style>
+  .apercus {
+    display: none;
+  }
+
+  /* Bureau seulement : sur mobile, le bandeau garde le numéro au-dessus du pli. */
+  @media (min-width: 64rem) {
+    .apercus {
+      position: relative;
+      display: block;
+      padding: 0 0 2.5rem 2.5rem;
+      color: var(--ivoire);
+      text-decoration: none;
+    }
+
+    .ap-ecran {
+      display: block;
+      border: 1px solid var(--ivoire-2);
+      background: var(--panneau);
+      transition: border-color 200ms ease;
+    }
+
+    .ap-ecran :global(img) {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .ap-telephone {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 28%;
+      border: 3px solid var(--nuit-fonce);
+      outline: 1px solid var(--ivoire-2);
+      background: var(--panneau);
+      transition:
+        transform 240ms cubic-bezier(0.23, 1, 0.32, 1),
+        outline-color 200ms ease;
+    }
+
+    .ap-telephone :global(img) {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .ap-legende {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--ivoire-2);
+      transition: color 150ms ease;
+    }
+  }
+
+  /* Survol : le téléphone se soulève, les cadres et la légende passent au doré. */
+  @media (min-width: 64rem) and (hover: hover) and (pointer: fine) {
+    .apercus:hover .ap-ecran {
+      border-color: var(--dore);
+    }
+
+    .apercus:hover .ap-telephone {
+      transform: translateY(-0.5rem);
+      outline-color: var(--dore);
+    }
+
+    .apercus:hover .ap-legende {
+      color: var(--dore);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .apercus:hover .ap-telephone {
+      transform: none;
+    }
+  }
+</style>

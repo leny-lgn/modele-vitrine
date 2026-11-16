@@ -1,0 +1,500 @@
+/* Site personnel : direction « annuaire professionnel par métier ».
+   Les secteurs sont des rubriques, les trois gammes sont les trois tailles d'annonce.
+   Palette « la devanture » : façade gris anthracite bleuté, boiseries, lettres dorées, texte ivoire.
+   Une seule couleur d'accent : le doré (en aplat, jamais en dégradé métallisé).
+   Contrastes (WCAG) en commentaire en face de chaque couleur. */
+
+@font-face {
+  font-family: 'Libre Franklin';
+  src: url('/fonts/libre-franklin-variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Overpass Mono';
+  src: url('/fonts/overpass-mono-variable.woff2') format('woff2');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root[data-site='perso'] {
+  color-scheme: dark;
+
+  /* Couleurs de base */
+  --nuit: #151a1c; /* fond de page : gris anthracite bleuté */
+  --nuit-fonce: #0e1214; /* bandes et bandeau d'accueil */
+  --panneau: #1f2629; /* encadrés posés sur la façade */
+  --ivoire: #efe8d8; /* texte : sur nuit 15,0:1 ; sur panneau 13,1:1 ; sur bois 7,5:1 */
+  --ivoire-2: #bdb6a8; /* texte secondaire : sur nuit 8,7:1 ; sur panneau 7,6:1 */
+  --bois: #5b4325; /* boiseries : brun bois foncé, doré ; bandeau de menu, bande Tarifs */
+  --dore: #c9a44c; /* accent unique : sur nuit 7,6:1 ; sur panneau 6,6:1 ; nuit dessus 7,6:1 */
+  --dore-vif: #dcbb68; /* survol : nuit dessus 9,0:1 */
+
+  /* Rôles (les composants n'utilisent que ceux-ci) */
+  --papier: var(--nuit);
+  --feuille: var(--panneau);
+  --encre: var(--ivoire);
+  --encre-2: var(--ivoire-2);
+  --sur-dore: var(--nuit); /* texte posé sur le doré */
+  --filet-doux: #2f383c; /* filets décoratifs uniquement */
+
+  --couleur-fond: var(--papier);
+  --couleur-texte: var(--encre);
+  --couleur-texte-secondaire: var(--encre-2);
+  --couleur-trait: var(--filet-doux);
+  --couleur-accent: var(--dore);
+  --couleur-accent-texte: var(--sur-dore);
+  --couleur-focus: var(--dore);
+
+  --police-texte: 'Libre Franklin', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --police-titres: var(--police-texte);
+  --police-chiffres: 'Overpass Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --largeur: 76rem;
+  --marge: clamp(1rem, 4vw, 2.5rem);
+  --espace-section: clamp(3.5rem, 9vw, 6.5rem);
+}
+
+/* Menu fixé en haut : les ancres (#modeles, #tarifs…) s'arrêtent sous lui. */
+:root[data-site='perso'] {
+  scroll-padding-top: 4.5rem;
+}
+
+[data-site='perso'] body {
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  font-feature-settings: 'kern', 'liga';
+}
+
+[data-site='perso'] ::selection {
+  background: var(--dore);
+  color: var(--sur-dore);
+}
+
+[data-site='perso'] :focus-visible {
+  outline: 3px solid var(--dore);
+  outline-offset: 3px;
+}
+
+[data-site='perso'] a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+[data-site='perso'] a:hover {
+  color: var(--dore);
+  text-decoration-thickness: 2px;
+}
+
+/* Le lien d'évitement est sur fond encre (ivoire) : le doré du survol y serait illisible. */
+[data-site='perso'] .lien-evitement:hover {
+  color: var(--couleur-fond);
+}
+
+/* Conteneur de page */
+.page {
+  width: 100%;
+  max-width: var(--largeur);
+  margin-inline: auto;
+  padding-inline: var(--marge);
+}
+
+/* Pleine largeur : le contenu s'aligne sur les bords du menu (seule la marge reste). */
+.page.page-large {
+  max-width: none;
+}
+
+/* Rubrique : lettres d'enseigne dorées sur bande sombre, filet doré dessous
+   (le titre lui-même, jamais un surtitre). Doré sur nuit foncée : 7,9:1. */
+.rubrique {
+  display: block;
+  padding: 0.45rem 0.75rem 0.4rem;
+  background: var(--nuit-fonce);
+  border-bottom: 2px solid var(--dore);
+  color: var(--dore);
+  font-weight: 800;
+  font-size: clamp(1.125rem, 2.4vw, 1.375rem);
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+/* Rubrique de tête de page (h1) : plus haute, avec le lieu à droite */
+.rubrique-h1 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.15rem 1rem;
+  padding: 0.7rem 1rem 0.6rem;
+  font-size: clamp(1.75rem, 6vw, 3.25rem);
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+}
+
+.rubrique-h1 .r-lieu {
+  font-weight: 500;
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Sections : double filet en tête, comme un changement de rubrique */
+.section {
+  padding-top: var(--espace-section);
+}
+
+.titre-section {
+  padding-top: 0.6rem;
+  border-top: 3px solid var(--encre);
+  box-shadow: inset 0 1px 0 var(--papier), inset 0 2px 0 var(--encre);
+  font-size: clamp(1.75rem, 4.4vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+}
+
+.intro-section {
+  max-width: 40rem;
+  margin-top: 0.75rem;
+  color: var(--encre-2);
+  font-size: 1.125rem;
+}
+
+/* Chiffres : numéros, prix, durées */
+.mono {
+  font-family: var(--police-chiffres);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Lignes à points de conduite : « Libellé ........ valeur » */
+.points {
+  list-style: none;
+  padding: 0;
+}
+
+.points > li,
+.points > div {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding-block: 0.3rem;
+}
+
+.points .conduite {
+  flex: 1 1 1.5rem;
+  min-width: 1.5rem;
+  border-bottom: 2px dotted var(--encre);
+  transform: translateY(-0.3em);
+}
+
+.points dt,
+.points dd {
+  margin: 0;
+}
+
+/* Dans une liste de définitions, seuls dt et dd sont permis : les points sont dessinés après le libellé. */
+.points dt {
+  display: flex;
+  white-space: nowrap;
+  hyphens: none;
+  flex: 1 1 auto;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.points dt::after {
+  content: '';
+  flex: 1 1 1.5rem;
+  min-width: 1.5rem;
+  border-bottom: 2px dotted var(--encre);
+  transform: translateY(-0.3em);
+}
+
+.points .valeur {
+  text-align: right;
+}
+
+/* Boutons */
+.bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.55rem 1.25rem;
+  border: 2px solid var(--encre);
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    background-color 150ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 150ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 150ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.bouton-plein {
+  background: var(--dore);
+  border-color: var(--dore);
+  color: var(--sur-dore);
+}
+
+[data-site='perso'] .bouton-plein:hover {
+  background: var(--dore-vif);
+  border-color: var(--dore-vif);
+  color: var(--sur-dore);
+  text-decoration: none;
+}
+
+.bouton-trait {
+  background: transparent;
+  color: var(--encre);
+}
+
+[data-site='perso'] .bouton-trait:hover {
+  background: var(--encre);
+  color: var(--feuille);
+  text-decoration: none;
+}
+
+/* Informations encore à fournir (moi.json) */
+mark.a-completer {
+  background: #ffe9a8;
+  color: #3d3000;
+  padding: 0 0.2em;
+  font-family: var(--police-texte);
+  hyphens: none;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Texte courant */
+.prose > * + * {
+  margin-top: 1rem;
+}
+
+.prose {
+  max-width: 42rem;
+}
+
+.prose h2 {
+  margin-top: 2.5rem;
+  font-size: 1.375rem;
+  font-weight: 800;
+}
+
+.prose ul {
+  padding-left: 1.25rem;
+}
+
+/* Bandes pleine largeur. La couleur passe par les jetons : filets, points et textes suivent seuls. */
+.bande {
+  padding-bottom: var(--espace-section);
+}
+
+.bande-sombre {
+  --papier: var(--nuit-fonce); /* ivoire-2 dessus : 9,0:1 ; doré : 7,9:1 */
+  background: var(--papier);
+}
+
+/* Bande « boiseries » : texte ivoire (7,5:1), secondaire #e6dccb (6,8:1).
+   Liens et boutons restent en ivoire : le doré (3,9:1) y est réservé au décor. */
+.bande-bois {
+  --papier: var(--bois);
+  --encre-2: #e6dccb;
+  background: var(--bois);
+  color: var(--ivoire);
+}
+
+[data-site='perso'] .bande-bois a,
+[data-site='perso'] .bande-bois a:hover {
+  color: var(--ivoire);
+}
+
+[data-site='perso'] .bande-bois .bouton-plein {
+  background: var(--ivoire);
+  border-color: var(--ivoire);
+  color: var(--nuit); /* 15,0:1 */
+}
+
+[data-site='perso'] .bande-bois .bouton-plein:hover {
+  background: var(--dore-vif);
+  border-color: var(--dore-vif);
+  color: var(--nuit);
+}
+
+[data-site='perso'] .bande-bois :focus-visible {
+  outline-color: var(--ivoire);
+}
+
+[data-site='perso'] .bande-bois ::selection {
+  background: var(--ivoire);
+  color: var(--bois);
+}
+
+/* Mouvement lié au défilement (site perso seulement, voir CLAUDE.md) :
+   les points de conduite se tracent du libellé vers la valeur quand la ligne entre à l'écran.
+   Sans support ou avec « réduire les animations » : les points sont simplement là. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    [data-site='perso'] .conduite,
+    [data-site='perso'] .points dt::after {
+      transform-origin: left center;
+      animation: trace-conduite linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 30%;
+    }
+  }
+}
+
+@keyframes trace-conduite {
+  from {
+    transform: translateY(-0.3em) scaleX(0);
+  }
+  to {
+    transform: translateY(-0.3em) scaleX(1);
+  }
+}
+
+/* Apparition au défilement (site perso) : chaque bloc monte de 1,5 rem en s'éclaircissant
+   quand il entre à l'écran. Liée au défilement, courbe ease-out marquée ; un bloc déjà visible
+   au chargement est simplement là. Sans support ou « réduire les animations » : rien ne bouge.
+   Jamais sur un élément placé dans des colonnes CSS (columns) : dans Chrome, son déplacement
+   modifie sa propre progression et il vibre. La FAQ (en colonnes) apparaît donc d'un bloc. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    [data-site='perso'] .titre-section,
+    [data-site='perso'] .apparait,
+    [data-site='perso'] .etapes > li,
+    [data-site='perso'] .faq,
+    [data-site='perso'] .offre,
+    [data-site='perso'] .abonnement,
+    [data-site='perso'] .coord,
+    [data-site='perso'] .qui,
+    [data-site='perso'] .rubrique-metier .annonce {
+      animation: apparait cubic-bezier(0.23, 1, 0.32, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+    }
+  }
+}
+
+@keyframes apparait {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Appui : le bouton s'enfonce légèrement (120 ms), pour confirmer le geste. */
+[data-site='perso'] .bouton {
+  transition:
+    background-color 150ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 150ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 150ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 120ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+[data-site='perso'] .bouton:active {
+  transform: scale(0.97);
+}
+
+/* Survols, seulement avec une souris : un filet doré et le titre qui passe au doré, rien de plus. */
+@media (hover: hover) and (pointer: fine) {
+  [data-site='perso'] .etapes > li,
+  [data-site='perso'] .offre,
+  [data-site='perso'] .faq-item {
+    transition: box-shadow 200ms ease;
+  }
+
+  [data-site='perso'] .etapes > li:hover,
+  [data-site='perso'] .offre:hover,
+  [data-site='perso'] .faq-item:hover {
+    box-shadow: inset 0 2px 0 var(--dore);
+  }
+
+  [data-site='perso'] .et-titre,
+  [data-site='perso'] .of-nom,
+  [data-site='perso'] .faq-item dt,
+  [data-site='perso'] .faq-item h3 {
+    transition: color 150ms ease;
+  }
+
+  [data-site='perso'] .etapes > li:hover .et-titre,
+  [data-site='perso'] .offre:hover .of-nom,
+  [data-site='perso'] .faq-item:hover dt,
+  [data-site='perso'] .faq-item:hover h3 {
+    color: var(--dore);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-site='perso'] .bouton:active {
+    transform: none;
+  }
+}
+
+
+/* Passage entre Modèles, Tarifs et Contact : seul le bandeau de titre change de taille, en douceur,
+   et le contenu dessous glisse avec lui. Tout le reste (menu, pied) change sans animation.
+   240 ms, ease-out marqué : un redimensionnement court qui accompagne le clic, sans attente.
+   Vers ou depuis l'accueil (pas de bandeau d'un des deux côtés) : aucune animation. */
+@view-transition {
+  navigation: auto;
+}
+
+.bandeau-page {
+  view-transition-name: bandeau;
+}
+
+.suite-page {
+  view-transition-name: suite;
+}
+
+[data-site='perso'] .entete {
+  view-transition-name: menu;
+}
+
+::view-transition-old(root),
+::view-transition-new(root),
+::view-transition-old(menu),
+::view-transition-new(menu) {
+  animation: none;
+}
+
+/* Le menu reste au premier plan pendant le mouvement */
+::view-transition-group(menu) {
+  z-index: 10;
+  animation: none;
+}
+
+::view-transition-group(bandeau),
+::view-transition-group(suite) {
+  animation-duration: 240ms;
+  animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Le bandeau se coupe proprement pendant qu'il rétrécit, au lieu de déborder */
+::view-transition-group(bandeau) {
+  overflow: clip;
+}
+
+/* Élément présent d'un seul côté (accueil ↔ autre page) : pas de fondu, changement immédiat */
+::view-transition-old(*):only-child,
+::view-transition-new(*):only-child {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}

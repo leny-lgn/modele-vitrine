@@ -1,0 +1,67 @@
+---
+// « Qui je suis » : photo facultative (public/images/accueil/<photo>) et quelques phrases.
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { MOI, NOM } from '../../lib/moi';
+import { RACINE, cheminRelatif, urlImage } from '../../lib/images.mjs';
+import T from './T.astro';
+
+const photo = MOI.photo && existsSync(join(RACINE, cheminRelatif('accueil', MOI.photo))) ? MOI.photo : undefined;
+---
+
+<div class:list={['qui', { 'avec-photo': photo }]}>
+  {
+    photo && (
+      <img
+        class="qui-photo"
+        src={urlImage('accueil', photo)}
+        width="600"
+        height="750"
+        alt={`Portrait de ${NOM}`}
+        loading="lazy"
+        decoding="async"
+      />
+    )
+  }
+  <div class="qui-texte">
+    {
+      MOI.presentation.map((p) => (
+        <p>
+          <T texte={p} />
+        </p>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .qui {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .qui-texte {
+    max-width: 40rem;
+    font-size: 1.1875rem;
+    line-height: 1.5;
+  }
+
+  .qui-texte p + p {
+    margin-top: 0.9rem;
+  }
+
+  .qui-photo {
+    width: 100%;
+    max-width: 16rem;
+    height: auto;
+    border: 1px solid var(--encre);
+  }
+
+  @media (min-width: 48rem) {
+    .avec-photo {
+      grid-template-columns: 16rem minmax(0, 1fr);
+      gap: 2.5rem;
+    }
+  }
+</style>

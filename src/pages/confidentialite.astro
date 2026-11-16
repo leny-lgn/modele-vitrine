@@ -1,0 +1,60 @@
+---
+// Politique de confidentialité du site personnel.
+import Perso from '../layouts/Perso.astro';
+import T from '../components/perso/T.astro';
+import { MOI } from '../lib/moi';
+
+const ml = MOI.mentionsLegales;
+---
+
+<Perso titre="Confidentialité" description="Données personnelles : ce qui est collecté, pourquoi, et vos droits.">
+  <div class="page tete">
+    <h1 class="rubrique rubrique-h1">Confidentialité</h1>
+    <div class="prose">
+      <h2>Ce site ne vous suit pas</h2>
+      <p>Aucun cookie, aucun outil de mesure d’audience, aucun traceur publicitaire. Aucun formulaire ne collecte de données.</p>
+
+      <h2>Quand vous me contactez</h2>
+      <p>
+        Si vous m’appelez ou m’écrivez, j’utilise votre nom, votre numéro, votre adresse e-mail et le contenu de votre
+        message uniquement pour vous répondre et, si vous le souhaitez, préparer un devis. Ces informations ne sont ni
+        vendues ni transmises à des tiers.
+      </p>
+      <p>Durée de conservation : <T texte={ml.conservation} />.</p>
+
+      <h2>Hébergement</h2>
+      <p>
+        L’hébergeur (<T texte={ml.hebergeur} />) traite des données techniques, comme l’adresse IP, nécessaires au
+        fonctionnement et à la sécurité du site.
+      </p>
+
+      <h2>Vos droits</h2>
+      <p>
+        Vous pouvez demander l’accès à vos données, leur correction ou leur suppression, et vous opposer à leur
+        utilisation, en écrivant à <T texte={MOI.email} />. Vous pouvez aussi adresser une réclamation à la CNIL
+        (cnil.fr).
+      </p>
+      <p>Responsable du traitement : <T texte={MOI.nom} />.</p>
+    </div>
+  </div>
+</Perso>
+
+<style>
+  .tete {
+    padding-top: 1.25rem;
+  }
+
+  .prose {
+    margin-top: 1.5rem;
+  }
+
+  .prose h2:first-child {
+    margin-top: 0;
+  }
+
+  @media (min-width: 48rem) {
+    .tete {
+      padding-top: 2rem;
+    }
+  }
+</style>

@@ -1,0 +1,518 @@
+---
+// « Votre métier, votre taille d'annonce » : une page d'annuaire où l'annonce du modèle
+// grandit selon la gamme choisie (une ligne, un encadré, une pleine annonce).
+// Sans JS : le choix de gamme marche (CSS :has) ; le choix du métier est masqué.
+// Générée depuis src/sites/ et moi.json : chaque nouveau secteur apparaît seul.
+import type { Gamme, Site } from '../../lib/schema';
+import { infosSecteur, LIBELLES_GAMMES } from '../../lib/secteurs';
+import { lienSite } from '../../lib/liens';
+import { MOI, gamme, prixFr, villesFr } from '../../lib/moi';
+import { telephoneFr } from '../../lib/typo-fr';
+import { sitesParSecteur } from '../../lib/sites';
+import Capture from './Capture.astro';
+import FondAnnuaire from './FondAnnuaire.astro';
+import T from './T.astro';
+
+const GAMMES_ORDRE = ['essentiel', 'vitrine', 'premium'] as const;
+const secteurs = [...sitesParSecteur().entries()];
+const [secteurDefaut] = secteurs[0];
+const avecModele = new Set(secteurs.map(([s]) => infosSecteur(s).libelle.toLowerCase()));
+const sansModele = MOI.metiers.filter((m) => !avecModele.has(m.toLowerCase()));
+
+const pluriel = (n: number, mot: string) => `${n} ${mot}${n > 1 ? 's' : ''}`;
+function nbPages(site: Site): string {
+  const chantiers = site.gamme === 'premium' ? site.realisations.filter((r) => r.slug).length : 0;
+  return chantiers
+    ? `${pluriel(site.pages.length, 'page')} + ${pluriel(chantiers, 'page')} de chantier`
+    : pluriel(site.pages.length, 'page');
+}
+---
+
+<div class="trouver" data-trouver>
+  <div class="tr-commandes">
+    <div class="tr-metier" data-zone-metier hidden>
+      <label for="tr-metier">Votre métier</label>
+      <select id="tr-metier" data-metier>
+        <optgroup label="Avec un modèle">
+          {
+            secteurs.map(([s]) => (
+              <option value={s} data-libelle={infosSecteur(s).libelle}>
+                {infosSecteur(s).libelle}
+              </option>
+            ))
+          }
+        </optgroup>
+        {
+          sansModele.length > 0 && (
+            <optgroup label="Pas encore de modèle">
+              {sansModele.map((m) => (
+                <option value="" data-libelle={m}>
+                  {m}
+                </option>
+              ))}
+            </optgroup>
+          )
+        }
+      </select>
+    </div>
+
+    <fieldset class="tr-gammes">
+      <legend>Taille du site</legend>
+      <div class="tr-choix">
+        {
+          GAMMES_ORDRE.map((g) => (
+            <label class="tr-gamme">
+              <input class="visuellement-cache" type="radio" name="tr-gamme" value={g} checked={g === 'vitrine'} />
+              <span class="tr-g-nom">{LIBELLES_GAMMES[g]}</span>
+              <span class="tr-g-prix mono">
+                <T texte={prixFr(gamme(g).prix)} />
+              </span>
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="tr-page">
+    <p class="rubrique tr-rubrique">
+      <span data-rubrique>{infosSecteur(secteurDefaut).libelle}</span>
+      <span class="tr-lieu">{villesFr()}</span>
+    </p>
+    <p class="tr-note" data-note aria-live="polite" hidden></p>
+
+    <div class="tr-feuille">
+      <FondAnnuaire lignes={36} graine={11} />
+      {
+        secteurs.map(([secteur, sites], i) => (
+          <div class="tr-annonces" data-secteur={secteur} hidden={i > 0}>
+            {GAMMES_ORDRE.map((g) => {
+              const site: Site | undefined = sites[g as Gamme];
+              if (!site) return null;
+              const libelle = infosSecteur(secteur).libelle;
+              return (
+                <article class:list={['tr-annonce', `tr-${g}`]} data-gamme={g}>
+                  {g === 'premium' && (
+                    <Capture
+                      slug={site.slug}
+                      vue="bureau"
+                      alt={`Page d’accueil du modèle ${libelle} Premium, sur ordinateur`}
+                      sizes="(min-width: 64rem) 640px, 90vw"
+                    />
+                  )}
+                  {g !== 'premium' && (
+                    <Capture
+                      slug={site.slug}
+                      vue="bureau"
+                      class="tr-capture"
+                      alt={`Page d’accueil du modèle ${libelle} ${LIBELLES_GAMMES[g]}, sur ordinateur`}
+                      sizes={g === 'vitrine' ? '(min-width: 48rem) 45vw, 90vw' : '(min-width: 48rem) 24vw, 50vw'}
+                    />
+                  )}
+                  <div class="tr-texte">
+                    <p class="tr-ligne">
+                      <strong class="tr-nom">{site.nom}</strong>
+                      <span class="tr-suite">
+                        <span class="conduite" aria-hidden="true" />
+                        <span class="tr-tel">
+                          {telephoneFr(site.telephone)} <span class="tr-fictif">(n°&nbsp;fictif)</span>
+                        </span>
+                      </span>
+                    </p>
+                    {g !== 'essentiel' && <p class="tr-accroche">{site.accroche}</p>}
+                    <p class="tr-details">
+                      {LIBELLES_GAMMES[g]} · {nbPages(site)} · <span class="mono"><T texte={prixFr(gamme(g).prix)} /></span>
+                    </p>
+                    <a class="tr-lien" href={lienSite(site)}>
+                      Ouvrir le modèle {LIBELLES_GAMMES[g]}
+                      <span class="visuellement-cache"> ({libelle}, entreprise fictive)</span>
+                    </a>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<script>
+  // Choix du métier : met à jour la rubrique et montre le modèle du métier, ou le plus proche.
+  for (const bloc of document.querySelectorAll<HTMLElement>('[data-trouver]')) {
+    const zone = bloc.querySelector<HTMLElement>('[data-zone-metier]');
+    const choix = bloc.querySelector<HTMLSelectElement>('[data-metier]');
+    const rubrique = bloc.querySelector<HTMLElement>('[data-rubrique]');
+    const note = bloc.querySelector<HTMLElement>('[data-note]');
+    const groupes = [...bloc.querySelectorAll<HTMLElement>('[data-secteur]')];
+    if (!zone || !choix || !rubrique || !note || groupes.length === 0) continue;
+    zone.hidden = false;
+    const exemple = rubrique.textContent ?? '';
+
+    choix.addEventListener('change', () => {
+      const option = choix.selectedOptions[0];
+      const libelle = option?.dataset.libelle ?? exemple;
+      const secteur = choix.value || groupes[0].dataset.secteur;
+      rubrique.textContent = libelle;
+      for (const g of groupes) g.hidden = g.dataset.secteur !== secteur;
+      if (choix.value) {
+        note.hidden = true;
+        note.textContent = '';
+      } else {
+        note.hidden = false;
+        // Typographie française : insécables dans les guillemets et avant « : ».
+        note.textContent = `Pas encore de modèle « ${libelle} » : voici le modèle ${exemple}. Votre site suit la même structure, avec vos informations, vos horaires et vos photos.`;
+      }
+    });
+  }
+</script>
+
+<style>
+  .trouver {
+    margin-top: 2rem;
+  }
+
+  /* Commandes : métier puis taille */
+  .tr-commandes {
+    display: grid;
+    gap: 1.25rem;
+    align-items: end;
+  }
+
+  .tr-metier {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .tr-metier[hidden] {
+    display: none;
+  }
+
+  .tr-metier label,
+  .tr-gammes legend {
+    font-weight: 800;
+  }
+
+  .tr-metier select {
+    min-height: 3rem;
+    padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+    border: 2px solid var(--encre);
+    border-radius: 0;
+    background:
+      linear-gradient(45deg, transparent 50%, var(--encre) 50%) right 1.1rem center / 0.4rem 0.4rem no-repeat,
+      linear-gradient(-45deg, transparent 50%, var(--encre) 50%) right 0.7rem center / 0.4rem 0.4rem no-repeat,
+      var(--feuille);
+    color: var(--encre);
+    font: inherit;
+    font-weight: 600;
+    appearance: none;
+  }
+
+  .tr-gammes {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .tr-gammes legend {
+    margin-bottom: 0.35rem;
+    padding: 0;
+  }
+
+  .tr-choix {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border: 2px solid var(--encre);
+  }
+
+  .tr-gamme {
+    display: grid;
+    align-content: center;
+    gap: 0.1rem;
+    min-height: 3.5rem;
+    padding: 0.45rem 0.6rem;
+    cursor: pointer;
+    background: var(--feuille);
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      transform 120ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .tr-gamme + .tr-gamme {
+    border-left: 1px solid var(--encre);
+  }
+
+  .tr-gamme:active {
+    transform: scale(0.97);
+  }
+
+  .tr-g-nom {
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .tr-g-prix {
+    font-size: 0.875rem;
+    line-height: 1.2;
+  }
+
+  .tr-gamme:has(input:checked) {
+    background: var(--dore);
+    color: var(--sur-dore);
+  }
+
+  .tr-gamme:has(input:checked) :global(.a-completer) {
+    color: #3d3000;
+  }
+
+  .tr-gamme:has(input:focus-visible) {
+    outline: 3px solid var(--dore);
+    outline-offset: 3px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .tr-gamme:not(:has(input:checked)):hover {
+      background: rgb(201 164 76 / 0.14);
+    }
+  }
+
+  /* La page d'annuaire */
+  .tr-page {
+    margin-top: 1.5rem;
+    border: 1px solid var(--encre);
+    background: var(--feuille);
+  }
+
+  .tr-rubrique {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.25rem 1rem;
+  }
+
+  .tr-lieu {
+    font-weight: 500;
+    font-size: 1rem;
+    text-transform: none;
+  }
+
+  .tr-note {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--encre);
+    max-width: none;
+  }
+
+  .tr-note[hidden] {
+    display: none;
+  }
+
+  .tr-feuille {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  .tr-feuille > :global(.fond-annuaire) {
+    z-index: -1;
+  }
+
+  /* Les trois annonces occupent la même place : la feuille garde la hauteur de la plus grande. */
+  /* Marge du bas : quelques lignes d'annuaire restent visibles, même sous la pleine annonce. */
+  .tr-annonces {
+    display: grid;
+    padding: 1rem 1rem 4.5rem;
+  }
+
+  .tr-annonces[hidden] {
+    display: none;
+  }
+
+  .tr-annonce {
+    grid-area: 1 / 1;
+    align-self: start;
+    position: relative;
+    background: var(--feuille);
+    /* Sortie : rapide */
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.98);
+    filter: blur(2px);
+    transform-origin: top left;
+    transition:
+      opacity 120ms ease-out,
+      transform 120ms ease-out,
+      filter 120ms ease-out,
+      border-color 150ms ease,
+      visibility 0s linear 120ms;
+  }
+
+  /* Entrée : 220 ms, ease-out marqué */
+  .trouver:has(input[value='essentiel']:checked) .tr-essentiel,
+  .trouver:has(input[value='vitrine']:checked) .tr-vitrine,
+  .trouver:has(input[value='premium']:checked) .tr-premium {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    filter: none;
+    transition:
+      opacity 220ms cubic-bezier(0.23, 1, 0.32, 1),
+      transform 220ms cubic-bezier(0.23, 1, 0.32, 1),
+      filter 220ms cubic-bezier(0.23, 1, 0.32, 1),
+      visibility 0s;
+  }
+
+  /* Survol de l'annonce : léger éclaircissement, cadre doré */
+  .tr-annonce:has(.tr-lien:hover) {
+    background: rgb(239 232 216 / 0.06);
+    border-color: var(--dore);
+  }
+
+  .tr-lien::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Les captures ordinateur sont lisibles : la taille croît avec la gamme
+     (Essentiel : vignette ; Vitrine : largeur de l'annonce ; Premium : toute la page). */
+  .tr-annonce :global(.capture) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--filet-doux);
+  }
+
+  /* Essentiel : une ligne parmi les autres, un peu plus appuyée, vignette à droite */
+  .tr-essentiel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 50%;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.75rem 0.5rem;
+    border-block: 2px solid var(--encre);
+  }
+
+  .tr-essentiel :global(.tr-capture) {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .tr-essentiel .tr-texte {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  /* Vitrine : encadré au filet fin, capture sur toute la largeur de l'annonce */
+  .tr-vitrine {
+    padding: 0.9rem;
+    border: 1px solid var(--encre);
+  }
+
+  .tr-vitrine .tr-texte {
+    margin-top: 0.9rem;
+  }
+
+  /* Premium : pleine annonce, cadre épais, capture en tête */
+  .tr-premium {
+    padding: 0.9rem;
+    border: 3px solid var(--encre);
+  }
+
+  .tr-premium .tr-texte {
+    margin-top: 0.9rem;
+  }
+
+  .tr-ligne {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+
+  .tr-nom {
+    font-weight: 800;
+    hyphens: none;
+  }
+
+  .tr-suite {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+
+  .tr-tel {
+    font-size: 0.9375rem;
+    white-space: nowrap;
+  }
+
+  .tr-fictif,
+  .tr-details {
+    color: var(--encre-2);
+  }
+
+  .tr-accroche {
+    margin-top: 0.35rem;
+    hyphens: manual;
+  }
+
+  .tr-details {
+    margin-top: 0.35rem;
+    font-size: 0.9375rem;
+  }
+
+  .tr-lien {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-weight: 700;
+    color: var(--dore);
+  }
+
+  @media (min-width: 48rem) {
+    .tr-commandes {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+      gap: 1.5rem;
+    }
+
+    .tr-annonces {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 2.5rem;
+      padding: 1.25rem 1.25rem 5rem;
+    }
+
+    /* Essentiel et Vitrine tiennent dans une colonne ; Premium prend la page. */
+    .tr-essentiel,
+    .tr-vitrine {
+      grid-column: 1;
+    }
+
+    .tr-premium {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 1.25rem;
+      align-items: end;
+    }
+
+    .tr-premium .tr-texte {
+      margin-top: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tr-annonce,
+    .trouver:has(input:checked) .tr-annonce {
+      transform: none;
+      filter: none;
+    }
+
+    .tr-gamme:active {
+      transform: none;
+    }
+  }
+</style>

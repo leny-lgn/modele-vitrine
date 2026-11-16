@@ -287,13 +287,22 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
     font-size: var(--taille-petit);
   }
 
+  /* Bureau : comme le Premium, la plaque remplit la fenêtre (sous le bandeau de démo), plafonnée à
+     56 rem. Fond ardoise uni, sans grande photo (brief Essentiel) ; le contenu est centré en hauteur. */
   @media (min-width: 48rem) {
+    .plaque {
+      display: grid;
+      align-content: center;
+      min-height: min(calc(100svh - 2rem), 56rem);
+    }
+
     .plaque {
       padding-block: var(--espace-4) var(--espace-5);
     }
 
+    /* Le nom occupe la plaque comme une enseigne */
     .plaque-nom {
-      font-size: var(--taille-5);
+      font-size: clamp(3rem, 6vw, 6rem);
     }
 
     .plaque-accroche {

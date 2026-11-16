@@ -1,0 +1,225 @@
+---
+// Pied de page du site personnel, en « enseigne » : le contact d'abord (numéro en grand),
+// les liens, puis le logo en grandes lettres dorées sur toute la largeur, comme peint
+// sur une devanture. Toutes les données viennent de moi.json.
+import { MOI, NOM, aCompleter } from '../../lib/moi';
+import { logoEnLigne } from '../../lib/logo';
+import { telephoneFr, telHref } from '../../lib/typo-fr';
+import {
+  LIEN_ACCUEIL,
+  LIEN_GRILLE,
+  LIEN_TARIFS,
+  LIEN_CONTACT,
+  LIEN_MENTIONS,
+  LIEN_CONFIDENTIALITE,
+} from '../../lib/liens';
+import T from './T.astro';
+
+const tel = aCompleter(MOI.telephone) ? undefined : MOI.telephone;
+const email = aCompleter(MOI.email) ? undefined : MOI.email;
+const enseigne = logoEnLigne('pd-enseigne-logo', 'pied');
+---
+
+<footer class="pied">
+  <div class="page page-large">
+    <div class="pd-grille">
+      <div class="pd-contact">
+        <p class="pd-titre">Un projet de site&#8239;?</p>
+        {
+          tel ? (
+            <a class="pd-tel mono" href={telHref(tel)}>
+              {telephoneFr(tel)}
+            </a>
+          ) : (
+            <p class="pd-tel mono">
+              <T texte={MOI.telephone} />
+            </p>
+          )
+        }
+        {email && <a class="pd-email" href={`mailto:${email}`}>{email}</a>}
+        <p class="pd-villes">
+          Sites internet · <T texte={MOI.villes.join(', ')} />
+        </p>
+      </div>
+
+      <nav class="pd-liens" aria-label="Pages du site">
+        <p class="pd-titre">Pages</p>
+        <ul>
+          <li><a href={LIEN_ACCUEIL}>Accueil</a></li>
+          <li><a href={LIEN_GRILLE}>Modèles</a></li>
+          <li><a href={LIEN_TARIFS}>Tarifs</a></li>
+          <li><a href={LIEN_CONTACT}>Contact</a></li>
+        </ul>
+      </nav>
+
+      <nav class="pd-liens" aria-label="Informations légales">
+        <p class="pd-titre">Informations</p>
+        <ul>
+          <li><a href={LIEN_MENTIONS}>Mentions légales</a></li>
+          <li><a href={LIEN_CONFIDENTIALITE}>Confidentialité</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    {
+      enseigne ? (
+        <a class="pd-enseigne" href={LIEN_ACCUEIL}>
+          <Fragment set:html={enseigne} />
+          <span class="visuellement-cache">{NOM}, retour à l’accueil</span>
+        </a>
+      ) : (
+        <p class="pd-enseigne-texte">
+          <T texte={NOM} />
+        </p>
+      )
+    }
+
+    <p class="pd-note">Les modèles présentent des entreprises fictives. Aucun cookie, aucun traceur.</p>
+  </div>
+</footer>
+
+<style>
+  /* Bande nuit foncée, séparée du contenu par la même ligne discrète que le menu. */
+  .pied {
+    margin-top: var(--espace-section);
+    padding-block: 3rem 2rem;
+    border-top: 1px solid #2a2f31;
+    background: var(--nuit-fonce);
+    font-size: 0.9375rem;
+  }
+
+  /* Mobile : le contact sur toute la largeur, les deux listes de liens côte à côte dessous. */
+  .pd-grille {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2rem 1.5rem;
+  }
+
+  .pd-contact {
+    grid-column: 1 / -1;
+  }
+
+  .pd-titre {
+    color: var(--encre-2);
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .pd-contact {
+    display: grid;
+    justify-items: start;
+    gap: 0.25rem;
+  }
+
+  .pd-contact .pd-titre {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--encre);
+  }
+
+  .pd-tel {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    font-weight: 600;
+    line-height: 1.1;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .pd-email {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+
+  .pd-villes {
+    color: var(--encre-2);
+  }
+
+  .pd-liens ul {
+    margin-top: 0.25rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pd-liens a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    text-decoration: none;
+  }
+
+  /* Survol des liens : texte doré, et le numéro aussi (souris seulement). */
+  @media (hover: hover) and (pointer: fine) {
+    .pd-liens a,
+    .pd-tel,
+    .pd-email {
+      transition: color 150ms ease;
+    }
+
+    .pd-liens a:hover,
+    .pd-tel:hover,
+    .pd-email:hover {
+      color: var(--dore);
+    }
+  }
+
+  /* L'enseigne : le logo en grand, doré, sur toute la largeur. */
+  .pd-enseigne {
+    display: block;
+    margin-top: 3rem;
+    color: var(--dore);
+    text-decoration: none;
+  }
+
+  .pd-enseigne :global(.pd-enseigne-logo) {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: color 200ms ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .pd-enseigne:hover :global(.pd-enseigne-logo) {
+      color: var(--dore-vif);
+    }
+  }
+
+  .pd-enseigne-texte {
+    margin-top: 3rem;
+    color: var(--dore);
+    font-size: clamp(3rem, 14vw, 12rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+  }
+
+  .pd-note {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #2a2f31;
+    color: var(--encre-2);
+  }
+
+  @media (min-width: 48rem) {
+    .pied {
+      padding-top: 4rem;
+    }
+
+    .pd-grille {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .pd-contact {
+      grid-column: auto;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pd-enseigne :global(.pd-enseigne-logo) {
+      transition: none;
+    }
+  }
+</style>

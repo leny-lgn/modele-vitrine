@@ -1,0 +1,46 @@
+---
+// Tarifs : gammes en détail, abonnement, options, étapes et conditions.
+import Perso from '../layouts/Perso.astro';
+import BandeauPage from '../components/perso/BandeauPage.astro';
+import Offres from '../components/perso/Offres.astro';
+import Etapes from '../components/perso/Etapes.astro';
+import Faq from '../components/perso/Faq.astro';
+import Appeler from '../components/perso/Appeler.astro';
+import { LIEN_GRILLE } from '../lib/liens';
+---
+
+<Perso titre="Tarifs" description="Prix des sites Essentiel, Vitrine et Premium, abonnement mensuel et options.">
+  <BandeauPage titre="Tarifs">
+    <p class="intro-section">
+      Un prix par gamme pour créer le site, puis un abonnement mensuel pour l’hébergement et l’entretien. Chaque
+      gamme a son <a href={LIEN_GRILLE}>modèle à consulter</a>.
+    </p>
+  </BandeauPage>
+  <div class="suite-page">
+
+  <section class="page page-large gammes" aria-label="Gammes, abonnement et options">
+    <Offres complet niveau={2} />
+  </section>
+
+  <section class="page page-large section" aria-labelledby="titre-etapes">
+    <h2 id="titre-etapes" class="titre-section">Comment ça se passe</h2>
+    <Etapes />
+  </section>
+
+  <section class="page page-large section" aria-labelledby="titre-faq">
+    <h2 id="titre-faq" class="titre-section">Questions fréquentes</h2>
+    <Faq />
+    <div class="action"><Appeler /></div>
+  </section>
+  </div>
+</Perso>
+
+<style>
+  .gammes {
+    padding-top: 2.5rem;
+  }
+
+  .action {
+    margin-top: 2rem;
+  }
+</style>

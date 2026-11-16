@@ -1,0 +1,50 @@
+---
+// Questions fréquentes : questions et réponses visibles d'emblée, en deux colonnes sur grand écran.
+import { MOI } from '../../lib/moi';
+import T from './T.astro';
+---
+
+<div class="faq">
+  {
+    MOI.faq.map((f) => (
+      <div class="faq-item">
+        <h3>
+          <T texte={f.q} />
+        </h3>
+        <p>
+          <T texte={f.r} />
+        </p>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .faq {
+    margin-top: 1.5rem;
+  }
+
+  .faq-item {
+    padding-block: 1rem;
+    border-top: 1px solid var(--encre);
+    break-inside: avoid;
+  }
+
+  h3 {
+    font-size: 1.125rem;
+    font-weight: 800;
+  }
+
+  p {
+    margin-top: 0.3rem;
+    max-width: 36rem;
+  }
+
+  @media (min-width: 60rem) {
+    .faq {
+      columns: 2;
+      column-gap: 2.5rem;
+      column-rule: 1px solid var(--encre);
+    }
+  }
+</style>

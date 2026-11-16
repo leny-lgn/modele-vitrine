@@ -1,0 +1,307 @@
+---
+// Les trois gammes côte à côte (colonnes d'annuaire), l'abonnement et les options.
+// `complet` : ajoute les listes « inclus » détaillées et les options (page Tarifs).
+import { MOI, prixFr } from '../../lib/moi';
+import { sitesParSecteur } from '../../lib/sites';
+import { lienSite } from '../../lib/liens';
+import { infosSecteur } from '../../lib/secteurs';
+import type { Site } from '../../lib/schema';
+import T from './T.astro';
+
+interface Props {
+  complet?: boolean;
+  /** Niveau du titre de chaque gamme. */
+  niveau?: 2 | 3;
+}
+const { complet = false, niveau = 3 } = Astro.props;
+const Titre = `h${niveau}` as 'h2' | 'h3';
+
+// Un modèle d'exemple par gamme : celui du premier secteur qui l'a.
+const exemples = new Map<string, Site>();
+for (const sites of sitesParSecteur().values()) {
+  for (const [g, s] of Object.entries(sites)) if (s && !exemples.has(g)) exemples.set(g, s);
+}
+---
+
+<div class="offres">
+  {
+    MOI.gammes.map((g) => {
+      const exemple = exemples.get(g.id);
+      return (
+        <article class:list={['offre', `offre-${g.id}`]}>
+          <Titre class="of-nom">{g.nom}</Titre>
+          <p class="of-pourqui">
+            <T texte={g.pourQui} />
+          </p>
+          <p class="of-prix mono">
+            <T texte={prixFr(g.prix)} />
+          </p>
+          <dl class="points of-faits">
+            <div>
+              <dt>Pages</dt>
+              <dd class="valeur">{g.pages}</dd>
+            </div>
+            <div>
+              <dt>Délai</dt>
+              <dd class="valeur">{g.delai}</dd>
+            </div>
+          </dl>
+          <ul class="of-inclus">
+            {g.inclus.map((i) => (
+              <li>
+                <T texte={i} />
+              </li>
+            ))}
+          </ul>
+          {exemple && (
+            <a class="of-exemple" href={lienSite(exemple)}>
+              Ouvrir le modèle {g.nom}
+              <span class="visuellement-cache"> ({infosSecteur(exemple.secteur).libelle}, entreprise fictive)</span>
+            </a>
+          )}
+        </article>
+      );
+    })
+  }
+</div>
+<p class="of-note"><T texte={MOI.noteDelais} /></p>
+
+<div class="abonnement">
+  <div class="ab-tete">
+    <Titre class="ab-titre">Abonnement mensuel</Titre>
+    <p class="ab-prix"><span class="mono"><T texte={prixFr(MOI.abonnement.prix)} /></span> par mois</p>
+  </div>
+  <ul class="ab-inclus">
+    {
+      MOI.abonnement.inclus.map((i) => (
+        <li>
+          <T texte={i} />
+        </li>
+      ))
+    }
+  </ul>
+  <p class="ab-conditions"><T texte={MOI.abonnement.conditions} /></p>
+</div>
+
+{
+  complet && MOI.options.length > 0 && (
+    <div class="options">
+      <Titre class="op-titre">Options</Titre>
+      <ul class="points">
+        {MOI.options.map((o) => (
+          <li>
+            <span>
+              <T texte={o.nom} />
+            </span>
+            <span class="conduite" aria-hidden="true" />
+            <span class="valeur mono">
+              <T texte={prixFr(o.prix)} />
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+{
+  complet && MOI.autresServices.length > 0 && (
+    <div class="options">
+      <Titre class="op-titre">Autres services</Titre>
+      <ul class="points services">
+        {MOI.autresServices.map((s) => (
+          <li>
+            <span class="sv-nom">
+              <T texte={s.nom} />
+              <span class="sv-pour">
+                <T texte={s.pourQui} />
+              </span>
+            </span>
+            <span class="conduite" aria-hidden="true" />
+            <span class="valeur">
+              <T texte={prixFr(s.prix)} />
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+{
+  complet && MOI.paiement.length > 0 && (
+    <div class="options">
+      <Titre class="op-titre">Paiement</Titre>
+      <ul class="paiement">
+        {MOI.paiement.map((p) => (
+          <li>
+            <T texte={p} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+<style>
+  .offres {
+    display: grid;
+    margin-top: 2rem;
+  }
+
+  .offre {
+    padding-block: 1.25rem 1.5rem;
+    border-top: 1px solid var(--encre);
+  }
+
+  .of-nom {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  .of-pourqui {
+    margin-top: 0.15rem;
+    color: var(--encre-2);
+  }
+
+  .of-prix {
+    margin-top: 0.75rem;
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  .of-faits {
+    margin-top: 0.75rem;
+  }
+
+  .of-inclus {
+    margin-top: 0.75rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .of-inclus li {
+    position: relative;
+    padding-block: 0.15rem;
+    padding-left: 1.1rem;
+  }
+
+  .of-inclus li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.8em;
+    width: 0.55rem;
+    border-top: 2px solid var(--dore);
+  }
+
+  .of-note {
+    margin-top: 1rem;
+    max-width: 44rem;
+    color: var(--encre-2);
+    font-size: 0.9375rem;
+  }
+
+  .of-exemple {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    margin-top: 0.5rem;
+    font-weight: 700;
+    color: var(--dore);
+  }
+
+  .abonnement {
+    display: grid;
+    gap: 0.75rem 2rem;
+    margin-top: 1.5rem;
+    padding: 1.1rem;
+    border: 1px solid var(--encre);
+    background: var(--feuille);
+  }
+
+  .ab-titre,
+  .op-titre {
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+
+  .ab-prix {
+    margin-top: 0.15rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .ab-inclus {
+    padding-left: 1.1rem;
+  }
+
+  .ab-conditions {
+    color: var(--encre-2);
+  }
+
+  .options {
+    margin-top: 2.5rem;
+    max-width: 56rem;
+  }
+
+  .sv-nom {
+    display: flex;
+    flex-direction: column;
+    max-width: 38rem;
+  }
+
+  .sv-pour {
+    color: var(--encre-2);
+    font-size: 0.9375rem;
+  }
+
+  .services .valeur {
+    max-width: 16rem;
+  }
+
+  .paiement {
+    margin-top: 0.5rem;
+    padding-left: 1.1rem;
+  }
+
+  .paiement li + li {
+    margin-top: 0.35rem;
+  }
+
+  .options .points {
+    margin-top: 0.5rem;
+  }
+
+  @media (min-width: 48rem) {
+    .abonnement {
+      grid-template-columns: 1fr 1.4fr;
+      padding: 1.5rem;
+    }
+
+    .ab-conditions {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* Trois colonnes seulement quand les listes y tiennent sans coupures à chaque ligne. */
+  @media (min-width: 60rem) {
+    .offres {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      border-top: 1px solid var(--encre);
+    }
+
+    .offre {
+      padding-inline: 1.25rem;
+      border-top: 0;
+      border-left: 1px solid var(--encre);
+    }
+
+    .offre:first-child {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+</style>

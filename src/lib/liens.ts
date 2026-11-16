@@ -21,3 +21,22 @@ export const LIEN_GRILLE = PREFIXE_MODELES;
 
 /** Accueil du site personnel. */
 export const LIEN_ACCUEIL = '/';
+
+/** Pages du site personnel. */
+export const LIEN_TARIFS = '/tarifs/';
+export const LIEN_CONTACT = '/contact/';
+export const LIEN_MENTIONS = '/mentions-legales/';
+export const LIEN_CONFIDENTIALITE = '/confidentialite/';
+
+/** Pages du site personnel, seules pages indexables (sitemap). Les démos n'y figurent jamais. */
+export const PAGES_PERSO = [
+  LIEN_ACCUEIL,
+  LIEN_GRILLE,
+  LIEN_TARIFS,
+  LIEN_CONTACT,
+  LIEN_MENTIONS,
+  LIEN_CONFIDENTIALITE,
+] as const;
+
+/** Image de partage (Open Graph) de l'accueil, générée par `npm run captures`. */
+export const IMAGE_PARTAGE_PERSO = '/images/accueil/partage.jpg';

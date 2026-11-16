@@ -1,0 +1,166 @@
+---
+// En-tête du site personnel : logo, navigation. Bandeau en bois, fixé en haut de l'écran.
+// Le logo est intégré au HTML (pas en <img>) pour que sa couleur change au survol :
+// les aplats blancs du fichier deviennent « currentColor », le dessin reste celui du fichier.
+import { NOM } from '../../lib/moi';
+import { logoEnLigne } from '../../lib/logo';
+import { LIEN_ACCUEIL, LIEN_GRILLE, LIEN_TARIFS, LIEN_CONTACT } from '../../lib/liens';
+import T from './T.astro';
+
+const liens = [
+  { href: LIEN_GRILLE, libelle: 'Modèles' },
+  { href: LIEN_TARIFS, libelle: 'Tarifs' },
+  { href: LIEN_CONTACT, libelle: 'Contact' },
+];
+const chemin = Astro.url.pathname;
+
+const logoSvg = logoEnLigne('et-logo', 'menu');
+---
+
+<header class="entete">
+  <div class="et-ligne">
+    <a class="et-nom" href={LIEN_ACCUEIL} aria-current={chemin === LIEN_ACCUEIL ? 'page' : undefined}>
+      {
+        logoSvg ? (
+          <>
+            <Fragment set:html={logoSvg} />
+            <span class="visuellement-cache">{NOM}, accueil</span>
+          </>
+        ) : (
+          <T texte={NOM} />
+        )
+      }
+    </a>
+    <nav aria-label="Pages du site">
+      <ul>
+        {
+          liens.map((l) => (
+            <li>
+              <a href={l.href} aria-current={chemin.startsWith(l.href) ? 'page' : undefined}>
+                {l.libelle}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  /* Bandeau de navigation pleine largeur, en bois (boiseries de la devanture), fixé en haut.
+     Lignes noires en haut et en bas (2 px) : elles détachent le bois de l'anthracite.
+     Contrastes : ivoire sur bois 7,5:1. */
+  .entete {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-block: 2px solid #000000;
+    background: var(--bois);
+    color: var(--ivoire);
+  }
+
+  .entete a,
+  .entete a:hover {
+    color: var(--ivoire);
+  }
+
+  .entete :focus-visible {
+    outline-color: var(--ivoire);
+  }
+
+  .et-ligne {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0 1.25rem;
+    padding: 0.2rem var(--marge);
+  }
+
+  .et-nom {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-weight: 800;
+    font-size: 1.1875rem;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+
+  /* Logo : hauteur fixe, largeur proportionnelle (711 × 208). */
+  .et-nom :global(.et-logo) {
+    display: block;
+    width: auto;
+    height: 2.25rem;
+    color: var(--ivoire);
+    transition: color 180ms ease;
+  }
+
+  /* Survol du logo : oiseau et nom passent du blanc au noir, un « blackbird » au sens propre. */
+  @media (hover: hover) and (pointer: fine) {
+    .et-nom:hover :global(.et-logo) {
+      color: var(--nuit);
+    }
+  }
+
+  .et-nom:focus-visible :global(.et-logo) {
+    color: var(--nuit);
+  }
+
+  nav ul {
+    display: flex;
+    gap: 0 1.1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  nav a[aria-current='page'] {
+    text-decoration: underline;
+    text-decoration-color: var(--ivoire);
+    text-decoration-thickness: 3px;
+    text-underline-offset: 0.35em;
+  }
+
+  /* Survol : un trait ivoire se dessine de gauche à droite sous le lien (200 ms, ease-out). */
+  @media (hover: hover) and (pointer: fine) {
+    nav a:not([aria-current='page']) {
+      background: linear-gradient(var(--ivoire), var(--ivoire)) left calc(100% - 0.55rem) / 0 2px no-repeat;
+      transition: background-size 200ms cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    nav a:not([aria-current='page']):hover {
+      background-size: 100% 2px;
+    }
+  }
+
+  /* Petit écran : logo et liens tiennent sur une seule ligne, le bandeau reste bas. */
+  @media (max-width: 29.99rem) {
+    .et-nom :global(.et-logo) {
+      height: 1.85rem;
+    }
+
+    nav ul {
+      gap: 0 0.85rem;
+    }
+
+    nav a {
+      font-size: 0.9375rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .et-nom :global(.et-logo) {
+      transition: none;
+    }
+  }
+</style>

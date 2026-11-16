@@ -1,0 +1,10 @@
+---
+// Texte issu de moi.json : les « [À COMPLÉTER] » restants sont surlignés.
+import { marquer } from '../../lib/moi';
+
+interface Props {
+  texte: string;
+}
+---
+
+<Fragment set:html={marquer(Astro.props.texte)} />

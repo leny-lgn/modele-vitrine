@@ -42,7 +42,8 @@ Abonnement mensuel sans engagement pour l'hébergement et les petites modificati
   il parle comme au téléphone. Tutoiement exclu côté client : vouvoiement.
 - Style nettement différent des modèles de secteur ; polices différentes des leurs
   (le plombier utilise Archivo) et hors liste interdite de CLAUDE.md.
-- Une seule couleur d'accent personnelle : ni bleu « tech », ni violet, ni dégradé.
+- Palette sombre « la devanture » : gris anthracite bleuté, boiseries, texte ivoire, et une seule
+  couleur d'accent, le doré en aplat. Ni bleu « tech » ni violet vif en accent, ni dégradé.
 
 ## Evidence on Hand
 - Les modèles de démonstration (entreprises fictives, présentées comme telles).

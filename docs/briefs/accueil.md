@@ -25,7 +25,15 @@ de la page, ce sont les échantillons de tes modèles : ils prouvent ton travail
 Contraintes :
 - Style nettement différent de tous les modèles de démo (ce n'est pas un 16e modèle).
 - Polices hors liste interdite de CLAUDE.md, et différentes de celles des secteurs.
-- Une seule couleur d'accent, choisie pour toi (ni bleu « tech », ni violet, ni dégradé).
+- Une seule couleur d'accent, choisie pour toi (ni bleu « tech », ni violet vif, ni dégradé).
+
+## Palette retenue (15 novembre 2026) : « la devanture »
+Remplace le fond blanc papier ci-dessus. Le site est sombre, comme une devanture de
+commerce : façade gris anthracite bleuté (#151A1C, bandes #0E1214), panneaux #1F2629,
+boiseries (#5B4325 : bandeau de menu, bande Tarifs), texte ivoire (#EFE8D8).
+Accent unique : doré #C9A44C, en aplat (rubriques en lettres d'enseigne, bouton Appeler,
+cadre de ton annonce). Jamais de dégradé métallisé, jamais de violet ou bleu vif en accent.
+La structure « annuaire » (rubriques, points de conduite, tailles d'annonce) est conservée.
 
 ## Structure de l'accueil (`/`)
 ```

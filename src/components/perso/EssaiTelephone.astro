@@ -1,0 +1,283 @@
+---
+// « Essayez-le dans un téléphone » : un téléphone dessiné où l'on fait défiler le vrai site de démo.
+// Rien n'est chargé au départ : on voit la capture du modèle. Le site (iframe) ne se charge
+// qu'au clic sur « Essayer ». Sans JS, le bouton reste un lien vers le modèle.
+// Bureau et tablette seulement : sur un téléphone, les liens « Ouvrir le modèle » suffisent.
+// Généré depuis src/sites/ (premier secteur).
+import type { Gamme, Site } from '../../lib/schema';
+import { infosSecteur, LIBELLES_GAMMES } from '../../lib/secteurs';
+import { lienSite } from '../../lib/liens';
+import { sitesParSecteur } from '../../lib/sites';
+import Capture from './Capture.astro';
+
+const ORDRE = ['essentiel', 'vitrine', 'premium'] as const;
+const [secteur, sites] = [...sitesParSecteur().entries()][0];
+const libelle = infosSecteur(secteur).libelle;
+const modeles = ORDRE.map((g) => sites[g as Gamme]).filter((s): s is Site => !!s);
+const depart = modeles.find((s) => s.gamme === 'vitrine') ?? modeles[0];
+---
+
+<div class="essai" data-essai>
+  <div class="es-texte">
+    <h3 class="es-titre">Essayez-le dans un téléphone</h3>
+    <p>
+      Choisissez une gamme, appuyez sur « Essayer », puis faites défiler le site comme sur votre téléphone.
+      L’entreprise est fictive.
+    </p>
+    <div class="es-gammes" role="group" aria-label="Gamme à essayer">
+      {
+        modeles.map((s) => (
+          <button
+            type="button"
+            class="es-gamme"
+            data-gamme={s.gamme}
+            data-url={lienSite(s)}
+            data-titre={`Modèle ${libelle} ${LIBELLES_GAMMES[s.gamme]}, entreprise fictive`}
+            aria-pressed={s === depart ? 'true' : 'false'}
+          >
+            {LIBELLES_GAMMES[s.gamme]}
+          </button>
+        ))
+      }
+    </div>
+    <p class="es-plein">
+      <a href={lienSite(depart)} data-plein>Ouvrir ce modèle en plein écran</a>
+    </p>
+  </div>
+
+  <div class="es-telephone">
+    <div class="es-ecran" data-ecran>
+      {
+        modeles.map((s) => (
+          <div class="es-affiche" data-affiche={s.gamme} hidden={s !== depart}>
+            <Capture
+              slug={s.slug}
+              vue="mobile"
+              alt={`Page d’accueil du modèle ${libelle} ${LIBELLES_GAMMES[s.gamme]}, sur téléphone`}
+              sizes="375px"
+            />
+          </div>
+        ))
+      }
+      <a class="bouton bouton-plein es-essayer" href={lienSite(depart)} data-essayer>
+        Essayer le modèle&nbsp;<span data-nom-gamme>{LIBELLES_GAMMES[depart.gamme]}</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  for (const bloc of document.querySelectorAll<HTMLElement>('[data-essai]')) {
+    const ecran = bloc.querySelector<HTMLElement>('[data-ecran]');
+    const essayer = bloc.querySelector<HTMLAnchorElement>('[data-essayer]');
+    const nomGamme = bloc.querySelector<HTMLElement>('[data-nom-gamme]');
+    const plein = bloc.querySelector<HTMLAnchorElement>('[data-plein]');
+    const boutons = [...bloc.querySelectorAll<HTMLButtonElement>('[data-gamme]')];
+    if (!ecran || !essayer || !nomGamme || !plein) continue;
+
+    let cadre: HTMLIFrameElement | null = null;
+    let choisi = boutons.find((b) => b.getAttribute('aria-pressed') === 'true') ?? boutons[0];
+
+    const charger = () => {
+      if (!cadre) {
+        cadre = document.createElement('iframe');
+        cadre.className = 'es-cadre';
+        // Dans le téléphone, la barre « Modèles » des démos n'a pas de sens (son « Retour »
+        // ouvrirait ce site dans le téléphone) : on la retire à chaque page chargée.
+        // Le bandeau « Modèle de démonstration — entreprise fictive » reste visible.
+        cadre.addEventListener('load', () => {
+          cadre?.contentDocument?.querySelector('.menu-modeles')?.remove();
+        });
+        ecran.append(cadre);
+        bloc.dataset.actif = '';
+      }
+      cadre.title = choisi.dataset.titre ?? '';
+      cadre.src = choisi.dataset.url ?? '';
+      cadre.focus();
+    };
+
+    essayer.addEventListener('click', (e) => {
+      e.preventDefault();
+      charger();
+    });
+
+    for (const b of boutons) {
+      b.addEventListener('click', () => {
+        choisi = b;
+        for (const autre of boutons) autre.setAttribute('aria-pressed', String(autre === b));
+        for (const a of bloc.querySelectorAll<HTMLElement>('[data-affiche]')) a.hidden = a.dataset.affiche !== b.dataset.gamme;
+        nomGamme.textContent = b.textContent?.trim() ?? '';
+        essayer.href = b.dataset.url ?? essayer.href;
+        plein.href = b.dataset.url ?? plein.href;
+        if (cadre) charger();
+      });
+    }
+  }
+</script>
+
+<style>
+  .essai {
+    display: none;
+  }
+
+  @media (min-width: 48rem) {
+    .essai {
+      display: grid;
+      gap: 2.5rem;
+      align-items: center;
+      margin-top: 3rem;
+      padding-top: 2.5rem;
+      border-top: 1px solid var(--filet-doux);
+    }
+  }
+
+  /* Grand écran : le texte et le téléphone côte à côte, rapprochés. */
+  @media (min-width: 64rem) {
+    .essai {
+      grid-template-columns: minmax(0, 32rem) auto;
+      justify-content: start;
+      gap: 6rem;
+    }
+  }
+
+  .es-titre {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .es-texte > p {
+    max-width: 36rem;
+    margin-top: 0.75rem;
+  }
+
+  .es-gammes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+
+  .es-gamme {
+    min-height: 2.75rem;
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--encre);
+    background: transparent;
+    color: var(--encre);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      transform 120ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .es-gamme[aria-pressed='true'] {
+    border-color: var(--dore);
+    background: var(--dore);
+    color: var(--sur-dore);
+  }
+
+  .es-gamme:active {
+    transform: scale(0.97);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .es-gamme[aria-pressed='false']:hover {
+      border-color: var(--dore);
+      color: var(--dore);
+    }
+  }
+
+  .es-plein a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-weight: 700;
+  }
+
+  /* Le téléphone : écran de 375 × 700 (taille réelle d'un téléphone), bord épais, coins arrondis. */
+  .es-telephone {
+    justify-self: center;
+    padding: 0.85rem;
+    border: 1px solid var(--ivoire-2);
+    border-radius: 2.75rem;
+    background: var(--nuit-fonce);
+    box-shadow: 0 1.5rem 3rem rgb(0 0 0 / 0.45);
+  }
+
+  .es-ecran {
+    position: relative;
+    width: 375px;
+    height: 700px;
+    overflow: hidden;
+    border-radius: 2rem;
+    background: var(--panneau);
+  }
+
+  .es-affiche,
+  .es-affiche :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .es-affiche[hidden] {
+    display: none;
+  }
+
+  /* Capture entière en largeur, calée en haut (le bas de l'écran reste sous le voile). */
+  .es-affiche :global(img) {
+    height: auto;
+  }
+
+  /* Bouton « Essayer » posé en bas de l'écran, sur un voile qui assombrit la capture. */
+  .es-ecran::after {
+    content: '';
+    position: absolute;
+    inset: 55% 0 0;
+    background: linear-gradient(transparent, rgb(14 18 20 / 0.85));
+    pointer-events: none;
+  }
+
+  .es-essayer {
+    position: absolute;
+    left: 50%;
+    bottom: 2rem;
+    z-index: 1;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+
+  .es-essayer:active {
+    transform: translateX(-50%) scale(0.97);
+  }
+
+  /* Une fois le site chargé : l'iframe remplace la capture et le bouton. */
+  .es-ecran :global(.es-cadre) {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: var(--panneau);
+  }
+
+  [data-actif] .es-ecran::after,
+  [data-actif] .es-essayer {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .es-gamme:active,
+    .es-essayer:active {
+      transform: translateX(-50%);
+    }
+
+    .es-gamme:active {
+      transform: none;
+    }
+  }
+</style>
