@@ -282,7 +282,7 @@ function nbPages(site: Site): string {
   .tr-metier select {
     min-height: 3rem;
     padding: 0.5rem 2.5rem 0.5rem 0.75rem;
-    border: 2px solid var(--encre);
+    border: 1px solid var(--filet);
     border-radius: 0;
     background:
       linear-gradient(45deg, transparent 50%, var(--encre) 50%) right 1.1rem center / 0.4rem 0.4rem no-repeat,
@@ -309,7 +309,7 @@ function nbPages(site: Site): string {
   .tr-choix {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    border: 2px solid var(--encre);
+    border: 1px solid var(--filet);
   }
 
   .tr-gamme {
@@ -327,7 +327,7 @@ function nbPages(site: Site): string {
   }
 
   .tr-gamme + .tr-gamme {
-    border-left: 1px solid var(--encre);
+    border-left: 1px solid var(--filet);
   }
 
   .tr-gamme:active {
@@ -367,7 +367,7 @@ function nbPages(site: Site): string {
   /* La page d'annuaire */
   .tr-page {
     margin-top: 1.5rem;
-    border: 1px solid var(--encre);
+    border: 1px solid var(--filet);
     background: var(--feuille);
   }
 
@@ -387,7 +387,7 @@ function nbPages(site: Site): string {
 
   .tr-note {
     padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--encre);
+    border-bottom: 1px solid var(--filet);
     max-width: none;
   }
 
@@ -465,7 +465,7 @@ function nbPages(site: Site): string {
     gap: 1rem;
     align-items: center;
     padding: 0.75rem 0.5rem;
-    border-block: 2px solid var(--encre);
+    border-block: 1px solid var(--filet);
   }
 
   .tr-essentiel :global(.tr-capture) {
@@ -482,11 +482,11 @@ function nbPages(site: Site): string {
   .tr-vitrine .tr-carte,
   .tr-premium .tr-carte {
     padding: 0.9rem;
-    border: 1px solid var(--encre);
+    border: 1px solid var(--filet);
   }
 
   .tr-premium .tr-carte {
-    border-width: 3px;
+    border-width: 2px;
   }
 
   .tr-vitrine .tr-texte,
@@ -495,11 +495,10 @@ function nbPages(site: Site): string {
   }
 
   /* À côté de l'annonce : ce que la gamme ajoute, puis les gammes au-dessus.
-     Cadre en tirets : un renvoi d'annuaire, pas une annonce. */
+     Simple filet à gauche : un renvoi d'annuaire, pas une annonce (pas de cadre dans le cadre). */
   .tr-plus {
-    padding: 1rem;
-    border: 1px dashed var(--encre-2);
-    background: var(--feuille);
+    padding: 0.25rem 0 0.25rem 1.25rem;
+    border-left: 1px solid var(--filet);
   }
 
   .tr-plus-bloc + .tr-plus-bloc {
@@ -605,7 +604,7 @@ function nbPages(site: Site): string {
   .conduite {
     flex: 1 1 1.5rem;
     min-width: 1.5rem;
-    border-bottom: 2px dotted var(--encre);
+    border-bottom: 1px dotted var(--encre-2);
     transform: translateY(-0.3em);
   }
 

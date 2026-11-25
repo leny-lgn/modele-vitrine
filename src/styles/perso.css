@@ -32,6 +32,7 @@
   --encre-2: var(--ivoire-2);
   --sur-dore: var(--nuit); /* texte posé sur le doré */
   --filet-doux: #2f383c; /* filets décoratifs uniquement */
+  --filet: #6b6f6c; /* cadres et champs, 1 px : sur nuit 3,4:1 ; sur panneau 3,0:1 */
 
   --couleur-fond: var(--papier);
   --couleur-texte: var(--encre);
@@ -148,8 +149,7 @@
 
 .titre-section {
   padding-top: 0.6rem;
-  border-top: 3px solid var(--encre);
-  box-shadow: inset 0 1px 0 var(--papier), inset 0 2px 0 var(--encre);
+  border-top: 1px solid var(--encre);
   font-size: clamp(1.625rem, 3.4vw, 2.25rem);
   font-weight: var(--graisse-titres);
   letter-spacing: -0.015em;
@@ -188,7 +188,7 @@
 .points .conduite {
   flex: 1 1 1.5rem;
   min-width: 1.5rem;
-  border-bottom: 2px dotted var(--encre);
+  border-bottom: 1px dotted var(--encre-2);
   transform: translateY(-0.3em);
 }
 
@@ -211,7 +211,7 @@
   content: '';
   flex: 1 1 1.5rem;
   min-width: 1.5rem;
-  border-bottom: 2px dotted var(--encre);
+  border-bottom: 1px dotted var(--encre-2);
   transform: translateY(-0.3em);
 }
 
@@ -226,7 +226,7 @@
   justify-content: center;
   min-height: 3rem;
   padding: 0.55rem 1.25rem;
-  border: 2px solid var(--encre);
+  border: 1px solid var(--encre);
   font-weight: var(--graisse-forte);
   line-height: 1.2;
   text-align: center;
@@ -306,6 +306,7 @@ mark.a-completer {
 .bande-bois {
   --papier: var(--bois);
   --encre-2: #e6dccb;
+  --filet: #a08d6a; /* filets sur le bois */
   background: var(--bois);
   color: var(--ivoire);
 }

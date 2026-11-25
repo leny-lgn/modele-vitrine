@@ -149,7 +149,7 @@ function nbPages(site: Site): string {
   .conduite {
     flex: 1 1 1.5rem;
     min-width: 1.5rem;
-    border-bottom: 2px dotted var(--encre);
+    border-bottom: 1px dotted var(--encre-2);
     transform: translateY(-0.3em);
   }
 
@@ -207,7 +207,7 @@ function nbPages(site: Site): string {
     gap: 0.75rem;
     align-items: start;
     padding-block: 0.5rem;
-    border-bottom: 1px solid var(--encre);
+    border-bottom: 1px solid var(--filet);
   }
 
   /* Vitrine : encadré au filet fin, capture téléphone à droite */
@@ -217,7 +217,7 @@ function nbPages(site: Site): string {
     grid-template-columns: minmax(0, 1fr) 6.5rem;
     gap: 1rem;
     padding: 0.9rem;
-    border: 1px solid var(--encre);
+    border: 1px solid var(--filet);
   }
 
   .annonce-essentiel :global(.an-capture-mobile),
@@ -236,7 +236,7 @@ function nbPages(site: Site): string {
   .annonce-premium {
     background: var(--feuille);
     padding: 0.9rem;
-    border: 3px solid var(--encre);
+    border: 2px solid var(--filet);
   }
 
   .annonce-premium .an-texte {
