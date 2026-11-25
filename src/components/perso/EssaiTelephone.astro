@@ -43,6 +43,7 @@ const depart = modeles.find((s) => s.gamme === 'vitrine') ?? modeles[0];
     <p class="es-plein">
       <a href={lienSite(depart)} data-plein>Ouvrir ce modèle en plein écran</a>
     </p>
+    <div class="es-suite"><slot /></div>
   </div>
 
   <div class="es-telephone">
@@ -116,8 +117,20 @@ const depart = modeles.find((s) => s.gamme === 'vitrine') ?? modeles[0];
 </script>
 
 <style>
+  /* Mobile : on est déjà sur un téléphone, seul le texte de suite reste (autre métier, tous les modèles). */
   .essai {
-    display: none;
+    margin-top: 2.5rem;
+  }
+
+  @media (max-width: 47.99rem) {
+    .es-texte > :not(.es-suite),
+    .es-telephone {
+      display: none;
+    }
+  }
+
+  .es-suite {
+    max-width: 32rem;
   }
 
   @media (min-width: 48rem) {
@@ -126,6 +139,16 @@ const depart = modeles.find((s) => s.gamme === 'vitrine') ?? modeles[0];
       gap: 2.5rem;
       align-items: center;
       margin-top: 3rem;
+    }
+
+    /* À côté du téléphone, séparée des commandes par un filet. */
+    .es-suite {
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--filet-doux);
+    }
+
+    .essai {
       padding-top: 2.5rem;
       border-top: 1px solid var(--filet-doux);
     }
@@ -194,7 +217,7 @@ const depart = modeles.find((s) => s.gamme === 'vitrine') ?? modeles[0];
     display: inline-flex;
     align-items: center;
     min-height: 2.75rem;
-    font-weight: var(--graisse-forte);
+    font-weight: var(--graisse-lien);
   }
 
   /* Le téléphone : écran de 375 × 700 (taille réelle d'un téléphone), bord épais, coins arrondis. */

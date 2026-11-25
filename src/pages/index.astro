@@ -73,9 +73,10 @@ const autreMetier = typoFr(
         }
       </p>
       <TrouverAnnonce />
-      <EssaiTelephone />
-      <p class="autre-metier">{autreMetier}</p>
-      <p class="suite"><a href={LIEN_GRILLE}>Tous les modèles, par métier</a></p>
+      <EssaiTelephone>
+        <p class="autre-metier">{autreMetier}</p>
+        <p class="suite"><a href={LIEN_GRILLE}>Tous les modèles, par métier</a></p>
+      </EssaiTelephone>
     </div>
   </section>
 
@@ -220,9 +221,13 @@ const autreMetier = typoFr(
   }
 
 
+  /* Même fond que le bandeau d'accueil : les deux marges s'additionnaient (160 px de vide). */
+  .ouverture + .section {
+    padding-top: 2rem;
+  }
+
   .autre-metier {
-    margin-top: 2rem;
-    max-width: 40rem;
+    max-width: 32rem;
   }
 
   .tarifs-aide {
@@ -234,6 +239,10 @@ const autreMetier = typoFr(
 
   .tarifs-aide > * + * {
     margin-top: 0.75rem;
+  }
+
+  .tarifs-aide > :global(:last-child) {
+    margin-top: 1.25rem;
   }
 
   .sans-coupure {
@@ -254,7 +263,7 @@ const autreMetier = typoFr(
     display: inline-flex;
     align-items: center;
     min-height: 2.75rem;
-    font-weight: var(--graisse-forte);
+    font-weight: var(--graisse-lien);
   }
 
   .realisations {

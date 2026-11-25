@@ -335,7 +335,7 @@ for (const sites of sitesParSecteur().values()) {
     align-items: center;
     min-height: 2.75rem;
     margin-top: 0.5rem;
-    font-weight: var(--graisse-forte);
+    font-weight: var(--graisse-lien);
     color: var(--dore);
   }
 
@@ -403,7 +403,8 @@ for (const sites of sitesParSecteur().values()) {
 
   @media (min-width: 48rem) {
     .abonnement {
-      grid-template-columns: 1fr 1.4fr;
+      /* Le titre et le prix tiennent dans une colonne étroite : la liste prend la place. */
+      grid-template-columns: minmax(12rem, 1fr) minmax(0, 3fr);
       padding: 1.5rem;
     }
 

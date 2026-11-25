@@ -52,10 +52,11 @@
      Titres à 650 plutôt que 800, emphase à 600. */
   --graisse-titres: 650;
   --graisse-forte: 600;
+  --graisse-lien: 500;
 
   --largeur: 76rem;
   --marge: clamp(1rem, 4vw, 2.5rem);
-  --espace-section: clamp(3.5rem, 9vw, 6.5rem);
+  --espace-section: clamp(3.5rem, 8vw, 5.5rem);
 }
 
 /* Menu fixé en haut : les ancres (#modeles, #tarifs…) s'arrêtent sous lui. */
@@ -67,6 +68,12 @@
   font-size: 1.0625rem;
   line-height: 1.55;
   font-feature-settings: 'kern', 'liga';
+  /* Coupure automatique conservée (CLAUDE.md), mais seulement des mots longs, jamais « oc-cupe » :
+     12 lettres au moins, 5 de chaque côté de la coupure. */
+  hyphenate-limit-chars: 12 5 5;
+  -webkit-hyphenate-limit-before: 5;
+  -webkit-hyphenate-limit-after: 5;
+  text-wrap: pretty;
 }
 
 [data-site='perso'] ::selection {

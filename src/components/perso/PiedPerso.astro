@@ -106,7 +106,7 @@ const surContact = Astro.url.pathname.replace(/\/?$/, '/') === LIEN_CONTACT;
   .pd-titre {
     color: var(--encre-2);
     font-size: 0.875rem;
-    font-weight: 600;
+    font-weight: var(--graisse-lien);
   }
 
   .pd-contact {
@@ -166,6 +166,7 @@ const surContact = Astro.url.pathname.replace(/\/?$/, '/') === LIEN_CONTACT;
   /* L'enseigne : le logo en grand, doré, sur toute la largeur. */
   .pd-enseigne {
     display: block;
+    max-width: 34rem;
     margin-top: 3rem;
     color: var(--dore);
     text-decoration: none;
@@ -203,6 +204,13 @@ const surContact = Astro.url.pathname.replace(/\/?$/, '/') === LIEN_CONTACT;
   @media (min-width: 48rem) {
     .pied {
       padding-top: 4rem;
+    }
+
+    /* Souris : liens resserrés (la hauteur de 44 px reste au doigt). */
+    @media (pointer: fine) {
+      .pd-liens a {
+        min-height: 2rem;
+      }
     }
 
     .pd-grille {
