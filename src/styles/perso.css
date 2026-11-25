@@ -12,14 +12,6 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'Overpass Mono';
-  src: url('/fonts/overpass-mono-variable.woff2') format('woff2');
-  font-weight: 300 700;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root[data-site='perso'] {
   color-scheme: dark;
 
@@ -51,7 +43,14 @@
 
   --police-texte: 'Libre Franklin', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --police-titres: var(--police-texte);
-  --police-chiffres: 'Overpass Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  /* Chiffres (prix, téléphone, durées) : la police du texte, un cran plus appuyée.
+     Une police à chasse fixe donnait un air de terminal et élargissait les espaces (« 300  € »). */
+  --police-chiffres: var(--police-texte);
+
+  /* Graisses : sur fond sombre, le texte clair paraît plus gras qu'il n'est.
+     Titres à 650 plutôt que 800, emphase à 600. */
+  --graisse-titres: 650;
+  --graisse-forte: 600;
 
   --largeur: 76rem;
   --marge: clamp(1rem, 4vw, 2.5rem);
@@ -115,11 +114,11 @@
   background: var(--nuit-fonce);
   border-bottom: 2px solid var(--dore);
   color: var(--dore);
-  font-weight: 800;
-  font-size: clamp(1.125rem, 2.4vw, 1.375rem);
+  font-weight: var(--graisse-titres);
+  font-size: clamp(1.0625rem, 2vw, 1.25rem);
   line-height: 1.2;
   text-transform: uppercase;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
 }
 
 /* Rubrique de tête de page (h1) : plus haute, avec le lieu à droite */
@@ -130,8 +129,8 @@
   justify-content: space-between;
   gap: 0.15rem 1rem;
   padding: 0.7rem 1rem 0.6rem;
-  font-size: clamp(1.75rem, 6vw, 3.25rem);
-  letter-spacing: -0.01em;
+  font-size: clamp(1.625rem, 4.6vw, 2.5rem);
+  letter-spacing: 0;
   line-height: 1.05;
 }
 
@@ -151,9 +150,9 @@
   padding-top: 0.6rem;
   border-top: 3px solid var(--encre);
   box-shadow: inset 0 1px 0 var(--papier), inset 0 2px 0 var(--encre);
-  font-size: clamp(1.75rem, 4.4vw, 2.75rem);
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-size: clamp(1.625rem, 3.4vw, 2.25rem);
+  font-weight: var(--graisse-titres);
+  letter-spacing: -0.015em;
   line-height: 1.08;
 }
 
@@ -167,8 +166,9 @@
 /* Chiffres : numéros, prix, durées */
 .mono {
   font-family: var(--police-chiffres);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
+  font-weight: 550;
+  font-variant-numeric: lining-nums tabular-nums;
+  white-space: nowrap;
 }
 
 /* Lignes à points de conduite : « Libellé ........ valeur » */
@@ -227,7 +227,7 @@
   min-height: 3rem;
   padding: 0.55rem 1.25rem;
   border: 2px solid var(--encre);
-  font-weight: 700;
+  font-weight: var(--graisse-forte);
   line-height: 1.2;
   text-align: center;
   text-decoration: none;
@@ -283,8 +283,8 @@ mark.a-completer {
 
 .prose h2 {
   margin-top: 2.5rem;
-  font-size: 1.375rem;
-  font-weight: 800;
+  font-size: 1.25rem;
+  font-weight: var(--graisse-titres);
 }
 
 .prose ul {

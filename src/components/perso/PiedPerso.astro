@@ -117,7 +117,7 @@ const surContact = Astro.url.pathname.replace(/\/?$/, '/') === LIEN_CONTACT;
 
   .pd-contact .pd-titre {
     font-size: 1.125rem;
-    font-weight: 800;
+    font-weight: var(--graisse-titres);
     color: var(--encre);
   }
 
@@ -188,7 +188,7 @@ const surContact = Astro.url.pathname.replace(/\/?$/, '/') === LIEN_CONTACT;
     margin-top: 3rem;
     color: var(--dore);
     font-size: clamp(3rem, 14vw, 12rem);
-    font-weight: 800;
+    font-weight: var(--graisse-titres);
     letter-spacing: -0.04em;
     line-height: 0.9;
   }

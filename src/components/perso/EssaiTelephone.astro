@@ -141,8 +141,8 @@ const depart = modeles.find((s) => s.gamme === 'vitrine') ?? modeles[0];
   }
 
   .es-titre {
-    font-size: clamp(1.5rem, 3vw, 2rem);
-    font-weight: 800;
+    font-size: clamp(1.375rem, 2.6vw, 1.75rem);
+    font-weight: var(--graisse-titres);
     letter-spacing: -0.02em;
   }
 
@@ -165,7 +165,7 @@ const depart = modeles.find((s) => s.gamme === 'vitrine') ?? modeles[0];
     background: transparent;
     color: var(--encre);
     font: inherit;
-    font-weight: 700;
+    font-weight: var(--graisse-forte);
     cursor: pointer;
     transition:
       background-color 150ms ease,
@@ -194,7 +194,7 @@ const depart = modeles.find((s) => s.gamme === 'vitrine') ?? modeles[0];
     display: inline-flex;
     align-items: center;
     min-height: 2.75rem;
-    font-weight: 700;
+    font-weight: var(--graisse-forte);
   }
 
   /* Le téléphone : écran de 375 × 700 (taille réelle d'un téléphone), bord épais, coins arrondis. */
