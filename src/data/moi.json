@@ -1,11 +1,11 @@
 {
   "publie": false,
   "nom": "Leny Langon",
-  "nomCommercial": "Blackbird",
+  "nomCommercial": "Haute-Lice",
   "logo": {
-    "clair": "blackbird-blanc.svg",
-    "sombre": "blackbird-noir.svg",
-    "favicon": "favicon.svg"
+    "clair": "haute-lice-blanc.svg",
+    "sombre": "haute-lice-noir.svg",
+    "favicon": "haute-lice-favicon.svg"
   },
   "accroche": "Je crée des sites internet pour les commerçants et artisans de Lannion, Brest, Nantes et alentours.",
   "enBref": "Étudiant à Lannion, alternant à Brest. Rendez-vous sur place quand c'est possible, sinon par téléphone ou en visio.",

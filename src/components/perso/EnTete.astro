@@ -88,16 +88,16 @@ const logoSvg = logoEnLigne('et-logo', 'menu');
     text-decoration: none;
   }
 
-  /* Logo : hauteur fixe, largeur proportionnelle (711 × 208). */
+  /* Logo : hauteur fixe, largeur proportionnelle (284 × 48). */
   .et-nom :global(.et-logo) {
     display: block;
     width: auto;
-    height: 2.25rem;
+    height: 1.6rem;
     color: var(--ivoire);
     transition: color 180ms ease;
   }
 
-  /* Survol du logo : oiseau et nom passent du blanc au noir, un « blackbird » au sens propre. */
+  /* Survol du logo : fils et nom passent de l’ivoire au noir. */
   @media (hover: hover) and (pointer: fine) {
     .et-nom:hover :global(.et-logo) {
       color: var(--nuit);
@@ -146,7 +146,7 @@ const logoSvg = logoEnLigne('et-logo', 'menu');
   /* Petit écran : logo et liens tiennent sur une seule ligne, le bandeau reste bas. */
   @media (max-width: 29.99rem) {
     .et-nom :global(.et-logo) {
-      height: 1.85rem;
+      height: 1.3rem;
     }
 
     nav ul {
