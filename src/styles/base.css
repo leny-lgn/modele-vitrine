@@ -177,3 +177,21 @@ textarea {
     scroll-behavior: auto !important;
   }
 }
+
+/* Très petits écrans (< 22 rem, ex. 320 px) : les boutons « Appeler le 02 … » et les horaires
+   peuvent passer à la ligne (le numéro reste groupé par ses insécables) au lieu d'élargir la page. */
+@media (max-width: 21.99rem) {
+  .appeler,
+  .bouton-p,
+  .bouton-v,
+  .dispo-groupe,
+  .horaires td {
+    white-space: normal !important;
+    text-align: center;
+  }
+
+  .dispo-groupe,
+  .horaires td {
+    text-align: left;
+  }
+}

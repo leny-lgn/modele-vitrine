@@ -138,10 +138,10 @@ function nbPages(site: Site): string {
                       <T texte={`${gamme(g).pourQui}.`} />
                     </p>
                     {precedente(g) && ajouts(g).length > 0 && (
-                      <div class="tr-plus-bloc">
-                        <p class="tr-plus-titre">
+                      <details class="tr-plus-bloc" open>
+                        <summary class="tr-plus-titre">
                           <T texte={typoFr(`En plus de la gamme ${LIBELLES_GAMMES[precedente(g)!]} :`)} />
-                        </p>
+                        </summary>
                         <ul class="tr-plus-liste">
                           {ajouts(g).map((x) => (
                             <li>
@@ -149,7 +149,7 @@ function nbPages(site: Site): string {
                             </li>
                           ))}
                         </ul>
-                      </div>
+                      </details>
                     )}
                     <a class="tr-vers-tarifs" href="#tarifs">Comparer les prix des trois gammes</a>
                   </div>
@@ -164,6 +164,15 @@ function nbPages(site: Site): string {
 </div>
 
 <script>
+  // Mobile : la liste « En plus de la gamme… » est repliée, pour que l'annonce et son lien
+  // tiennent sur un écran ; bureau : toujours dépliée. Sans JS : dépliée partout.
+  const mobile = window.matchMedia('(max-width: 47.99rem)');
+  const plier = () => {
+    for (const d of document.querySelectorAll<HTMLDetailsElement>('.tr-plus-bloc')) d.open = !mobile.matches;
+  };
+  plier();
+  mobile.addEventListener('change', plier);
+
   // Choix du métier : met à jour la rubrique et montre le modèle du métier, ou le plus proche.
   for (const bloc of document.querySelectorAll<HTMLElement>('[data-trouver]')) {
     const zone = bloc.querySelector<HTMLElement>('[data-zone-metier]');
@@ -437,6 +446,50 @@ function nbPages(site: Site): string {
 
   .tr-plus-titre {
     font-weight: var(--graisse-titres);
+    list-style: none;
+  }
+
+  .tr-plus-titre::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Mobile : le titre devient un bouton qui déplie la liste (chevron à droite). */
+  @media (max-width: 47.99rem) {
+    .tr-plus-titre {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      min-height: 2.75rem;
+      cursor: pointer;
+    }
+
+    .tr-plus-titre::after {
+      content: '';
+      flex: none;
+      width: 0.5rem;
+      height: 0.5rem;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: translateY(-0.15rem) rotate(45deg);
+      transition: transform 150ms ease-out;
+    }
+
+    .tr-plus-bloc[open] > .tr-plus-titre::after {
+      transform: translateY(0.1rem) rotate(-135deg);
+    }
+
+    .tr-plus-bloc {
+      margin-top: 0.75rem;
+      border-top: 1px solid var(--filet-doux);
+    }
+  }
+
+  /* Bureau : simple intitulé, pas de repli. */
+  @media (min-width: 48rem) {
+    .tr-plus-titre {
+      pointer-events: none;
+    }
   }
 
   /* En tête du renvoi, à qui sert la gamme (moi.json). */

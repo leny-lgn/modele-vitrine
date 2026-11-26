@@ -79,11 +79,11 @@ const objet = site.objet3d?.actif && site.objet3d.page === 'artisan';
     (atelier || objet) && (
       <section class="pg ap-atelier" aria-label="L’atelier">
         {atelier && (
-          <div class="fuite-d photo-p">
-            <CadreImage site={site} image={atelier} sizes="(min-width: 56rem) 64vw, 100vw" />
+          <div class="photo-p">
+            <CadreImage site={site} image={atelier} sizes="(min-width: 56rem) 56vw, 100vw" />
           </div>
         )}
-        {objet && <Objet3D site={site} class="ap-objet" />}
+        {objet && <Objet3D site={site} class="zg ap-objet" />}
       </section>
     )
   }
@@ -117,6 +117,8 @@ const objet = site.objet3d?.actif && site.objet3d.page === 'artisan';
     row-gap: var(--espace-4);
   }
 
+  /* La photo reste dans la colonne de texte (elle ne déborde plus jusqu'au bord de l'écran) ;
+     sur bureau, l'objet 3D occupe la colonne de gauche, en face d'elle, au lieu de s'empiler dessous. */
   .ap-atelier :global(.ap-objet) {
     max-width: 30rem;
   }

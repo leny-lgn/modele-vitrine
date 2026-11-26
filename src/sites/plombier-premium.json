@@ -346,10 +346,10 @@
       "prompt": "Le même cellier, même cadrage : chauffe-eau thermodynamique neuf, raccords cuivre propres et isolés, mur repeint en blanc."
     },
     "atelier": {
-      "fichier": "atelier.webp",
-      "format": "3:2",
-      "alt": "Établi et outils de l'artisan",
-      "prompt": "Établi en bois dans un petit atelier, outils de plomberie rangés, raccords en laiton dans des casiers, lumière latérale."
+      "fichier": "hero.webp",
+      "format": "16:9",
+      "alt": "L'artisan raccorde un évier en cuivre, sa caisse à outils ouverte à côté de lui",
+      "prompt": "Plombier accroupi sous un évier en inox, il serre un raccord sur des tuyaux en cuivre neufs, caisse à outils ouverte au premier plan, mur carrelé blanc, lumière naturelle, visage hors cadre."
     },
     "intervention": {
       "fichier": "intervention.webp",

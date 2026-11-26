@@ -39,10 +39,15 @@ if (existe) {
   const src = urlImage(site.slug, image.fichier);
   const variantes = LARGEURS.filter(
     (l) => l < width && existsSync(join(RACINE, cheminRelatif(site.slug, nomVariante(image.fichier, l)))),
-  ).map((l) => `${urlImage(site.slug, nomVariante(image.fichier, l))} ${l}w`);
+  );
+  // srcset 400/800/1600 seulement : l'original (jusqu'à 4 Mo) n'est jamais servi quand des
+  // variantes existent ; la plus grande variante sert aussi de src. width/height = proportions.
+  const plusGrande = variantes.at(-1);
   img = {
-    src,
-    srcset: variantes.length ? [...variantes, `${src} ${width}w`].join(', ') : undefined,
+    src: plusGrande ? urlImage(site.slug, nomVariante(image.fichier, plusGrande)) : src,
+    srcset: variantes.length
+      ? variantes.map((l) => `${urlImage(site.slug, nomVariante(image.fichier, l))} ${l}w`).join(', ')
+      : undefined,
     width,
     height,
   };

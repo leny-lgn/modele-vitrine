@@ -11,7 +11,7 @@ import QuiJeSuis from '../components/perso/QuiJeSuis.astro';
 import Faq from '../components/perso/Faq.astro';
 import Offres from '../components/perso/Offres.astro';
 import T from '../components/perso/T.astro';
-import { MOI, NOM, prixPlancher, villesFr } from '../lib/moi';
+import { MOI, prixPlancher, villesFr } from '../lib/moi';
 import { typoFr } from '../lib/typo-fr';
 import { LIEN_GRILLE, LIEN_TARIFS } from '../lib/liens';
 
@@ -31,7 +31,6 @@ const autreMetier = typoFr(
     </h1>
     <div class="annonce-perso">
       <div class="ap-qui">
-        <p class="ap-nom"><T texte={NOM} /></p>
         <p class="ap-accroche"><T texte={MOI.accroche} /></p>
         <p class="ap-bref"><T texte={MOI.enBref} /></p>
       </div>
@@ -55,7 +54,7 @@ const autreMetier = typoFr(
       <p class="intro-section">
         {
           typoFr(
-            'Choisissez votre métier et la taille de votre site : l’annonce grandit avec la gamme. Chaque modèle est un site complet que vous pouvez parcourir. Les entreprises sont fictives.',
+            'Choisissez votre métier et la taille de votre site, puis ouvrez le modèle : c’est un site complet, avec une entreprise fictive.',
           )
         }
       </p>
@@ -154,21 +153,15 @@ const autreMetier = typoFr(
     background: var(--feuille);
   }
 
-  .ap-nom {
-    font-size: clamp(1.875rem, 6vw, 3.25rem);
-    font-weight: var(--graisse-titres);
-    letter-spacing: -0.02em;
-    line-height: 1;
-    hyphens: manual;
-    text-wrap: balance;
-  }
-
+  /* La phrase qui dit ce que je fais tient lieu de titre de l'encadré : le nom est déjà dans le logo. */
   .ap-accroche {
     hyphens: manual;
-    margin-top: 0.75rem;
-    max-width: 34rem;
-    font-size: clamp(1.125rem, 2.2vw, 1.375rem);
-    line-height: 1.4;
+    max-width: 30ch;
+    font-size: clamp(1.5rem, 1rem + 2.2vw, 2.25rem);
+    font-weight: var(--graisse-titres);
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+    text-wrap: balance;
   }
 
   .ap-prix {
