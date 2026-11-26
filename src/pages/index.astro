@@ -67,9 +67,13 @@ const autreMetier = typoFr(
     </div>
   </section>
 
-  <section id="tarifs" class="section bande bande-bois" aria-labelledby="titre-tarifs">
+  <section id="tarifs" class="tarifs-section" aria-labelledby="titre-tarifs">
+    <div class="bande-bois enseigne-bois">
+      <div class="page page-large">
+        <h2 id="titre-tarifs" class="enseigne-titre">Tarifs</h2>
+      </div>
+    </div>
     <div class="page page-large">
-    <h2 id="titre-tarifs" class="titre-section">Tarifs</h2>
     <Offres illustre />
     <aside class="tarifs-aide" aria-label="Choisir une gamme">
       <p class="ta-titre">{typoFr('Vous hésitez entre deux gammes ?')}</p>
@@ -198,6 +202,24 @@ const autreMetier = typoFr(
 
   .autre-metier {
     max-width: 32rem;
+  }
+
+  /* Tarifs : le bois en enseigne seulement (une planche avec le titre, comme une devanture) ;
+     le contenu reste sur l'ardoise, comme les autres sections. */
+  .tarifs-section {
+    padding-top: var(--espace-section);
+  }
+
+  .enseigne-bois {
+    padding-block: 1.1rem;
+    border-block: 1px solid rgb(0 0 0 / 0.6);
+  }
+
+  .enseigne-titre {
+    font-size: clamp(1.625rem, 3.4vw, 2.25rem);
+    font-weight: var(--graisse-titres);
+    letter-spacing: -0.015em;
+    line-height: 1.08;
   }
 
   .tarifs-aide {

@@ -358,13 +358,13 @@ for (const sites of sitesParSecteur().values()) {
     color: var(--dore);
   }
 
+  /* Abonnement : posé entre deux filets, sans boîte pleine (plus léger dans la page). */
   .abonnement {
     display: grid;
     gap: 0.75rem 2rem;
     margin-top: 1.5rem;
-    padding: 1.1rem;
-    border: 1px solid var(--filet);
-    background: var(--feuille);
+    padding-block: 1.25rem;
+    border-block: 1px solid var(--filet);
   }
 
   .ab-titre,
@@ -424,7 +424,7 @@ for (const sites of sitesParSecteur().values()) {
     .abonnement {
       /* Le titre et le prix tiennent dans une colonne étroite : la liste prend la place. */
       grid-template-columns: minmax(12rem, 1fr) minmax(0, 3fr);
-      padding: 1.5rem;
+      padding-block: 1.5rem;
     }
 
     .ab-conditions {
