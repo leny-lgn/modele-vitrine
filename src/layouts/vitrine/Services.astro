@@ -16,6 +16,11 @@ interface Props {
 }
 const { site } = Astro.props;
 const groupes = site.services.map((g) => ({ ...g, id: ancreGroupe(g.groupe) }));
+// Rythme des fonds : le 1er groupe est suivi de la bande ardoise des urgences, puis un groupe
+// sur deux passe sur carrelage. Les garanties prennent le carrelage seulement si le dernier
+// groupe ne l'a pas déjà (jamais deux bandes identiques à la suite).
+const surCarrelage = (i: number) => i > 0 && i % 2 === 0;
+const garantiesCarrelage = !surCarrelage(groupes.length - 1);
 ---
 
 <Vitrine site={site} page="services" titre="Services">
@@ -38,7 +43,7 @@ const groupes = site.services.map((g) => ({ ...g, id: ancreGroupe(g.groupe) }));
       const image = g.image ? site.images[g.image] : undefined;
       return (
         <>
-          <section class="section-v groupe" id={g.id} aria-labelledby={`titre-${g.id}`}>
+          <section class:list={['section-v', 'groupe', { 'surface-carrelage': surCarrelage(i) }]} id={g.id} aria-labelledby={`titre-${g.id}`}>
             <div class:list={['page-v', 'groupe-grille', { 'avec-image': image || g.deroule?.length }]}>
               <div>
                 <TitreSection id={`titre-${g.id}`}>{g.groupe}</TitreSection>
@@ -73,7 +78,7 @@ const groupes = site.services.map((g) => ({ ...g, id: ancreGroupe(g.groupe) }));
 
   {
     site.garanties && (
-      <section class="section-v surface-carrelage" aria-labelledby="titre-garanties">
+      <section class:list={['section-v', { 'surface-carrelage': garantiesCarrelage }]} aria-labelledby="titre-garanties">
         <div class="page-v">
           <TitreSection id="titre-garanties">Vos garanties</TitreSection>
           <Garanties site={site} />

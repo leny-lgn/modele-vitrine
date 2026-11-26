@@ -256,8 +256,3 @@ textarea {
   }
 }
 
-@media (min-width: 90rem) {
-  [data-gamme='premium'] .dispo-mini:not([hidden]) {
-    display: inline-flex;
-  }
-}

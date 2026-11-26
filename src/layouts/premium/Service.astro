@@ -109,7 +109,7 @@ const a = (p: CleePage) => site.pages.includes(p);
 
   {
     urgent && site.tarifs && site.tarifs.lignes.length > 0 && (
-      <section class="section-p pg" id="prix" aria-labelledby="t-prix">
+      <section class="section-p pg surface-ardoise" id="prix" aria-labelledby="t-prix">
         <Titre id="t-prix">Prix</Titre>
         <div class="texte-p">
           <Tarifs tarifs={site.tarifs} infoPrix />
@@ -154,7 +154,7 @@ const a = (p: CleePage) => site.pages.includes(p);
 
   {
     g && aDesAvis && (
-      <section class="section-p pg" aria-labelledby="t-avis">
+      <section class:list={['section-p', 'pg', { 'surface-carrelage': urgent }]} aria-labelledby="t-avis">
         <Titre id="t-avis">Ils m’ont appelé pour ça</Titre>
         <Avis site={site} groupe={g.groupe} class="sv-avis" />
       </section>

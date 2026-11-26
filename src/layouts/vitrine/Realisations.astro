@@ -24,7 +24,7 @@ const intro = n ? `${n} chantier${n > 1 ? 's' : ''} photographié${n > 1 ? 's' :
       const avant = c.avant ? site.images[c.avant] : undefined;
       const apres = c.apres ? site.images[c.apres] : undefined;
       return (
-        <section id={`chantier-${i}`} class:list={['section-v', { 'section-v-suite': i === 0 }]} aria-labelledby={`titre-chantier-${i}`}>
+        <section id={`chantier-${i}`} class:list={['section-v', { 'section-v-suite': i === 0, 'surface-carrelage': i % 2 === 1 }]} aria-labelledby={`titre-chantier-${i}`}>
           <div class="page-v chantier">
             <TitreSection id={`titre-chantier-${i}`}>{c.titre}</TitreSection>
             {c.description && <p class="chantier-texte" set:html={marquerAVerifier(c.description)} />}

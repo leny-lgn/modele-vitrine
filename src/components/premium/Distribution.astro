@@ -121,10 +121,12 @@ const pages = site.pages as CleePage[];
       padding-top: var(--hauteur-collecteur);
     }
 
-    /* Piquage : une descente de 2 px depuis le collecteur jusqu'au nom de la page */
+    /* Colonnes montantes : chaque colonne de la grille a sa conduite, piquée sur le collecteur,
+       qui descend le long des noms de la colonne ; un court raccord mène à chaque nom. */
     .dist-liste li {
       position: relative;
       padding-top: var(--espace-3);
+      padding-left: 1rem;
     }
 
     .dist-liste li::before {
@@ -133,20 +135,35 @@ const pages = site.pages as CleePage[];
       left: 0;
       top: 0;
       width: 2px;
-      height: calc(var(--espace-3) - 0.25rem);
+      height: calc(var(--espace-3) + 1.375rem + 1px);
       background: var(--cuivre);
     }
 
-    /* Rangées suivantes : pas de piquage visible, le collecteur ne passe que sur la première */
-    .dist-liste li:nth-child(n + 3)::before {
-      display: none;
+    /* Une page en dessous dans la même colonne : la conduite continue jusqu'à elle. */
+    .dist-liste li:nth-last-child(n + 3)::before {
+      height: calc(100% + var(--espace-3));
     }
 
+    .dist-liste a {
+      position: relative;
+    }
+
+    .dist-liste a::before {
+      content: '';
+      position: absolute;
+      left: -1rem;
+      top: calc(50% - 1px);
+      width: 0.6rem;
+      height: 2px;
+      background: var(--cuivre);
+    }
+
+    /* Page en cours : la vanne se pose sur la conduite, à hauteur de son nom. */
     .dist-ici::after {
       content: '';
       position: absolute;
       left: -4px;
-      top: -6px;
+      top: calc(var(--espace-3) + 1.375rem - 5px);
       width: 10px;
       height: 10px;
       border: 2px solid var(--cuivre);
@@ -155,17 +172,7 @@ const pages = site.pages as CleePage[];
     }
   }
 
-  /* Page en cours hors de la première rangée (pas de piquage au-dessus d'elle) : la vanne se pose
-     devant son nom, à sa hauteur, au lieu de flotter entre deux rangées. */
-  @media (min-width: 56rem) {
-    .dist-liste li:nth-child(n + 3).dist-ici::after {
-      left: -1.1rem;
-      top: calc(var(--espace-3) + 1.375rem - 5px);
-    }
-  }
-
-  /* Grand écran : 4 colonnes (4 + 3 pour 7 pages) au lieu de 3, plus de « Devis » seul sur sa ligne ;
-     les 4 premières pages sont piquées sur le collecteur. */
+  /* Grand écran : 4 colonnes (4 + 3 pour 7 pages), plus de « Devis » seul sur sa ligne. */
   @media (min-width: 72rem) {
     .dist-liste {
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -174,23 +181,15 @@ const pages = site.pages as CleePage[];
 
     /* « RÉALISATIONS » doit tenir dans un quart de colonne : taille liée à la largeur d'écran. */
     .dist-liste a {
-      font-size: min(var(--taille-3), 2vw);
+      font-size: min(var(--taille-3), 1.75vw, 1.55rem);
     }
 
-    .dist-liste li:nth-child(3)::before,
-    .dist-liste li:nth-child(4)::before {
-      display: block;
+    .dist-liste li:nth-child(n)::before {
+      height: calc(var(--espace-3) + 1.375rem + 1px);
     }
 
-    .dist-liste li:nth-child(3).dist-ici::after,
-    .dist-liste li:nth-child(4).dist-ici::after {
-      left: -4px;
-      top: -6px;
-    }
-
-    .dist-liste li:nth-child(n + 5).dist-ici::after {
-      left: -1.1rem;
-      top: calc(var(--espace-3) + 1.375rem - 5px);
+    .dist-liste li:nth-last-child(n + 5)::before {
+      height: calc(100% + var(--espace-3));
     }
   }
 </style>

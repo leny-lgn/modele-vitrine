@@ -274,10 +274,19 @@ const services = site.services.map((g) => ({
   }
 
   @media (min-width: 56rem) {
-    /* Colonnes à la largeur de leur contenu (l'e-mail ne se coupe pas), liens légaux à droite. */
-    .pdp-colonnes {
-      grid-template-columns: repeat(4, max-content) minmax(0, 1fr);
-      align-items: start;
+    /* Colonnes à la largeur de leur contenu (l'e-mail ne se coupe pas), passant à la ligne
+       quand la place manque : le pied de page n'occupe que la zone droite de la grille. */
+    .pdp-colonnes:not(.pdp-seul) {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .pdp-colonnes:not(.pdp-seul) .pdp-legal {
+      flex-basis: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 var(--espace-3);
     }
 
     /* Version réduite : le nom à gauche, les liens légaux à droite, sur la même ligne. */
@@ -290,7 +299,8 @@ const services = site.services.map((g) => ({
 
     .pdp-seul {
       margin-top: 0;
-      grid-template-columns: repeat(2, max-content) minmax(0, 1fr);
+      grid-template-columns: max-content minmax(0, 16rem) minmax(0, 1fr);
+      align-items: start;
     }
 
     .pdp-premium .pdp-legal {

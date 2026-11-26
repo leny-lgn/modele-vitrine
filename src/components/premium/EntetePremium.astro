@@ -49,7 +49,6 @@ const courant = (p: CleePage) => (p === page ? 'page' : undefined);
         </ul>
       </details>
     </nav>
-    <span class="dispo-mini ep-dispo" data-dispo-mini hidden>Disponible</span>
     <a class="ep-tel chiffres" href={telHref(site.telephone)}>
       <span class="ep-tel-libelle">Appeler le&nbsp;</span>{telephoneFr(site.telephone)}
     </a>
@@ -231,8 +230,9 @@ const courant = (p: CleePage) => (p === page ? 'page' : undefined);
     display: none;
   }
 
-  /* Liste complète seulement quand elle tient sur une ligne (≈ 1 060 px mesurés) */
-  @media (min-width: 68rem) {
+  /* Liste complète seulement quand elle tient sur une ligne avec un vrai écart après le nom
+     (nom ≈ 250 px + liste ≈ 590 px + bouton ≈ 155 px + écart ≥ 3 rem : ≈ 1 216 px) */
+  @media (min-width: 76rem) {
     .ep-menu {
       display: none;
     }
@@ -240,6 +240,7 @@ const courant = (p: CleePage) => (p === page ? 'page' : undefined);
     .ep-liste {
       display: flex;
       gap: 0 1.25rem;
+      margin-left: var(--espace-4);
     }
   }
 
@@ -293,8 +294,8 @@ const courant = (p: CleePage) => (p === page ? 'page' : undefined);
     }
   }
 
-  /* « Appeler le » en toutes lettres seulement quand tout tient (≈ 1 165 px mesurés) */
-  @media (min-width: 74rem) {
+  /* « Appeler le » en toutes lettres seulement quand tout tient sans serrer le nom (≈ 1 376 px) */
+  @media (min-width: 86rem) {
     .ep-tel-libelle {
       position: static;
       width: auto;
