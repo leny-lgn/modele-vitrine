@@ -34,8 +34,10 @@ Abonnement mensuel sans engagement pour l'hébergement et les petites modificati
 ## Capabilities and Constraints
 - Pages : `/`, `/modeles/`, `/tarifs/`, `/contact/`, `/mentions-legales/`, `/confidentialite/`.
 - Toutes les données viennent de `src/data/moi.json` ; les modèles de `src/sites/`.
-- Prix, SIRET, téléphone, ville exacte : encore `[À COMPLÉTER]`. Tant que `publie` est
-  false, site en `noindex` avec bandeau « Site en préparation ».
+- Nom commercial : Haute-Lice (hautelice.fr, contact@hautelice.fr). Prix, téléphone et adresse
+  renseignés ; SIRET en cours d'attribution. Tant que `publie` est false, site en `noindex`
+  (plus de bandeau « Site en préparation »).
+- Pas de barre « Appeler » fixe sur le site personnel (les démos gardent la leur).
 - Stack et règles du dépôt : voir CLAUDE.md (Astro statique, CSS à la main, polices
   auto-hébergées, aucun traceur, Lighthouse 95+).
 

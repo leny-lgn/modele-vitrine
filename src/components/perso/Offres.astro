@@ -407,6 +407,28 @@ for (const sites of sitesParSecteur().values()) {
     max-width: 16rem;
   }
 
+  /* Mobile : le prix (souvent une phrase : « Abonnement + 50 € de mise en place ») passe sous
+     l'intitulé, au lieu d'être coupé en trois lignes étroites à droite. */
+  @media (max-width: 47.99rem) {
+    .services li {
+      display: block;
+      padding-block: 0.65rem;
+      border-bottom: 1px solid var(--filet-doux);
+    }
+
+    .services .conduite {
+      display: none;
+    }
+
+    .services .valeur {
+      display: block;
+      max-width: none;
+      margin-top: 0.2rem;
+      font-weight: 600;
+      text-align: left;
+    }
+  }
+
   .paiement {
     margin-top: 0.5rem;
     padding-left: 1.1rem;

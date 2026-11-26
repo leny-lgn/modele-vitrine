@@ -108,8 +108,15 @@ const logoSvg = logoEnLigne('et-logo', 'menu');
     color: var(--nuit);
   }
 
+  /* Texte très agrandi (réglage du téléphone) : les liens passent à la ligne au lieu de
+     sortir de l'écran. À taille normale, ils tiennent sur une ligne dès 320 px. */
+  nav {
+    min-width: 0;
+  }
+
   nav ul {
     display: flex;
+    flex-wrap: wrap;
     gap: 0 1.1rem;
     margin: 0;
     padding: 0;

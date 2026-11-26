@@ -1,6 +1,6 @@
 ---
-// « Qui je suis » : photo facultative (public/images/accueil/<photo>), l'origine du nom
-// (facultative) et quelques phrases. Sans photo, le texte occupe seul la section.
+// « Qui je suis » : photo facultative (public/images/accueil/<photo>), quelques phrases
+// (qui je suis d'abord), puis l'origine du nom (facultative). Sans photo, le texte occupe seul la section.
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { MOI } from '../../lib/moi';
@@ -26,6 +26,15 @@ const histoire = MOI.histoireNom;
     )
   }
   <div class="qui-texte">
+    <div class="qui-presentation">
+      {
+        MOI.presentation.map((p) => (
+          <p>
+            <T texte={p} />
+          </p>
+        ))
+      }
+    </div>
     {
       histoire && (
         <div class="qui-histoire">
@@ -38,15 +47,6 @@ const histoire = MOI.histoireNom;
         </div>
       )
     }
-    <div class="qui-presentation">
-      {
-        MOI.presentation.map((p) => (
-          <p>
-            <T texte={p} />
-          </p>
-        ))
-      }
-    </div>
   </div>
 </div>
 
@@ -74,11 +74,11 @@ const histoire = MOI.histoireNom;
     font-weight: var(--graisse-titres);
   }
 
-  /* L'histoire du nom, séparée de la présentation par un filet. */
+  /* L'histoire du nom, après la présentation, séparée par un filet. */
   .qui-histoire {
-    margin-bottom: 1.25rem;
-    padding-bottom: 1.25rem;
-    border-bottom: 1px solid var(--filet);
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--filet);
   }
 
   .qui-photo {
@@ -88,7 +88,7 @@ const histoire = MOI.histoireNom;
     border: 1px solid var(--filet);
   }
 
-  /* Grand écran sans photo : l'histoire du nom à gauche, la présentation à droite. */
+  /* Grand écran sans photo : la présentation à gauche, l'histoire du nom à droite. */
   @media (min-width: 64rem) {
     .qui:not(.avec-photo) .qui-texte:has(.qui-histoire) {
       display: grid;
@@ -98,13 +98,10 @@ const histoire = MOI.histoireNom;
     }
 
     .qui:not(.avec-photo) .qui-histoire {
-      margin-bottom: 0;
-      padding-bottom: 0;
-      border-bottom: 0;
-    }
-
-    .qui:not(.avec-photo) .qui-presentation {
+      margin-top: 0;
+      padding-top: 0;
       padding-left: 3rem;
+      border-top: 0;
       border-left: 1px solid var(--filet);
     }
   }

@@ -72,6 +72,11 @@ export function telHref(tel: string): string {
   return `tel:${c}`;
 }
 
+/** Lien « Envoyer un SMS » (même numéro international que telHref). */
+export function smsHref(tel: string): string {
+  return telHref(tel).replace(/^tel:/, 'sms:');
+}
+
 /** Numéro au format E.164 pour le JSON-LD. */
 export function telInternational(tel: string): string {
   return telHref(tel).slice(4);

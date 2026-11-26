@@ -3,9 +3,11 @@
 // Le mode de rendez-vous (sur place, téléphone, visio) n'est pas répété ici : il figure dans l'accroche
 // de l'accueil et dans la première étape, affichée sous la fiche sur la page Contact.
 import { MOI, aCompleter } from '../../lib/moi';
-import { telephoneFr, telHref } from '../../lib/typo-fr';
+import { telephoneFr, telHref, smsHref } from '../../lib/typo-fr';
 import Appeler from './Appeler.astro';
 import T from './T.astro';
+import Pastille from './Pastille.astro';
+import { LIEN_VCARD } from '../../lib/liens';
 
 const email = aCompleter(MOI.email) ? undefined : MOI.email;
 const tel = aCompleter(MOI.telephone) ? undefined : MOI.telephone;
@@ -22,19 +24,27 @@ const tel = aCompleter(MOI.telephone) ? undefined : MOI.telephone;
       <dt>E-mail</dt>
       <dd class="valeur">{email ? <a href={`mailto:${email}`}>{email}</a> : <T texte={MOI.email} />}</dd>
     </div>
-    <div>
+    <div class="co-zone">
       <dt>Zone</dt>
       <dd class="valeur"><T texte={MOI.zone} /></dd>
     </div>
     <div class="co-long">
-      <dt><span class="co-pastille" aria-hidden="true"></span>Disponible</dt>
+      <dt><Pastille />Disponible</dt>
       <dd><T texte={MOI.disponibilites} /></dd>
     </div>
   </dl>
   <div class="co-actions">
     <Appeler />
+    {tel && <a class="bouton bouton-trait" href={smsHref(tel)}>Envoyer un SMS</a>}
     {email && <a class="bouton bouton-trait" href={`mailto:${email}`}>Écrire un e-mail</a>}
   </div>
+  {
+    tel && (
+      <p class="co-vcard">
+        <a href={LIEN_VCARD} download>Enregistrer mon contact dans votre téléphone</a>
+      </p>
+    )
+  }
 </div>
 
 <style>
@@ -74,48 +84,21 @@ const tel = aCompleter(MOI.telephone) ? undefined : MOI.telephone;
     content: none;
   }
 
-  /* Pastille verte fixe (pas d'état « ouvert maintenant » : la disponibilité est 7 j/7).
-     Vert lisible sur le panneau sombre (contraste > 3:1 pour un élément graphique). */
-  .co-pastille {
-    position: relative;
-    display: inline-block;
-    width: 0.6rem;
-    height: 0.6rem;
-    margin-inline: 0.15rem 0.25rem; /* place pour le halo, sans toucher le mot */
-    border-radius: 50%;
-    background: #4fbf7f;
-  }
-
-  /* Halo de « voyant allumé » : un anneau part de la pastille, grandit (× 2,2) et s'efface.
-     2,4 s par battement, ease-out : départ net, fin très douce, rythme calme qui ne tire pas l'œil.
-     Seuls transform et opacity bougent (aucun recalcul de mise en page).
-     Exception voulue par l'utilisateur à la règle « une seule animation » du site perso. */
-  .co-pastille::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: #4fbf7f;
-    animation: co-halo 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
-  }
-
-  @keyframes co-halo {
-    from {
-      opacity: 0.55;
-      transform: scale(1);
+  /* Zone sur mobile : « Lannion, Brest, Nantes et alentours » ne tient pas à droite du libellé
+     (points de conduite trop courts, valeur coupée en deux lignes) ; elle passe dessous, en entier.
+     Sur un écran plus large, elle reste sur la même ligne que « Zone ». */
+  @media (max-width: 35.99rem) {
+    .co-faits .co-zone {
+      display: block;
     }
 
-    to {
-      opacity: 0;
-      transform: scale(2.2);
+    .co-faits .co-zone dt::after {
+      content: none;
     }
-  }
 
-  /* « Réduire les animations » : la pastille reste allumée, sans halo. */
-  @media (prefers-reduced-motion: reduce) {
-    .co-pastille::after {
-      animation: none;
-      opacity: 0;
+    .co-faits .co-zone dd {
+      margin-top: 0.15rem;
+      text-align: left;
     }
   }
 
@@ -134,6 +117,18 @@ const tel = aCompleter(MOI.telephone) ? undefined : MOI.telephone;
     flex-wrap: wrap;
     gap: 0.75rem;
     margin-top: 1.25rem;
+  }
+
+  .co-vcard {
+    margin-top: 0.75rem;
+  }
+
+  .co-vcard a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--dore);
+    font-weight: var(--graisse-lien);
   }
 
   @media (min-width: 48rem) {

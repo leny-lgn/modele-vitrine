@@ -80,7 +80,8 @@ const courant = (p: CleePage) => (p === page ? 'page' : undefined);
     font-size: var(--taille-1);
     line-height: 1;
     text-transform: uppercase;
-    white-space: nowrap;
+    /* Tient sur une ligne à taille normale ; passe sur deux si le texte est agrandi. */
+    min-width: 0;
     text-decoration: none;
     hyphens: manual;
   }

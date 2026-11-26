@@ -137,7 +137,8 @@
   justify-content: space-between;
   gap: 0.15rem 1rem;
   padding: 0.7rem 1rem 0.6rem;
-  font-size: clamp(1.625rem, 4.6vw, 2.5rem);
+  /* Plafond en vw : « CONFIDENTIALITÉ » tient dans l’écran même avec le texte agrandi. */
+  font-size: min(clamp(1.625rem, 4.6vw, 2.5rem), 8.6vw);
   letter-spacing: 0;
   line-height: 1.05;
 }
@@ -202,6 +203,17 @@
 .points dt,
 .points dd {
   margin: 0;
+}
+
+/* Valeurs (numéro, e-mail, SIRET) : passent à la ligne si le texte est agrandi, au lieu
+   d'élargir la page. */
+.points dd {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.points dd.mono {
+  white-space: normal;
 }
 
 /* Dans une liste de définitions, seuls dt et dd sont permis : les points sont dessinés après le libellé. */

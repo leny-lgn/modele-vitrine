@@ -158,10 +158,13 @@ const { site, page, titre, description, entree = 'gauche' } = Astro.props;
     overflow-wrap: normal;
   }
 
+  /* Chapô : grande taille, lu d'un trait. Pas de césure, retours à la ligne équilibrés. */
   [data-gamme='premium'] .chapo-p {
     max-width: 34rem;
     font-size: var(--taille-1);
     line-height: 1.45;
+    hyphens: manual;
+    text-wrap: pretty;
   }
 
   [data-gamme='premium'] .texte-p {

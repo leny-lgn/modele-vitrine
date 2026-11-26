@@ -45,6 +45,12 @@ body {
   font-size: 1.0625rem;
   line-height: 1.55;
   hyphens: auto;
+  /* Césure réservée aux mots longs (10 lettres et plus), jamais avant 4 lettres ni après moins
+     de 4 : plus de « rac-cordements », « choi-sir » ou « loge-ment » sur mobile.
+     Chrome/Firefox : hyphenate-limit-chars ; Safari : les deux propriétés préfixées. */
+  hyphenate-limit-chars: 10 4 4;
+  -webkit-hyphenate-limit-before: 4;
+  -webkit-hyphenate-limit-after: 4;
   overflow-wrap: break-word;
   padding-bottom: calc(var(--hauteur-appeler) + var(--hauteur-menu) + var(--bas-securite));
 }
@@ -178,20 +184,30 @@ textarea {
   }
 }
 
-/* Très petits écrans (< 22 rem, ex. 320 px) : les boutons « Appeler le 02 … » et les horaires
-   peuvent passer à la ligne (le numéro reste groupé par ses insécables) au lieu d'élargir la page. */
-@media (max-width: 21.99rem) {
-  .appeler,
-  .bouton-p,
-  .bouton-v,
-  .dispo-groupe,
-  .horaires td {
-    white-space: normal !important;
-    text-align: center;
-  }
+/* Boutons et horaires : ils peuvent toujours passer à la ligne plutôt que d'élargir la page
+   (très petits écrans, texte agrandi dans les réglages du téléphone). À taille normale, ils tiennent
+   sur une ligne ; le numéro reste groupé par ses espaces insécables. !important : les styles des
+   gammes (portée Astro, plus spécifiques) déclarent nowrap pour le cas normal. */
+.appeler,
+.bouton,
+.bouton-p,
+.bouton-v,
+.bouton-contour,
+.bouton-p-contour {
+  max-width: 100%;
+  white-space: normal !important;
+  text-align: center;
+}
 
-  .dispo-groupe,
-  .horaires td {
-    text-align: left;
-  }
+/* Groupes d'horaires (« Lundi au jeudi : 8 h – 12 h… ») : gardés entiers tant qu'ils tiennent,
+   coupés seulement s'ils dépassent la ligne. */
+.dispo-groupe {
+  display: inline-block;
+  max-width: 100%;
+  white-space: normal !important;
+}
+
+/* Tableau d'horaires : une plage par ligne quand c'est possible, coupée après la virgule sinon. */
+.horaires td {
+  white-space: normal !important;
 }

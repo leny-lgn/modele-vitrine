@@ -127,9 +127,11 @@ const fermeture = site.fermetureExceptionnelle;
     margin-top: 0.25rem;
   }
 
+  /* La pastille reste en face de la première ligne quand le statut passe sur deux lignes
+     (« Fermé — rappel à partir / de 13 h 30 ») au lieu de se centrer entre les deux. */
   .dispo-statut {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.5rem;
     font-weight: 700;
   }
@@ -139,6 +141,8 @@ const fermeture = site.fermetureExceptionnelle;
     flex: none;
     width: 0.625rem;
     height: 0.625rem;
+    margin-top: 0.45em;
+    margin-top: calc((1lh - 0.625rem) / 2);
     border-radius: 50%;
     border: 2px solid var(--couleur-texte-secondaire);
   }

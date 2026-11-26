@@ -22,7 +22,11 @@ const moiSchema = z.object({
   /** Fichiers du logo dans public/images/marque/ : version claire (fonds sombres),
       sombre (fonds clairs) et icône d'onglet. Facultatif : sans logo, le nom s'affiche en texte. */
   logo: z.object({ clair: texte, sombre: texte, favicon: texte }).optional(),
+  /** Phrase de présentation (description de la page, référencement) : métier et villes. */
   accroche: texte,
+  /** Titre de l'encadré en tête de l'accueil : le bénéfice seul (les villes sont déjà dans le titre).
+      Facultatif : sans lui, l'accroche s'affiche. */
+  promesse: texte.optional(),
   /** Une phrase sous l'accroche de l'accueil : qui vous êtes, en fait (statut, déplacement, propriété du site). */
   enBref: texte,
   telephone: texte,

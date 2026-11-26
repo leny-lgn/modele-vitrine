@@ -480,8 +480,10 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
     line-height: 1.45;
   }
 
+  /* Photo de détail : seulement sur grand écran, en troisième colonne. En dessous, elle restait
+     seule en vignette avec un vide à côté ; le portrait suffit (image paresseuse : non chargée). */
   .artisan-detail {
-    max-width: 12rem;
+    display: none;
   }
 
   @media (min-width: 48rem) {
@@ -489,10 +491,6 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
       grid-template-columns: 15rem minmax(0, 1fr);
       column-gap: var(--espace-5);
       align-items: start;
-    }
-
-    .artisan-detail {
-      grid-column: 2;
     }
   }
 
@@ -502,8 +500,8 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
     }
 
     .artisan-detail {
+      display: block;
       grid-column: 3;
-      max-width: none;
       align-self: end;
     }
   }

@@ -24,6 +24,8 @@ export const LIEN_ACCUEIL = '/';
 
 /** Pages du site personnel. */
 export const LIEN_TARIFS = '/tarifs/';
+/** Fiche contact (vCard) à enregistrer dans le téléphone, générée depuis moi.json. */
+export const LIEN_VCARD = '/contact.vcf';
 export const LIEN_CONTACT = '/contact/';
 export const LIEN_MENTIONS = '/mentions-legales/';
 export const LIEN_CONFIDENTIALITE = '/confidentialite/';

@@ -1,7 +1,7 @@
 ---
 // Barre « Modèles » fixée en bas d'écran, générée depuis src/sites/. Démo uniquement.
 // Mobile (< 48 rem) : repliée par défaut en une pastille « Modèles » au-dessus de la barre Appeler,
-// pour que la démo ressemble au vrai site ; un toucher l'ouvre. Sans JS : barre toujours ouverte.
+// pour que la démo ressemble au vrai site ; un toucher l'ouvre. Masquée pendant le défilement. Sans JS : barre toujours ouverte.
 import { sitesParSecteur } from '../../lib/sites';
 import { lienSite, LIEN_GRILLE, LIEN_ACCUEIL } from '../../lib/liens';
 import { NOM } from '../../lib/moi';
@@ -108,6 +108,19 @@ const autresSecteurs = [...groupes.entries()].filter(([s]) => s !== site.secteur
       memoriser(false);
       masquer.focus();
     });
+
+    // Pastille mobile : masquée pendant le défilement (elle passait sur les boutons du site),
+    // de retour 700 ms après l'arrêt. Écouteur passif : aucun coût sur le défilement.
+    let minuterie: number | undefined;
+    window.addEventListener(
+      'scroll',
+      () => {
+        racine.classList.add('mm-defile');
+        clearTimeout(minuterie);
+        minuterie = window.setTimeout(() => racine.classList.remove('mm-defile'), 700);
+      },
+      { passive: true },
+    );
   }
 </script>
 
@@ -301,6 +314,27 @@ const autresSecteurs = [...groupes.entries()].filter(([s]) => s !== site.secteur
       border-bottom: 1px solid #45484b;
       border-radius: 999px;
       box-shadow: 0 2px 8px rgb(0 0 0 / 0.25);
+      transition:
+        opacity 160ms ease-out,
+        transform 160ms ease-out;
+    }
+
+    /* Pendant le défilement : la pastille s'efface et glisse de 0,5 rem vers le bas (160 ms,
+       ease-out : elle laisse la place sans attirer l'œil). Non cliquable tant qu'elle est cachée. */
+    :global(html.mm-defile:not([data-menu-modeles='ouvert'])) .mm-languette:not([hidden]) {
+      opacity: 0;
+      transform: translateY(0.5rem);
+      pointer-events: none;
+    }
+  }
+
+  @media (max-width: 47.99rem) and (prefers-reduced-motion: reduce) {
+    .mm-languette {
+      transition: none !important;
+    }
+
+    :global(html.mm-defile:not([data-menu-modeles='ouvert'])) .mm-languette:not([hidden]) {
+      transform: none;
     }
   }
 </style>

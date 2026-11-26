@@ -11,11 +11,15 @@ import QuiJeSuis from '../components/perso/QuiJeSuis.astro';
 import Faq from '../components/perso/Faq.astro';
 import Offres from '../components/perso/Offres.astro';
 import T from '../components/perso/T.astro';
+import Pastille from '../components/perso/Pastille.astro';
 import { MOI, prixPlancher, villesFr } from '../lib/moi';
 import { typoFr } from '../lib/typo-fr';
 import { LIEN_GRILLE, LIEN_TARIFS } from '../lib/liens';
 
 const description = MOI.accroche;
+// « 7/7, réponse dans la journée (le plus souvent…) » : sans la précision entre parenthèses,
+// qui reste sur la page Contact.
+const dispoCourte = MOI.disponibilites.replace(/\s*\(.*\)\s*$/, '');
 const autreMetier = typoFr(
   'Votre métier n’est pas encore dans les modèles ? Le site se construit de la même façon : appelez-moi pour en parler.',
 );
@@ -31,10 +35,11 @@ const autreMetier = typoFr(
     </h1>
     <div class="annonce-perso">
       <div class="ap-qui">
-        <p class="ap-accroche"><T texte={MOI.accroche} /></p>
+        <p class="ap-accroche"><T texte={MOI.promesse ?? MOI.accroche} /></p>
         <p class="ap-bref"><T texte={MOI.enBref} /></p>
       </div>
       <div class="ap-contact">
+        <p class="ap-dispo"><Pastille />Disponible <T texte={dispoCourte} /></p>
         <p class="ap-prix">
           Site complet dès <strong class="mono"><T texte={prixPlancher()} /></strong>
         </p>
@@ -73,7 +78,7 @@ const autreMetier = typoFr(
       </div>
     </div>
     <div class="page page-large">
-    <Offres illustre />
+    <Offres illustre choix />
     <aside class="tarifs-aide" aria-label="Choisir une gamme">
       <p class="ta-titre">{typoFr('Vous hésitez entre deux gammes ?')}</p>
       <p>
@@ -162,6 +167,14 @@ const autreMetier = typoFr(
     letter-spacing: -0.015em;
     line-height: 1.15;
     text-wrap: balance;
+  }
+
+  /* Pastille en face de la première ligne si la phrase passe sur deux lignes. */
+  .ap-dispo {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 0.6rem;
+    color: var(--encre-2);
   }
 
   .ap-prix {

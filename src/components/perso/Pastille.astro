@@ -1,0 +1,52 @@
+---
+// Voyant vert « disponible » : pastille fixe et halo lent (accueil et page Contact).
+// Pas d'état « ouvert maintenant » : la disponibilité est 7 j/7.
+// Exception voulue par l'utilisateur à la règle « une seule animation » du site perso.
+---
+
+<span class="pastille" aria-hidden="true"></span>
+
+<style>
+  /* Vert lisible sur le panneau sombre (contraste > 3:1 pour un élément graphique). */
+  .pastille {
+    position: relative;
+    display: inline-block;
+    flex: none;
+    width: 0.6rem;
+    height: 0.6rem;
+    margin-inline: 0.15rem 0.5rem; /* place pour le halo, sans toucher le mot */
+    border-radius: 50%;
+    background: #4fbf7f;
+  }
+
+  /* Un anneau part de la pastille, grandit (× 2,2) et s'efface. 2,4 s par battement, ease-out :
+     départ net, fin très douce, rythme calme qui ne tire pas l'œil. Seuls transform et opacity bougent. */
+  .pastille::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: #4fbf7f;
+    animation: halo 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  }
+
+  @keyframes halo {
+    from {
+      opacity: 0.55;
+      transform: scale(1);
+    }
+
+    to {
+      opacity: 0;
+      transform: scale(2.2);
+    }
+  }
+
+  /* « Réduire les animations » : la pastille reste allumée, sans halo. */
+  @media (prefers-reduced-motion: reduce) {
+    .pastille::after {
+      animation: none;
+      opacity: 0;
+    }
+  }
+</style>

@@ -326,7 +326,9 @@ const sansCesure = (t: string) =>
   /* Mobile et démo sans photo : le titre sur l'ardoise, sous la photo. */
   .hp-titre {
     padding: var(--espace-3) var(--marge-page) 0;
-    font-size: var(--titre-une);
+    /* Plafond en vw : si le texte est agrandi dans les réglages du téléphone, « VILLE-EXEMPLE »
+       (insécable) reste dans l'écran ; à taille normale, --titre-une s'applique tel quel. */
+    font-size: min(var(--titre-une), 10.5vw);
     line-height: 0.9;
     text-transform: uppercase;
     letter-spacing: 0;
