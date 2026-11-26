@@ -109,7 +109,8 @@
         "Au téléphone, vous décrivez le problème. Je vous dis ce que vous pouvez faire tout de suite, comme couper l'arrivée d'eau.",
         "Sur place, je cherche la cause et je vous annonce le prix avant de commencer.",
         "Je répare, je teste avec vous et je vous laisse une facture détaillée."
-      ]
+      ],
+      "imageDeroule": "depannage-siphon"
     },
     {
       "groupe": "Installation",
@@ -125,7 +126,8 @@
         "Visite chez vous : je regarde la place disponible, l'arrivée d'eau et l'électricité.",
         "Devis écrit, avec la référence de l'appareil et le détail de la pose.",
         "Pose, mise en service et explications sur l'entretien."
-      ]
+      ],
+      "imageDeroule": "installation-pose"
     },
     {
       "groupe": "Rénovation",
@@ -142,7 +144,8 @@
         "Devis détaillé poste par poste, avec un planning.",
         "Dépose, réseau neuf, pose des équipements, essais d'étanchéité.",
         "Réception du chantier ensemble, pièce par pièce."
-      ]
+      ],
+      "imageDeroule": "renovation-finie"
     }
   ],
   "confiance": {
@@ -154,19 +157,22 @@
         "texte": "Fuite sous l'évier un samedi matin. Il a décroché tout de suite, m'a donné le prix au téléphone et c'était le même sur la facture.",
         "auteur": "Claire M.",
         "commune": "Saint-Exemple",
-        "date": "septembre 2026"
+        "date": "septembre 2026",
+        "groupe": "Dépannage"
       },
       {
         "texte": "Remplacement du chauffe-eau. Ancien appareil emporté, chantier laissé propre, et il a pris le temps de m'expliquer le réglage.",
         "auteur": "Marc D.",
         "commune": "Ville-Exemple",
-        "date": "juin 2026"
+        "date": "juin 2026",
+        "groupe": "Installation"
       },
       {
         "texte": "Douche à l'italienne à la place de la baignoire chez ma mère. Devis détaillé, travaux faits aux dates prévues.",
         "auteur": "Sophie L.",
         "commune": "Bourg-Démo",
-        "date": "avril 2026"
+        "date": "avril 2026",
+        "groupe": "Rénovation"
       }
     ]
   },
@@ -356,6 +362,30 @@
       "format": "3:2",
       "alt": "Intervention sous un évier",
       "prompt": "Plombier allongé sous un évier de cuisine, lampe frontale allumée, vue de côté, visage non visible."
+    },
+    "depannage-siphon": {
+      "fichier": "depannage-siphon.webp",
+      "format": "4:5",
+      "alt": "Mains de l'artisan qui démontent un siphon sous un évier",
+      "prompt": "Gros plan sur deux mains qui dévissent un siphon blanc sous un évier de cuisine, seau posé dessous, lampe frontale qui éclaire la scène, visage hors cadre."
+    },
+    "installation-pose": {
+      "fichier": "installation-pose.webp",
+      "format": "4:5",
+      "alt": "Chauffe-eau neuf posé dans un cellier, raccords en cuivre isolés",
+      "prompt": "Chauffe-eau thermodynamique blanc neuf installé dans un cellier propre, raccords en cuivre neufs et isolés, groupe de sécurité visible, lumière naturelle latérale."
+    },
+    "renovation-finie": {
+      "fichier": "renovation-finie.webp",
+      "format": "4:5",
+      "alt": "Salle de bain refaite : douche à l'italienne, paroi vitrée et robinetterie laiton",
+      "prompt": "Salle de bain rénovée et vide, douche à l'italienne avec paroi vitrée fixe, carrelage grand format gris clair, robinetterie en laiton brossé, lumière douce d'une fenêtre."
+    },
+    "outils": {
+      "fichier": "outils.webp",
+      "format": "4:5",
+      "alt": "Clés, pince et raccords en laiton posés sur un établi",
+      "prompt": "Vue de dessus d'un établi en bois : clé à molette, pince multiprise, raccords en laiton et un rouleau de ruban téflon, rangés côte à côte, lumière latérale douce."
     }
   },
   "objet3d": {

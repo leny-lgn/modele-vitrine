@@ -40,6 +40,8 @@ const heroAttente = !!hero && !imageExiste(site.slug, hero.fichier);
 const imgInstallation = installation?.image ? site.images[installation.image] : undefined;
 const imgRenovation = renovation?.image ? site.images[renovation.image] : undefined;
 const imgArtisan = site.images.artisan;
+/** Photo d'outils en face des tarifs (colonne de gauche), si le JSON la déclare. */
+const imgOutils = site.images.outils;
 
 // Les noms composés (« Ville-Exemple ») ne se coupent pas au trait d'union dans le grand titre.
 const sansCesure = (t: string) =>
@@ -204,19 +206,28 @@ const sansCesure = (t: string) =>
     site.tarifs && site.tarifs.lignes.length > 0 && (
       <section class="section-p pg" aria-labelledby="t-tarifs" style="--rangs: 2">
         <Titre id="t-tarifs">Tarifs</Titre>
-        {site.tarifs.mention && (
-          <dl class="annotations zg">
-            <div>
-              <dt>Prix</dt>
-              <dd>{site.tarifs.mention}</dd>
-            </div>
-            {site.tarifs.devisGratuit && (
-              <div>
-                <dt>Devis</dt>
-                <dd>Gratuit, écrit, avant tout travaux.</dd>
+        {(site.tarifs.mention || imgOutils) && (
+          <div class="zg ac-tarifs-zg">
+            {imgOutils && (
+              <div class="photo-p">
+                <CadreImage site={site} image={imgOutils} sizes="(min-width: 56rem) 30vw, 100vw" />
               </div>
             )}
-          </dl>
+            {site.tarifs.mention && (
+              <dl class="annotations">
+                <div>
+                  <dt>Prix</dt>
+                  <dd>{site.tarifs.mention}</dd>
+                </div>
+                {site.tarifs.devisGratuit && (
+                  <div>
+                    <dt>Devis</dt>
+                    <dd>Gratuit, écrit, avant tout travaux.</dd>
+                  </div>
+                )}
+              </dl>
+            )}
+          </div>
         )}
         <div class="texte-p">
           <Tarifs tarifs={site.tarifs} mention={false} />
@@ -477,6 +488,19 @@ const sansCesure = (t: string) =>
 
     .sec-contact .zg :global(.horaires) {
       max-width: 22rem;
+    }
+  }
+
+  .ac-tarifs-zg {
+    display: grid;
+    gap: var(--espace-3);
+    align-content: start;
+  }
+
+  /* Mobile : la photo d'outils n'ajoute rien sous le tableau ; seules les annotations restent. */
+  @media (max-width: 55.99rem) {
+    .ac-tarifs-zg .photo-p {
+      display: none;
     }
   }
 </style>

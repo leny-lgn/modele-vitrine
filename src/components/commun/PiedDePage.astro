@@ -16,7 +16,8 @@ interface Props {
 const { site, page, class: classe } = Astro.props;
 const email = site.email && !contientAVerifier(site.email) ? site.email : undefined;
 const premium = site.gamme === 'premium';
-const horaires = premium ? resumeHoraires(site.horaires) : [];
+const vitrine = site.gamme === 'vitrine';
+const horaires = premium || vitrine ? resumeHoraires(site.horaires) : [];
 // Accueil et L'artisan (Premium) finissent déjà par une section « Contact » complète :
 // le pied de page n'y répète pas les coordonnées (nom et liens légaux seulement).
 const sansRedite = premium && (page === 'accueil' || page === 'artisan');
@@ -66,13 +67,13 @@ const sansRedite = premium && (page === 'accueil' || page === 'artisan');
     </footer>
   ) : (
 
-<footer class:list={['pied-de-page', classe]}>
+<footer class:list={['pied-de-page', { 'pdp-vitrine': vitrine }, classe]}>
   <div class="pdp-coordonnees">
     <p class="pdp-nom">{site.nom}</p>
     <address>
       {site.adresse.rue}<br />
       {site.adresse.codePostal}&nbsp;{site.adresse.ville}<br />
-      <a href={telHref(site.telephone)} class="chiffres">{telephoneFr(site.telephone)}</a>
+      <a href={telHref(site.telephone)} class="chiffres pdp-tel-v">{telephoneFr(site.telephone)}</a>
       {
         email && (
           <>
@@ -83,6 +84,21 @@ const sansRedite = premium && (page === 'accueil' || page === 'artisan');
       }
     </address>
   </div>
+  {
+    vitrine && horaires.length > 0 && (
+      <div class="pdp-horaires-v">
+        <p class="pdp-libelle">Horaires</p>
+        <ul class="pdp-horaires chiffres">
+          {horaires.map((r) => (
+            <li>
+              {r.jours}&nbsp;: {r.plages}
+            </li>
+          ))}
+          {site.urgences?.actif && site.urgences.plage && <li>Urgences&nbsp;: {site.urgences.plage}</li>}
+        </ul>
+      </div>
+    )
+  }
   <ul class="pdp-legal">
     <li><a href={lienSite(site, 'mentions-legales')}>Mentions légales</a></li>
     <li><a href={lienSite(site, 'confidentialite')}>Confidentialité</a></li>
@@ -120,6 +136,18 @@ const sansRedite = premium && (page === 'accueil' || page === 'artisan');
   .pdp-legal {
     list-style: none;
     padding: 0;
+  }
+
+  /* ——— Vitrine : horaires résumés et numéro mis en avant (plus simple que le Premium) ——— */
+  .pdp-vitrine {
+    padding-block: var(--espace-4);
+    background: var(--couleur-fond-2, transparent);
+  }
+
+  .pdp-tel-v {
+    color: var(--couleur-lien);
+    font-size: var(--taille-1);
+    font-weight: 700;
   }
 
   /* ——— Premium ——— */
@@ -205,6 +233,9 @@ const sansRedite = premium && (page === 'accueil' || page === 'artisan');
 
     .pdp-premium .pdp-legal {
       justify-self: end;
+    }
+
+    .pdp-premium .pdp-legal a {
       white-space: nowrap;
     }
 

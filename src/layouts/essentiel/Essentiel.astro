@@ -558,6 +558,24 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
     }
   }
 
+  /* Bureau : les prestations d'un groupe sur deux colonnes, en taille de texte courante
+     (une colonne étroite en petit laissait la moitié droite vide). */
+  @media (min-width: 64rem) {
+    .prestation dd ul {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.25rem var(--espace-3);
+    }
+
+    .prestation dd li + li {
+      margin-top: 0;
+    }
+
+    .prestation dd li {
+      font-size: var(--taille-1);
+    }
+  }
+
   .prestations > * + * {
     margin-top: 0;
   }
@@ -581,6 +599,7 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
     font-size: var(--taille-2);
     line-height: 1.25;
   }
+
 
   @media (min-width: 64rem) {
     .zone {

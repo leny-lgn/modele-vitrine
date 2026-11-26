@@ -128,6 +128,13 @@ const avecTexte = entrees.some((e) => e.titre || e.texte);
     color: var(--cuivre-fonce);
   }
 
+  /* Description du chantier : même taille que les listes et le déroulé (elle paraissait minuscule
+     sous un titre de 60 px). */
+  .ge-texte p:not(.ge-details) {
+    font-size: var(--taille-1);
+    line-height: 1.4;
+  }
+
   .ge-details {
     color: var(--couleur-texte-secondaire);
     font-size: var(--taille-petit);

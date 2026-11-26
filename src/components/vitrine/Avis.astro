@@ -11,18 +11,23 @@ interface Avis {
   commune?: string;
   date?: string;
   source?: string;
+  /** Groupe de services concerné (« Dépannage »…), pour n'afficher que les avis d'une page de service. */
+  groupe?: string;
 }
 
 interface Props {
   site: Site;
   class?: string;
+  /** Pages de service : seulement les avis de ce groupe, et rien (pas d'emplacements vides) s'il n'y en a pas. */
+  groupe?: string;
 }
-const { site, class: classe } = Astro.props;
+const { site, class: classe, groupe } = Astro.props;
 const confiance = (site.confiance ?? {}) as { avis?: Avis[]; avisExemples?: Avis[] };
-const valides = (liste?: Avis[]) => (liste ?? []).filter((a) => a?.texte && a?.auteur);
+const valides = (liste?: Avis[]) =>
+  (liste ?? []).filter((a) => a?.texte && a?.auteur && (!groupe || a.groupe === groupe));
 const avis = valides(confiance.avis);
 const fictifs = avis.length === 0 && site.demo ? valides(confiance.avisExemples) : [];
-const exemples = avis.length === 0 && fictifs.length === 0 && site.demo;
+const exemples = avis.length === 0 && fictifs.length === 0 && site.demo && !groupe;
 ---
 
 {

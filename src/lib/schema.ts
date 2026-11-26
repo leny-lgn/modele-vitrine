@@ -78,6 +78,8 @@ export const siteSchema = z.looseObject({
         intro: z.string().optional(),
         /** Premium : déroulé d'une intervention, étape par étape. */
         deroule: z.array(texte).optional(),
+        /** Premium : clé d'une image posée en face du déroulé (colonne de gauche). */
+        imageDeroule: z.string().optional(),
       }),
     )
     .optional()

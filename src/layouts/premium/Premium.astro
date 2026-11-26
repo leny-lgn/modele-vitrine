@@ -131,8 +131,14 @@ const { site, page, titre, description, entree = 'gauche' } = Astro.props;
        quel que soit son rang dans le code (sur mobile, l'ordre du code s'applique). */
     [data-gamme='premium'] .pg > .zg,
     [data-gamme='premium'] .pg > .fuite-g {
-      grid-row: 1 / span var(--rangs, 1);
+      grid-row: 1 / span calc(var(--rangs, 1) + 1);
       align-self: start;
+    }
+
+    /* Quand la colonne de gauche (photo, fiche) est plus haute que le texte d'en face, le surplus
+       va dans une rangée vide ajoutée en bas, et non entre le titre et le texte (trou sous le titre). */
+    [data-gamme='premium'] .pg:has(> .zg, > .fuite-g) {
+      grid-template-rows: repeat(var(--rangs, 1), auto) 1fr;
     }
   }
 
@@ -142,11 +148,11 @@ const { site, page, titre, description, entree = 'gauche' } = Astro.props;
     row-gap: var(--espace-3);
   }
 
-  /* Bureau : 5,5 rem au-dessus et au-dessous (11 rem entre deux sections) ;
-     × 1,5 laissait près de 270 px de vide, qui se lisaient comme des trous. */
+  /* Bureau : environ 3,7 rem au-dessus et au-dessous (2/3 de --espace-5). Avec 5,5 rem,
+     les sections courtes (3 lignes de liste) étaient séparées par plus de blanc que de contenu. */
   @media (min-width: 56rem) {
     [data-gamme='premium'] .section-p {
-      padding-block: var(--espace-5);
+      padding-block: calc(var(--espace-5) * 0.67);
     }
   }
 

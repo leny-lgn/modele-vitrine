@@ -1,12 +1,13 @@
 ---
 // Tête des pages internes Premium. Sur bureau, la conduite arrive par la gauche en face
-// du titre (voir Fil, entree="gauche") ; sous elle, dans la zone gauche : une ligne de
-// disponibilité (statut + urgences). Le bloc complet reste sur l'accueil ; le numéro est dans
-// l'en-tête (bureau) et la barre Appeler (mobile).
+// du titre (voir Fil, entree="gauche") ; sous elle, dans la zone gauche, une fiche courte :
+// disponibilité (statut + urgences), numéro, zone, devis gratuit. Tout vient du JSON.
+// Sur mobile, seule la disponibilité reste en tête (le numéro est dans la barre Appeler).
 // Slot « zg » : ajouté en tête de la zone gauche (ex. fiche d'un chantier).
 import type { Site } from '../../lib/schema';
 import Disponibilite from '../commun/Disponibilite.astro';
 import { echapper } from '../../lib/texte';
+import { telephoneFr, telHref } from '../../lib/typo-fr';
 
 interface Props {
   site: Site;
@@ -32,6 +33,28 @@ const titreHtml = titre
       contact && (
         <div class="tp-contact">
           <Disponibilite site={site} compact />
+          <dl class="tp-fiche">
+            <div class="tp-tel">
+              <dt>Téléphone</dt>
+              <dd>
+                <a class="chiffres" href={telHref(site.telephone)}>{telephoneFr(site.telephone)}</a>
+              </dd>
+            </div>
+            {site.zone.rayonKm && (
+              <div>
+                <dt>Zone</dt>
+                <dd>
+                  {site.zone.rayonKm}&nbsp;km autour de {site.adresse.ville}
+                </dd>
+              </div>
+            )}
+            {site.tarifs?.devisGratuit && (
+              <div>
+                <dt>Devis</dt>
+                <dd>Gratuit, écrit, avant tout travaux</dd>
+              </div>
+            )}
+          </dl>
         </div>
       )
     }
@@ -76,16 +99,56 @@ const titreHtml = titre
     justify-items: start;
   }
 
-  /* Mobile : disponibilité et appel d'abord, la fiche ensuite */
+  /* Fiche : mêmes filets que les annotations du plan ; numéro en grand, en cuivre. */
+  .tp-fiche {
+    display: grid;
+    width: 100%;
+    margin: 0;
+    border-top: 1px solid var(--couleur-trait);
+    font-size: var(--taille-petit);
+  }
+
+  .tp-fiche > div {
+    display: grid;
+    gap: 0.1rem;
+    padding-block: 0.6rem;
+    border-bottom: 1px solid var(--couleur-trait);
+  }
+
+  .tp-fiche dt {
+    font-weight: 700;
+  }
+
+  .tp-fiche dd {
+    margin: 0;
+    color: var(--couleur-texte-secondaire);
+  }
+
+  .tp-tel a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--cuivre-fonce);
+    font-size: var(--taille-2);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  /* Mobile : disponibilité d'abord ; la fiche n'apparaît pas (numéro dans la barre Appeler,
+     zone et devis plus bas dans la page). */
   @media (max-width: 55.99rem) {
     .tp-contact {
       order: -1;
+    }
+
+    .tp-fiche {
+      display: none;
     }
   }
 
   @media (min-width: 56rem) {
     .tete-p {
-      padding-bottom: var(--espace-5);
+      padding-bottom: var(--espace-4);
     }
 
     /* Sous la conduite d'arrivée, qui passe à hauteur des capitales du titre */

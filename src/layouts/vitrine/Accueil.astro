@@ -107,14 +107,28 @@ const chantier = site.realisations.find((r) => r.avant && r.apres && site.images
       <section class="section-v" aria-labelledby="titre-tarifs">
         <div class="page-v">
           <TitreSection id="titre-tarifs">Tarifs</TitreSection>
-          <Tarifs tarifs={site.tarifs} />
-          {a('tarifs') && (
-            <p>
-              <a class="lien-v" href={lienSite(site, 'tarifs')}>
-                Tous les tarifs et l’information sur les prix
-              </a>
-            </p>
-          )}
+          <div class="tarifs-grille">
+            <div>
+              <Tarifs tarifs={site.tarifs} mention={false} />
+              {a('tarifs') && (
+                <p>
+                  <a class="lien-v" href={lienSite(site, 'tarifs')}>
+                    Tous les tarifs et l’information sur les prix
+                  </a>
+                </p>
+              )}
+            </div>
+            <aside class="tarifs-encart" aria-label="Devis">
+              <p class="te-titre">{site.tarifs.devisGratuit ? 'Devis gratuit' : 'Devis'}</p>
+              {site.tarifs.mention && <p>{site.tarifs.mention}</p>}
+              <Appeler site={site} class="bouton-v" />
+              {a('contact') && (
+                <a class="lien-v" href={lienSite(site, 'contact')}>
+                  Toutes les coordonnées
+                </a>
+              )}
+            </aside>
+          </div>
         </div>
       </section>
     )
@@ -352,6 +366,37 @@ const chantier = site.realisations.find((r) => r.avant && r.apres && site.images
   /* ——— Tarifs ——— */
   .section-v :global(.tarifs-v) + p {
     margin-top: var(--espace-1);
+  }
+
+  /* Encart « Devis » à droite du tableau (il laissait la moitié droite vide sur ordinateur). */
+  .tarifs-grille {
+    display: grid;
+    gap: var(--espace-3);
+  }
+
+  .tarifs-encart {
+    display: grid;
+    gap: var(--espace-2);
+    align-content: start;
+    justify-items: start;
+    padding: var(--espace-3);
+    border: 1px solid var(--couleur-trait);
+    border-top: 3px solid var(--couleur-accent);
+  }
+
+  .te-titre {
+    font-family: var(--police-titres);
+    font-size: var(--taille-2);
+    font-weight: 800;
+    line-height: 1.05;
+  }
+
+  @media (min-width: 64rem) {
+    .tarifs-grille {
+      grid-template-columns: minmax(0, 3fr) minmax(16rem, 2fr);
+      column-gap: var(--espace-5);
+      align-items: start;
+    }
   }
 
   /* ——— Réalisation ——— */

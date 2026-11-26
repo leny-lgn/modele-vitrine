@@ -1,7 +1,7 @@
 ---
 // Pages Dépannage, Installation et Rénovation (gamme Premium), une par groupe de services
 // (services[].page dans le JSON). Tête → ce que fait l'artisan → (dépannage : prix) →
-// déroulé sur la conduite → chantiers du groupe → appel ou devis.
+// déroulé sur la conduite (photo en face) → chantiers du groupe → avis du groupe → appel ou devis.
 import Premium from './Premium.astro';
 import TetePremium from '../../components/premium/TetePremium.astro';
 import Titre from '../../components/premium/Titre.astro';
@@ -11,6 +11,7 @@ import Objet3D from '../../components/premium/Objet3D.astro';
 import CadreImage from '../../components/demo/CadreImage.astro';
 import Appeler from '../../components/commun/Appeler.astro';
 import Tarifs from '../../components/vitrine/Tarifs.astro';
+import Avis from '../../components/vitrine/Avis.astro';
 import type { Site, CleePage } from '../../lib/schema';
 import { lienSite } from '../../lib/liens';
 import { LIBELLES_PAGES } from '../../lib/secteurs';
@@ -27,6 +28,12 @@ const titre = g?.groupe ?? LIBELLES_PAGES[page];
 const urgent = page === 'depannage';
 const urgences = urgent && site.urgences?.actif ? site.urgences : undefined;
 const image = g?.image ? site.images[g.image] : undefined;
+const imageDeroule = g?.imageDeroule ? site.images[g.imageDeroule] : undefined;
+// Avis du même groupe (dépannage, installation, rénovation), réels ou fictifs marqués en démo.
+const confiance = (site.confiance ?? {}) as { avis?: { groupe?: string }[]; avisExemples?: { groupe?: string }[] };
+const aDesAvis = [...(confiance.avis ?? []), ...(site.demo ? (confiance.avisExemples ?? []) : [])].some(
+  (x) => g && x.groupe === g.groupe,
+);
 const objet = site.objet3d?.actif && site.objet3d.page === page;
 
 const chantiers: EntreeGalerie[] = site.realisations
@@ -105,8 +112,13 @@ const a = (p: CleePage) => site.pages.includes(p);
 
   {
     g?.deroule && g.deroule.length > 0 && (
-      <section class="section-p pg" aria-labelledby="t-deroule">
+      <section class="section-p pg" aria-labelledby="t-deroule" style="--rangs: 2">
         <Titre id="t-deroule">Déroulement</Titre>
+        {imageDeroule && (
+          <div class="fuite-g photo-p sv-photo-deroule">
+            <CadreImage site={site} image={imageDeroule} sizes="(min-width: 56rem) 34vw, 100vw" />
+          </div>
+        )}
         <Deroule etapes={g.deroule} />
       </section>
     )
@@ -119,6 +131,15 @@ const a = (p: CleePage) => site.pages.includes(p);
           <Titre id="t-chantiers">Chantiers</Titre>
         </div>
         <GalerieEditoriale site={site} entrees={chantiers} niveau={3} />
+      </section>
+    )
+  }
+
+  {
+    g && aDesAvis && (
+      <section class="section-p pg" aria-labelledby="t-avis">
+        <Titre id="t-avis">Ils m’ont appelé pour ça</Titre>
+        <Avis site={site} groupe={g.groupe} class="sv-avis" />
       </section>
     )
   }
@@ -153,8 +174,26 @@ const a = (p: CleePage) => site.pages.includes(p);
 </Premium>
 
 <style>
+  /* Photo en face du déroulé : bureau seulement (sur mobile, elle allongeait la page d'un écran). */
+  @media (max-width: 55.99rem) {
+    .sv-photo-deroule {
+      display: none;
+    }
+  }
+
   .sv-objet {
     padding-bottom: var(--espace-4);
+  }
+
+  /* Un ou deux avis seulement : une colonne de lecture, pas une grille de trois. */
+  /* (Classe posée sur un élément du composant Avis : sélecteurs globaux, classe doublée pour
+     passer devant la grille à trois colonnes du composant.) */
+  :global(.sv-avis.sv-avis) {
+    max-width: 40rem;
+  }
+
+  :global(.sv-avis.sv-avis .avis-v) {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .sv-urgences {
