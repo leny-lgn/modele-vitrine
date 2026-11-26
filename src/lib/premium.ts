@@ -3,7 +3,7 @@ import type { Site, CleePage } from './schema';
 import { racineSite } from './liens';
 
 export type Chantier = Site['realisations'][number];
-type Artisan = { prenom?: string; nom?: string; depuis?: number; presentation?: string };
+type Artisan = { prenom?: string; nom?: string; depuis?: number; presentation?: string; methode?: string[] };
 type Confiance = { qualifications?: string[]; assuranceDecennale?: string };
 
 /** Page d'un chantier : <site>/realisations/<slug>/ */

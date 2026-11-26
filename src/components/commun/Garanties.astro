@@ -1,0 +1,79 @@
+---
+// Garanties légales des travaux (JSON : garanties) : trois durées en grand, ce qu'elles couvrent dessous.
+// Ce sont des faits de loi (Code civil, art. 1792 et suivants), pas des promesses de l'artisan.
+import type { Site } from '../../lib/schema';
+
+interface Props {
+  site: Site;
+  class?: string;
+}
+const { site, class: classe } = Astro.props;
+const g = site.garanties;
+---
+
+{
+  g && (
+    <div class:list={['garanties', classe]}>
+      {g.intro && <p class="ga-intro">{g.intro}</p>}
+      <dl class="ga-liste">
+        {g.liste.map((x) => (
+          <div>
+            <dt>
+              <span class="ga-duree chiffres">{x.duree}</span>
+              <span class="ga-nom">{x.nom}</span>
+            </dt>
+            <dd>{x.texte}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  )
+}
+
+<style>
+  .ga-intro {
+    max-width: 40rem;
+    font-size: var(--taille-1);
+    line-height: 1.45;
+  }
+
+  .ga-liste {
+    display: grid;
+    gap: var(--espace-3);
+    margin: var(--espace-3) 0 0;
+  }
+
+  .ga-liste > div {
+    padding-top: var(--espace-2);
+    border-top: 1px solid var(--couleur-trait);
+  }
+
+  .ga-duree {
+    display: block;
+    color: var(--couleur-accent);
+    font-family: var(--police-titres);
+    font-size: var(--taille-4);
+    font-stretch: var(--largeur-titres);
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .ga-nom {
+    display: block;
+    margin-top: 0.35rem;
+    font-weight: 700;
+  }
+
+  .ga-liste dd {
+    margin: 0.3rem 0 0;
+    color: var(--couleur-texte-secondaire);
+    line-height: 1.5;
+  }
+
+  @media (min-width: 48rem) {
+    .ga-liste {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--espace-4);
+    }
+  }
+</style>

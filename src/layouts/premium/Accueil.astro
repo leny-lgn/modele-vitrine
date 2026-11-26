@@ -18,6 +18,8 @@ import Avis from '../../components/vitrine/Avis.astro';
 import Coordonnees from '../../components/vitrine/Coordonnees.astro';
 import Carte from '../../components/commun/Carte.astro';
 import Faq from '../../components/commun/Faq.astro';
+import BandeauPhoto from '../../components/commun/BandeauPhoto.astro';
+import Arguments from '../../components/commun/Arguments.astro';
 import type { Site, CleePage } from '../../lib/schema';
 import { lienSite } from '../../lib/liens';
 import { echapper, marquerAVerifier } from '../../lib/texte';
@@ -86,6 +88,7 @@ const sansCesure = (t: string) =>
           )
         }
       </div>
+      <Arguments site={site} class="hp-arguments" />
     </div>
   </section>
 
@@ -135,7 +138,7 @@ const sansCesure = (t: string) =>
 
   {
     installation && (
-      <section class="section-p pg sec-installation" aria-labelledby="t-installation" style="--rangs: 4">
+      <section class="section-p pg surface-carrelage sec-installation" aria-labelledby="t-installation" style="--rangs: 4">
         <Titre id="t-installation">{installation.groupe}</Titre>
         {imgInstallation && (
           <div class="fuite-g photo-p ph-carree">
@@ -207,9 +210,11 @@ const sansCesure = (t: string) =>
     )
   }
 
+  <BandeauPhoto site={site} interieur="pg" class="ac-bandeau" />
+
   {
     site.tarifs && site.tarifs.lignes.length > 0 && (
-      <section class="section-p pg" aria-labelledby="t-tarifs" style="--rangs: 2">
+      <section class="section-p pg surface-ardoise" aria-labelledby="t-tarifs" style="--rangs: 2">
         <Titre id="t-tarifs">Tarifs</Titre>
         {(site.tarifs.mention || imgOutils) && (
           <div class="zg ac-tarifs-zg">
@@ -269,7 +274,7 @@ const sansCesure = (t: string) =>
           )}
           {qualifications.length > 0 && (
             <div>
-              <dt>Qualifications</dt>
+              <dt class="marque-laiton">Qualifications</dt>
               {qualifications.map((q) => (
                 <dd set:html={marquerAVerifier(q)} />
               ))}
@@ -277,11 +282,23 @@ const sansCesure = (t: string) =>
           )}
           {assurance && (
             <div>
-              <dt>Assurance décennale</dt>
+              <dt class="marque-laiton">Assurance décennale</dt>
               <dd set:html={marquerAVerifier(assurance)} />
             </div>
           )}
         </dl>
+      )
+    }
+    {
+      artisan.methode && artisan.methode.length > 0 && (
+        <div class="sa-methode">
+          <h3>Comment je travaille</h3>
+          <ul class="liste-p">
+            {artisan.methode.map((m) => (
+              <li>{m}</li>
+            ))}
+          </ul>
+        </div>
       )
     }
     {
@@ -295,7 +312,7 @@ const sansCesure = (t: string) =>
     }
   </section>
 
-  <section class="section-p pg" aria-labelledby="t-avis" style="--rangs: 1">
+  <section class="section-p pg surface-carrelage" aria-labelledby="t-avis" style="--rangs: 1">
     <Titre id="t-avis">Avis</Titre>
     {
       imgProprete && (
@@ -317,7 +334,7 @@ const sansCesure = (t: string) =>
 
   {
     site.faq.length > 0 && (
-      <section class="section-p pg" aria-labelledby="t-faq" style="--rangs: 1">
+      <section class="section-p pg surface-carrelage" aria-labelledby="t-faq" style="--rangs: 1">
         <Titre id="t-faq">Questions</Titre>
         <div class="zg ac-faq-zg">
           <p class="ac-faq-appel">Une autre question&#8239;? {nomArtisan ? `${nomArtisan} répond lui-même.` : 'Appelez.'}</p>
@@ -327,6 +344,21 @@ const sansCesure = (t: string) =>
       </section>
     )
   }
+
+  <section class="section-p pg surface-cuivre" aria-labelledby="t-appel">
+    <Titre id="t-appel">{urgences ? 'Un problème maintenant ?' : 'Votre projet'}</Titre>
+    {urgences?.plage && <p class="ac-appel-plage chiffres">Urgences&nbsp;: {urgences.plage}</p>}
+    <div class="actions-p">
+      <Appeler site={site} class="bouton-p" />
+      {
+        a('devis') && (
+          <a class="lien-p" href={lienSite(site, 'devis')}>
+            {urgences ? 'Pas urgent ? Demander un devis' : 'Demander un devis'}
+          </a>
+        )
+      }
+    </div>
+  </section>
 
   <section class="section-p pg surface-ardoise sec-contact" aria-labelledby="t-contact" style="--rangs: 2">
     <Titre id="t-contact">Contact</Titre>
@@ -508,6 +540,28 @@ const sansCesure = (t: string) =>
     max-width: 30rem;
   }
 
+  .sa-methode {
+    max-width: 34rem;
+  }
+
+  .sa-methode h3 {
+    margin-bottom: var(--espace-1);
+    font-size: var(--taille-1);
+  }
+
+  .hero-p :global(.hp-arguments) {
+    margin-top: var(--espace-3);
+    padding-top: var(--espace-3);
+    border-top: 1px solid var(--couleur-trait);
+  }
+
+  @media (min-width: 56rem) {
+    .hero-p :global(.hp-arguments) {
+      grid-column: 1 / -1;
+      margin-top: var(--espace-1);
+    }
+  }
+
   @media (min-width: 56rem) {
     /* L'artisan : le texte descend en face de la photo, plus bas que le titre */
     .sec-artisan .sa-presentation {
@@ -532,6 +586,11 @@ const sansCesure = (t: string) =>
     .ac-photo-bureau {
       display: none;
     }
+  }
+
+  .ac-appel-plage {
+    color: var(--couleur-texte-secondaire);
+    font-weight: 500;
   }
 
   .ac-faq-zg {

@@ -95,6 +95,22 @@
   background: var(--couleur-fond);
 }
 
+/* Surface cuivre : une seule bande par page, pour l'appel final. C'est l'accent du brief,
+   à l'endroit où il a un sens (appeler). Blanc sur cuivre foncé : 5,5:1 ; texte secondaire
+   #fbf2ec : 4,9:1 ; bouton ardoise et texte zinc : 13,2:1. */
+[data-secteur='plombier'] .surface-cuivre {
+  --couleur-fond: var(--cuivre-fonce);
+  --couleur-texte: #ffffff;
+  --couleur-texte-secondaire: #fbf2ec;
+  --couleur-trait: rgb(255 255 255 / 0.45);
+  --couleur-accent: var(--ardoise);
+  --couleur-accent-texte: var(--blanc-zinc);
+  --couleur-lien: #ffffff;
+  --couleur-focus: #ffffff;
+  background: var(--couleur-fond);
+  color: var(--couleur-texte);
+}
+
 [data-secteur='plombier'] body {
   font-size: var(--taille-texte);
   font-stretch: 100%;
@@ -124,4 +140,15 @@
 
 [data-secteur='plombier'] a:hover {
   text-decoration-thickness: 2px;
+}
+
+/* Laiton, la touche rare du brief : une pastille devant les preuves (qualifications, assurance). */
+[data-secteur='plombier'] .marque-laiton::before {
+  content: '';
+  display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  margin-right: 0.5em;
+  background: var(--laiton);
+  vertical-align: 0.05em;
 }

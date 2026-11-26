@@ -50,6 +50,7 @@ const prixARemplir = !prixExemple && tarifs.lignes.some((l) => contientAVerifier
       </p>
     )
   }
+  {tarifs.compris && <p class="tv-compris" set:html={marquerAVerifier(tarifs.compris)} />}
   {infoPrix && tarifs.infoPrix && <p class="tv-legal" set:html={marquerAVerifier(tarifs.infoPrix)} />}
 </div>
 
@@ -108,6 +109,12 @@ const prixARemplir = !prixExemple && tarifs.lignes.some((l) => contientAVerifier
       white-space: normal;
       min-width: 7rem;
     }
+  }
+
+  .tv-compris {
+    max-width: 38rem;
+    margin-top: var(--espace-2);
+    line-height: 1.5;
   }
 
   .tv-mention,

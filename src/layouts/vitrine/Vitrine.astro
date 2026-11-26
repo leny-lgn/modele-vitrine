@@ -5,6 +5,8 @@
 import Base from '../Base.astro';
 import Entete from '../../components/vitrine/Entete.astro';
 import Trace from '../../components/vitrine/Trace.astro';
+import BandeAppel from '../../components/vitrine/BandeAppel.astro';
+import { lienSite } from '../../lib/liens';
 import type { Site } from '../../lib/schema';
 import type { CibleLien } from '../../lib/liens';
 
@@ -15,6 +17,10 @@ interface Props {
   description?: string;
 }
 const { site, page, titre, description } = Astro.props;
+// Bande cuivre de fin de page : l'accueil la place lui-même (avant le contact) ;
+// les pages Tarifs et Contact finissent déjà sur l'appel et le devis.
+const bandeAppel = page === 'services' || page === 'realisations';
+const lienDevis = site.pages.includes('contact') ? `${lienSite(site, 'contact')}#devis` : undefined;
 ---
 
 <Base site={site} page={page} titre={titre} description={description}>
@@ -22,6 +28,7 @@ const { site, page, titre, description } = Astro.props;
   <div class="circuit">
     <Trace slug={site.slug} />
     <slot />
+    {bandeAppel && <BandeAppel site={site} lienDevis={lienDevis} />}
   </div>
 </Base>
 

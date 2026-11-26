@@ -57,7 +57,7 @@ const objet = site.objet3d?.actif && site.objet3d.page === 'artisan';
       {
         qualifications.length > 0 && (
           <div>
-            <dt>Qualifications</dt>
+            <dt class="marque-laiton">Qualifications</dt>
             {qualifications.map((q) => (
               <dd set:html={marquerAVerifier(q)} />
             ))}
@@ -67,7 +67,7 @@ const objet = site.objet3d?.actif && site.objet3d.page === 'artisan';
       {
         assurance && (
           <div>
-            <dt>Assurance décennale</dt>
+            <dt class="marque-laiton">Assurance décennale</dt>
             <dd set:html={marquerAVerifier(assurance)} />
           </div>
         )

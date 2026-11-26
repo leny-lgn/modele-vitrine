@@ -16,6 +16,7 @@ const libelle = `Appeler le ${telephoneFr(site.telephone)}`;
   variante === 'barre' ? (
     <div class="appeler-barre">
       <a class:list={['appeler', classe]} href={telHref(site.telephone)}>
+        <span class="barre-dispo" aria-hidden="true" />
         {libelle}
       </a>
     </div>
@@ -25,6 +26,18 @@ const libelle = `Appeler le ${telephoneFr(site.telephone)}`;
     </a>
   )
 }
+
+<script>
+  // Mobile : la barre du bas ne double pas le bouton Appeler du haut de page. Elle se retire tant
+  // que ce bouton est visible et revient dès qu'il sort de l'écran. Sans JS : barre toujours là.
+  const barre = document.querySelector('.appeler-barre');
+  const premier = document.querySelector('main .appeler');
+  if (barre && premier && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => {
+      document.documentElement.toggleAttribute('data-barre-retiree', e.isIntersecting);
+    }).observe(premier);
+  }
+</script>
 
 <style>
   .appeler {
@@ -52,8 +65,47 @@ const libelle = `Appeler le ${telephoneFr(site.telephone)}`;
 
   .appeler-barre .appeler {
     display: flex;
+    gap: 0.6rem;
     width: 100%;
     min-height: 3.5rem;
+  }
+
+  /* Retrait vers le bas : 220 ms, courbe qui freine à l'arrivée (la barre se pose, ne cogne pas) ;
+     visibility retardée pour qu'elle ne reste pas atteignable au clavier une fois sortie. */
+  .appeler-barre {
+    transition:
+      transform 220ms cubic-bezier(0.23, 1, 0.32, 1),
+      visibility 0s linear 0s;
+  }
+
+  :global(html[data-barre-retiree]) .appeler-barre {
+    transform: translateY(100%);
+    visibility: hidden;
+    transition:
+      transform 220ms cubic-bezier(0.23, 1, 0.32, 1),
+      visibility 0s linear 220ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .appeler-barre,
+    :global(html[data-barre-retiree]) .appeler-barre {
+      transition: none;
+    }
+  }
+
+  /* Pastille verte cerclée de blanc quand c'est ouvert (lisible sur le cuivre) */
+  .barre-dispo {
+    display: none;
+  }
+
+  :global(html[data-dispo='ouvert']) .barre-dispo {
+    display: block;
+    flex: none;
+    width: 0.7rem;
+    height: 0.7rem;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    background: var(--vert-ok, #2e7d5b);
   }
 
   @media (min-width: 48rem) {

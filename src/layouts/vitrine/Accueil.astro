@@ -15,6 +15,9 @@ import Zone from '../../components/vitrine/Zone.astro';
 import Avis from '../../components/vitrine/Avis.astro';
 import Coordonnees from '../../components/vitrine/Coordonnees.astro';
 import Faq from '../../components/commun/Faq.astro';
+import BandeauPhoto from '../../components/commun/BandeauPhoto.astro';
+import BandeAppel from '../../components/vitrine/BandeAppel.astro';
+import Arguments from '../../components/commun/Arguments.astro';
 import type { Site, CleePage } from '../../lib/schema';
 import { lienSite } from '../../lib/liens';
 import { echapper, marquerAVerifier } from '../../lib/texte';
@@ -47,6 +50,9 @@ const autresChantiers = site.realisations
   .filter(({ r }) => r !== chantier);
 // « Comment ça se passe » : le déroulé du premier groupe qui en a un (le dépannage).
 const groupeDeroule = site.services.find((g) => g.deroule && g.deroule.length > 0);
+// Services sur deux colonnes : le premier groupe à gauche avec sa photo, les autres à droite.
+const [premierGroupe, ...autresGroupes] = site.services;
+const imgPremierGroupe = premierGroupe?.image ? site.images[premierGroupe.image] : undefined;
 ---
 
 <Vitrine site={site} page="accueil">
@@ -78,6 +84,14 @@ const groupeDeroule = site.services.find((g) => g.deroule && g.deroule.length > 
     </div>
   </section>
 
+  {
+    site.arguments.length > 0 && (
+      <div class="page-v arguments-v">
+        <Arguments site={site} />
+      </div>
+    )
+  }
+
   <Urgences site={site} />
 
   {
@@ -86,14 +100,23 @@ const groupeDeroule = site.services.find((g) => g.deroule && g.deroule.length > 
         <div class="page-v">
           <TitreSection id="titre-services">Services</TitreSection>
           <div class="services-colonnes">
-            {site.services.map((g) => (
-              <div class="service-groupe">
-                <h3>{g.groupe}</h3>
-                <ul>
-                  {g.items.map((i) => (
-                    <li>{nomPrestation(i)}</li>
-                  ))}
-                </ul>
+            {[[premierGroupe], autresGroupes].map((colonne, c) => (
+              <div class="services-colonne">
+                {colonne.map((g) => (
+                  <div class="service-groupe">
+                    <h3>{g.groupe}</h3>
+                    <ul>
+                      {g.items.map((i) => (
+                        <li>{nomPrestation(i)}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+                {c === 0 && imgPremierGroupe && autresGroupes.length > 0 && (
+                  <div class="services-photo">
+                    <CadreImage site={site} image={imgPremierGroupe} sizes="(min-width: 48rem) 34rem, 100vw" />
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -111,7 +134,7 @@ const groupeDeroule = site.services.find((g) => g.deroule && g.deroule.length > 
 
   {
     groupeDeroule && (
-      <section class="section-v" aria-labelledby="titre-deroule">
+      <section class="section-v surface-carrelage" aria-labelledby="titre-deroule">
         <div class="page-v">
           <TitreSection id="titre-deroule">Comment se passe un {groupeDeroule.groupe.toLowerCase()}</TitreSection>
           <ol class="deroule-v">
@@ -126,7 +149,7 @@ const groupeDeroule = site.services.find((g) => g.deroule && g.deroule.length > 
 
   {
     site.tarifs && site.tarifs.lignes.length > 0 && (
-      <section class="section-v surface-carrelage" aria-labelledby="titre-tarifs">
+      <section class="section-v" aria-labelledby="titre-tarifs">
         <div class="page-v">
           <TitreSection id="titre-tarifs">Tarifs</TitreSection>
           <div class="tarifs-grille">
@@ -158,7 +181,7 @@ const groupeDeroule = site.services.find((g) => g.deroule && g.deroule.length > 
 
   {
     chantier && (
-      <section class="section-v" aria-labelledby="titre-realisations">
+      <section class="section-v surface-ardoise" aria-labelledby="titre-realisations">
         <div class="page-v">
           <TitreSection id="titre-realisations">Réalisations</TitreSection>
           <div class="realisation-une">
@@ -208,6 +231,8 @@ const groupeDeroule = site.services.find((g) => g.deroule && g.deroule.length > 
     </div>
   </section>
 
+  <BandeauPhoto site={site} />
+
   <section class="section-v" aria-labelledby="titre-confiance">
     <div class="page-v">
       <TitreSection id="titre-confiance">Qui vient chez vous</TitreSection>
@@ -228,7 +253,7 @@ const groupeDeroule = site.services.find((g) => g.deroule && g.deroule.length > 
               <dl class="confiance-preuves">
                 {qualifications.length > 0 && (
                   <div>
-                    <dt>Qualifications</dt>
+                    <dt class="marque-laiton">Qualifications</dt>
                     {qualifications.map((q) => (
                       <dd set:html={marquerAVerifier(q)} />
                     ))}
@@ -236,7 +261,7 @@ const groupeDeroule = site.services.find((g) => g.deroule && g.deroule.length > 
                 )}
                 {confiance.assuranceDecennale && (
                   <div>
-                    <dt>Assurance décennale</dt>
+                    <dt class="marque-laiton">Assurance décennale</dt>
                     <dd set:html={marquerAVerifier(confiance.assuranceDecennale)} />
                   </div>
                 )}
@@ -259,6 +284,8 @@ const groupeDeroule = site.services.find((g) => g.deroule && g.deroule.length > 
       </section>
     )
   }
+
+  <BandeAppel site={site} lienDevis={lienDevis} />
 
   <section class="section-v surface-ardoise" aria-labelledby="titre-contact">
     <div class="page-v">
@@ -399,17 +426,37 @@ const groupeDeroule = site.services.find((g) => g.deroule && g.deroule.length > 
     margin-top: var(--espace-2);
   }
 
+  .services-colonne {
+    display: grid;
+    gap: var(--espace-3);
+    align-content: start;
+  }
+
+  /* Photo sous la colonne la plus courte : bureau seulement (sur mobile, elle rallongeait la page) */
+  .services-photo {
+    display: none;
+  }
+
+  .services-photo :global(img) {
+    width: 100%;
+    aspect-ratio: 2 / 1;
+    object-fit: cover;
+  }
+
   @media (min-width: 48rem) {
     .services-colonnes {
-      display: block;
-      columns: 2;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       column-gap: var(--espace-5);
     }
 
-    .service-groupe {
-      break-inside: avoid;
-      padding-bottom: var(--espace-3);
+    .services-photo {
+      display: block;
     }
+  }
+
+  /* ——— Arguments sous le hero ——— */
+  .arguments-v {
+    padding-block: var(--espace-3) var(--espace-4);
   }
 
   /* ——— Déroulé : trois temps côte à côte, chacun sous un trait cuivre (un tronçon de conduite) ——— */

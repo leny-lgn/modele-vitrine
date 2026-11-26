@@ -7,6 +7,7 @@ import type { CibleLien } from '../../lib/liens';
 import { lienSite } from '../../lib/liens';
 import { LIBELLES_PAGES } from '../../lib/secteurs';
 import { telephoneFr, telHref } from '../../lib/typo-fr';
+import Marque from '../commun/Marque.astro';
 
 interface Props {
   site: Site;
@@ -19,7 +20,7 @@ const courant = (p: CleePage) => (p === page ? 'page' : undefined);
 
 <header class="entete-p surface-ardoise">
   <div class="ep-grille">
-    <a class="ep-nom" href={lienSite(site)} aria-current={page === 'accueil' ? 'page' : undefined}>{site.nom}</a>
+    <a class="ep-nom" href={lienSite(site)} aria-current={page === 'accueil' ? 'page' : undefined}><Marque nom={site.nom} /></a>
     <nav class="ep-nav" aria-label="Pages du site">
       <ul class="ep-liste">
         {
@@ -48,6 +49,7 @@ const courant = (p: CleePage) => (p === page ? 'page' : undefined);
         </ul>
       </details>
     </nav>
+    <span class="dispo-mini ep-dispo" data-dispo-mini hidden>Disponible</span>
     <a class="ep-tel chiffres" href={telHref(site.telephone)}>
       <span class="ep-tel-libelle">Appeler le&nbsp;</span>{telephoneFr(site.telephone)}
     </a>

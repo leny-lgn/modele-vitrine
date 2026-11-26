@@ -4,6 +4,8 @@
 // Aucun élément signature, aucune animation : des filets fins comme seul décor.
 import { nomPrestation } from '../../lib/services';
 import PremiersGestes from '../../components/commun/PremiersGestes.astro';
+import Arguments from '../../components/commun/Arguments.astro';
+import Marque from '../../components/commun/Marque.astro';
 import Base from '../Base.astro';
 import Appeler from '../../components/commun/Appeler.astro';
 import Disponibilite from '../../components/commun/Disponibilite.astro';
@@ -36,7 +38,7 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
   <section class="plaque surface-ardoise" aria-labelledby="titre-page">
     <div class="page plaque-grille">
       <div class="plaque-identite">
-        <p class="plaque-nom">{site.nom}</p>
+        <p class="plaque-nom"><Marque nom={site.nom} /></p>
         <h1 id="titre-page" class="plaque-accroche">{site.accroche}</h1>
       </div>
       <div class="plaque-fiche">
@@ -65,6 +67,7 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
         <Appeler site={site} class="appeler-grand" />
         {nomArtisan && <p class="plaque-interlocuteur">Au téléphone&nbsp;: {nomArtisan}</p>}
       </div>
+      <Arguments site={site} class="plaque-arguments" />
     </div>
   </section>
 
@@ -105,7 +108,7 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
 
   {
     (nomArtisan || artisan.presentation) && (
-      <section class="bloc" aria-labelledby="titre-artisan">
+      <section class="bloc surface-carrelage" aria-labelledby="titre-artisan">
         <div class="page artisan-grille">
           {imgArtisan && (
             <div class="artisan-photo">
@@ -184,7 +187,7 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
     </div>
   </section>
 
-  <section class="bloc" aria-labelledby="titre-contact">
+  <section class="bloc surface-ardoise" aria-labelledby="titre-contact">
     <div class="page bloc-grille">
       <h2 id="titre-contact">Horaires et contact</h2>
       <div class="bloc-contenu contact">
@@ -406,6 +409,23 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
     padding-top: 0;
   }
 
+  /* Bande de couleur (carrelage, ardoise) : elle se sépare seule, sans filet ;
+     le bloc qui la suit non plus. */
+  .bloc + .bloc:is(.surface-carrelage, .surface-ardoise),
+  .bloc:is(.surface-carrelage, .surface-ardoise) + .bloc.bloc {
+    padding-top: var(--espace-4);
+  }
+
+  .bloc + .bloc:is(.surface-carrelage, .surface-ardoise) > .page,
+  .bloc:is(.surface-carrelage, .surface-ardoise) + .bloc.bloc > .page {
+    padding-top: 0;
+  }
+
+  .bloc + .bloc:is(.surface-carrelage, .surface-ardoise) > .page::before,
+  .bloc:is(.surface-carrelage, .surface-ardoise) + .bloc.bloc > .page::before {
+    content: none;
+  }
+
   .bloc h2 {
     font-size: var(--taille-3);
     line-height: 1.05;
@@ -427,6 +447,16 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
 
     .bloc + .bloc > .page {
       padding-top: var(--espace-5);
+    }
+
+    .bloc + .bloc:is(.surface-carrelage, .surface-ardoise),
+    .bloc:is(.surface-carrelage, .surface-ardoise) + .bloc.bloc {
+      padding-top: var(--espace-5);
+    }
+
+    .bloc + .bloc:is(.surface-carrelage, .surface-ardoise) > .page,
+    .bloc:is(.surface-carrelage, .surface-ardoise) + .bloc.bloc > .page {
+      padding-top: 0;
     }
 
     .bloc-grille {
@@ -503,10 +533,38 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
     line-height: 1.45;
   }
 
-  /* Photo de détail : seulement sur grand écran, en troisième colonne. En dessous, elle restait
-     seule en vignette avec un vide à côté ; le portrait suffit (image paresseuse : non chargée). */
+  /* Photo de détail : grand écran seulement, en bandeau sous le texte (elle comble la hauteur du
+     portrait). En dessous, elle restait seule en vignette ; le portrait suffit (image paresseuse). */
   .artisan-detail {
     display: none;
+  }
+
+  /* Grand nom sur deux lignes : le té reste à la taille d'une ligne de texte courant, aligné en haut */
+  .plaque-nom :global(.marque) {
+    align-items: flex-start;
+    gap: 0.25em;
+  }
+
+  .plaque-nom :global(.marque-nom) {
+    white-space: normal;
+  }
+
+  .plaque-nom :global(.marque-te) {
+    width: 0.55em;
+    height: 0.55em;
+    margin-top: 0.12em;
+  }
+
+  .plaque :global(.plaque-arguments) {
+    margin-top: var(--espace-4);
+    padding-top: var(--espace-3);
+    border-top: 1px solid var(--couleur-trait);
+  }
+
+  @media (min-width: 48rem) {
+    .plaque :global(.plaque-arguments) {
+      grid-column: 1 / -1;
+    }
   }
 
   @media (min-width: 48rem) {
@@ -519,14 +577,23 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
 
   @media (min-width: 64rem) {
     .artisan-grille {
-      grid-template-columns: 22rem minmax(0, 1fr) 14rem;
+      grid-template-columns: 22rem minmax(0, 1fr);
     }
 
-    /* En haut, à la hauteur du portrait (en bas, elle paraissait détachée du bloc). */
+    .artisan-photo {
+      grid-row: span 2;
+    }
+
     .artisan-detail {
       display: block;
-      grid-column: 3;
-      align-self: start;
+      grid-column: 2;
+      max-width: 34rem;
+    }
+
+    .artisan-detail :global(img) {
+      width: 100%;
+      aspect-ratio: 5 / 2;
+      object-fit: cover;
     }
   }
 

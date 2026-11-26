@@ -7,9 +7,20 @@
   "artisan": {
     "prenom": "Julien",
     "nom": "Lemoine",
-    "presentation": "Plombier chauffagiste installé à Ville-Exemple. Je travaille seul, je réponds moi-même au téléphone et je donne le prix avant de commencer."
+    "presentation": "Plombier chauffagiste installé à Ville-Exemple. Je travaille seul, je réponds moi-même au téléphone et je donne le prix avant de commencer.",
+    "methode": [
+      "Le prix est annoncé avant de commencer : au téléphone pour un dépannage, sur devis écrit pour des travaux.",
+      "Le sol est protégé et le chantier laissé propre, ancien matériel emporté.",
+      "La facture reprend le devis, ligne par ligne."
+    ]
   },
   "accroche": "Plombier à Ville-Exemple et 15 km autour",
+  "arguments": [
+    "Prix annoncé avant de commencer",
+    "Devis gratuit et écrit",
+    "Julien Lemoine répond lui-même",
+    "15 km autour de Ville-Exemple"
+  ],
   "telephone": "02 00 00 00 00",
   "email": "contact@plomberie-lemoine.example",
   "adresse": {
@@ -211,6 +222,26 @@
       }
     ]
   },
+  "garanties": {
+    "intro": "Pour les travaux d'installation et de rénovation, la loi prévoit trois garanties. Elles partent du jour où vous réceptionnez le chantier.",
+    "liste": [
+      {
+        "duree": "1 an",
+        "nom": "Parfait achèvement",
+        "texte": "Tout défaut signalé dans l'année est réparé, quel qu'il soit."
+      },
+      {
+        "duree": "2 ans",
+        "nom": "Bon fonctionnement",
+        "texte": "Les équipements qui se démontent sans abîmer l'ouvrage : robinetterie, chauffe-eau, radiateurs."
+      },
+      {
+        "duree": "10 ans",
+        "nom": "Garantie décennale",
+        "texte": "Les dommages qui touchent la solidité de l'ouvrage ou le rendent inutilisable, comme une fuite encastrée."
+      }
+    ]
+  },
   "reseaux": {
     "facebook": "",
     "instagram": ""
@@ -263,7 +294,8 @@
         "prix": "[EXEMPLE] à partir de 350 €"
       }
     ],
-    "devis": "Gratuit, écrit, avant tous travaux."
+    "devis": "Gratuit, écrit, avant tous travaux.",
+    "compris": "[EXEMPLE] Compris : petites fournitures (joints, téflon, colliers), essais après réparation et nettoyage. En plus : les pièces et les appareils, indiqués à part sur le devis."
   },
   "realisations": [
     {
@@ -376,6 +408,11 @@
       "alt": "Salle de bain refaite : douche à l'italienne, paroi vitrée et robinetterie laiton",
       "prompt": "Salle de bain rénovée et vide, douche à l'italienne avec paroi vitrée fixe, carrelage grand format gris clair, robinetterie en laiton brossé, lumière douce d'une fenêtre."
     }
+  },
+  "bandeau": {
+    "image": "apres1",
+    "texte": "Je réponds moi-même au téléphone et je donne le prix avant de commencer.",
+    "auteur": "Julien Lemoine, plombier à Ville-Exemple"
   },
   "faq": [
     {

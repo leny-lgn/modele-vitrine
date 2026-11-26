@@ -99,6 +99,9 @@ function valider(fichier: string, brut: unknown): Site {
     });
   }
 
+  if (site.bandeau && !site.images[site.bandeau.image])
+    erreurs.push(`bandeau.image : image « ${site.bandeau.image} » absente de « images »`);
+
   site.services.forEach((g, i) => {
     if (g.image && !site.images[g.image]) erreurs.push(`services[${i}].image : image « ${g.image} » absente de « images »`);
   });

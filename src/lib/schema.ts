@@ -39,6 +39,8 @@ export const siteSchema = z.looseObject({
   demo: z.boolean(),
   nom: texte,
   accroche: texte,
+  /** Trois ou quatre faits courts sous le hero (« Devis gratuit et écrit »…), tirés de ce que l'artisan fournit. */
+  arguments: z.array(texte).max(4).optional().default([]),
   description: z.string().optional(),
   telephone: texte,
   email: z.string().optional(),
@@ -89,6 +91,8 @@ export const siteSchema = z.looseObject({
     .object({
       mention: z.string().optional(),
       devisGratuit: z.boolean().optional(),
+      /** Ce qui est compris dans le prix, et ce qui est en plus (une phrase ou deux). */
+      compris: z.string().optional(),
       /** Précision sur le devis (« Gratuit, écrit, avant tous travaux. ») */
       devis: z.string().optional(),
       /** Information légale sur les prix des dépannages à domicile (arrêté du 24 janvier 2017). */
@@ -97,8 +101,17 @@ export const siteSchema = z.looseObject({
     })
     .optional(),
   confiance: z.looseObject({}).optional(),
+  /** Garanties légales des travaux (parfait achèvement, biennale, décennale). */
+  garanties: z
+    .object({
+      intro: z.string().optional(),
+      liste: z.array(z.object({ duree: texte, nom: texte, texte: texte })).min(1),
+    })
+    .optional(),
   /** Gestes à faire en attendant l'artisan (couper l'eau…) : conseils généraux, jamais une promesse. */
   premiersGestes: z.array(z.object({ cas: texte, geste: texte })).optional().default([]),
+  /** Bandeau photo pleine largeur (Vitrine, Premium) : une photo de chantier et une phrase de l'artisan. */
+  bandeau: z.object({ image: z.string(), texte: texte, auteur: z.string().optional() }).optional(),
   /** Questions fréquentes. Les réponses ne disent que ce que l'artisan a fourni. */
   faq: z.array(z.object({ question: texte, reponse: texte })).optional().default([]),
   reseaux: z.record(z.string(), z.string()).optional(),

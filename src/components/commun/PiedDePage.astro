@@ -7,6 +7,7 @@ import { telephoneFr, telHref } from '../../lib/typo-fr';
 import { lienSite, type CibleLien } from '../../lib/liens';
 import { contientAVerifier } from '../../lib/texte';
 import { resumeHoraires } from '../../lib/horaires';
+import { ancreGroupe } from '../../lib/services';
 
 interface Props {
   site: Site;
@@ -21,6 +22,14 @@ const horaires = premium || vitrine ? resumeHoraires(site.horaires) : [];
 // Accueil et L'artisan (Premium) finissent déjà par une section « Contact » complète :
 // le pied de page n'y répète pas les coordonnées (nom et liens légaux seulement).
 const sansRedite = premium && (page === 'accueil' || page === 'artisan');
+// Vitrine et Premium : services (liens vers leur page) et communes desservies, en texte (Google).
+const plan = premium || vitrine;
+const services = site.services.map((g) => ({
+  nom: g.groupe,
+  lien: premium
+    ? g.page && site.pages.includes(g.page) ? lienSite(site, g.page) : undefined
+    : site.pages.includes('services') ? `${lienSite(site, 'services')}#${ancreGroupe(g.groupe)}` : undefined,
+}));
 ---
 
 {
@@ -59,6 +68,20 @@ const sansRedite = premium && (page === 'accueil' || page === 'artisan');
         </div>
         </>
         )}
+        {plan && services.length > 0 && (
+          <div>
+            <p class="pdp-libelle">Services</p>
+            <ul class="pdp-liste">
+              {services.map((x) => <li>{x.lien ? <a href={x.lien}>{x.nom}</a> : x.nom}</li>)}
+            </ul>
+          </div>
+        )}
+        {plan && (
+          <div class="pdp-zone">
+            <p class="pdp-libelle">Zone d’intervention</p>
+            <p class="pdp-communes">{site.zone.communes.join(', ')}</p>
+          </div>
+        )}
         <ul class="pdp-legal">
           <li><a href={lienSite(site, 'mentions-legales')}>Mentions légales</a></li>
           <li><a href={lienSite(site, 'confidentialite')}>Confidentialité</a></li>
@@ -96,6 +119,24 @@ const sansRedite = premium && (page === 'accueil' || page === 'artisan');
           ))}
           {site.urgences?.actif && site.urgences.plage && <li>Urgences&nbsp;: {site.urgences.plage}</li>}
         </ul>
+      </div>
+    )
+  }
+  {
+    plan && services.length > 0 && (
+      <div>
+        <p class="pdp-libelle">Services</p>
+        <ul class="pdp-liste">
+          {services.map((x) => <li>{x.lien ? <a href={x.lien}>{x.nom}</a> : x.nom}</li>)}
+        </ul>
+      </div>
+    )
+  }
+  {
+    plan && (
+      <div class="pdp-zone">
+        <p class="pdp-libelle">Zone d’intervention</p>
+        <p class="pdp-communes">{site.zone.communes.join(', ')}</p>
       </div>
     )
   }
@@ -200,6 +241,27 @@ const sansRedite = premium && (page === 'accueil' || page === 'artisan');
     font-weight: 700;
   }
 
+  .pdp-liste {
+    margin-top: 0.25rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pdp-liste a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+
+  .pdp-zone {
+    max-width: 16rem;
+  }
+
+  .pdp-communes {
+    margin-top: var(--espace-1);
+    color: var(--couleur-texte-secondaire);
+  }
+
   .pdp-horaires {
     margin-top: var(--espace-1);
     padding: 0;
@@ -214,7 +276,7 @@ const sansRedite = premium && (page === 'accueil' || page === 'artisan');
   @media (min-width: 56rem) {
     /* Colonnes à la largeur de leur contenu (l'e-mail ne se coupe pas), liens légaux à droite. */
     .pdp-colonnes {
-      grid-template-columns: max-content max-content minmax(0, 1fr);
+      grid-template-columns: repeat(4, max-content) minmax(0, 1fr);
       align-items: start;
     }
 
@@ -228,7 +290,7 @@ const sansRedite = premium && (page === 'accueil' || page === 'artisan');
 
     .pdp-seul {
       margin-top: 0;
-      grid-template-columns: minmax(0, 1fr);
+      grid-template-columns: repeat(2, max-content) minmax(0, 1fr);
     }
 
     .pdp-premium .pdp-legal {

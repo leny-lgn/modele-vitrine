@@ -6,6 +6,8 @@ import TitreSection from '../../components/vitrine/TitreSection.astro';
 import Urgences from '../../components/vitrine/Urgences.astro';
 import CadreImage from '../../components/demo/CadreImage.astro';
 import Prestations from '../../components/commun/Prestations.astro';
+import Garanties from '../../components/commun/Garanties.astro';
+import { ancreGroupe } from '../../lib/services';
 import type { Site } from '../../lib/schema';
 import { lienSite } from '../../lib/liens';
 
@@ -13,14 +15,7 @@ interface Props {
   site: Site;
 }
 const { site } = Astro.props;
-const ancre = (groupe: string) =>
-  groupe
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-const groupes = site.services.map((g) => ({ ...g, id: ancre(g.groupe) }));
+const groupes = site.services.map((g) => ({ ...g, id: ancreGroupe(g.groupe) }));
 ---
 
 <Vitrine site={site} page="services" titre="Services">
@@ -74,6 +69,17 @@ const groupes = site.services.map((g) => ({ ...g, id: ancre(g.groupe) }));
         </>
       );
     })
+  }
+
+  {
+    site.garanties && (
+      <section class="section-v surface-carrelage" aria-labelledby="titre-garanties">
+        <div class="page-v">
+          <TitreSection id="titre-garanties">Vos garanties</TitreSection>
+          <Garanties site={site} />
+        </div>
+      </section>
+    )
   }
 
   <section class="section-v" aria-labelledby="titre-suite">

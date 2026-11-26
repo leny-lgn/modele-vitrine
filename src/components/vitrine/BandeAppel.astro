@@ -1,0 +1,73 @@
+---
+// Bande cuivre de fin de page (Vitrine) : le dernier appel avant le contact. Une seule par page :
+// c'est la couleur d'accent du brief, utilisée là où elle a un sens (appeler).
+import type { Site } from '../../lib/schema';
+import Appeler from '../commun/Appeler.astro';
+
+interface Props {
+  site: Site;
+  /** Lien « Demander un devis » (page Contact), si le site en a une. */
+  lienDevis?: string;
+}
+const { site, lienDevis } = Astro.props;
+const urgences = site.urgences?.actif ? site.urgences : undefined;
+---
+
+<section class="section-v surface-cuivre bande-appel" aria-labelledby="titre-appel">
+  <div class="page-v ba-grille">
+    <div>
+      <h2 id="titre-appel" class="titre-v">{urgences ? 'Un problème maintenant ?' : 'Votre projet'}</h2>
+      {urgences?.plage && <p class="ba-plage chiffres">Urgences&nbsp;: {urgences.plage}</p>}
+    </div>
+    <div class="ba-actions">
+      <Appeler site={site} class="bouton-v" />
+      {
+        lienDevis && (
+          <a class="lien-v" href={lienDevis}>
+            {urgences ? 'Pas urgent ? Demander un devis' : 'Demander un devis'}
+          </a>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .ba-grille {
+    display: grid;
+    gap: var(--espace-3);
+  }
+
+  .ba-plage {
+    margin-top: var(--espace-1);
+    color: var(--couleur-texte-secondaire);
+    font-weight: 500;
+  }
+
+  .ba-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--espace-1) var(--espace-3);
+  }
+
+  @media (max-width: 47.99rem) {
+    .ba-actions > :global(.bouton-v) {
+      flex: 1 1 100%;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .bande-appel .ba-actions > :global(.bouton-v:hover) {
+      background: #11181c;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .ba-grille {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      column-gap: var(--espace-5);
+    }
+  }
+</style>

@@ -10,3 +10,13 @@ export function nomPrestation(p: Prestation): string {
 export function textePrestation(p: Prestation): string | undefined {
   return typeof p === 'string' ? undefined : p.texte;
 }
+
+/** Ancre d'un groupe sur la page Services (« Dépannage » → « depannage »). */
+export function ancreGroupe(groupe: string): string {
+  return groupe
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}

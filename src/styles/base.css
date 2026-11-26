@@ -230,3 +230,34 @@ textarea {
   font-style: normal;
   white-space: nowrap;
 }
+
+/* « Disponible maintenant » en petit (en-tête bureau), rempli par Disponibilite quand c'est ouvert */
+.dispo-mini:not([hidden]) {
+  display: none;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: var(--taille-petit, 0.9375rem);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dispo-mini::before {
+  content: '';
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--couleur-ok, #2a7353);
+}
+
+/* Affiché seulement quand l'en-tête a la place (sinon il pousserait le menu) */
+@media (min-width: 80rem) {
+  [data-gamme='vitrine'] .dispo-mini:not([hidden]) {
+    display: inline-flex;
+  }
+}
+
+@media (min-width: 90rem) {
+  [data-gamme='premium'] .dispo-mini:not([hidden]) {
+    display: inline-flex;
+  }
+}

@@ -14,6 +14,7 @@ import Tarifs from '../../components/vitrine/Tarifs.astro';
 import Avis from '../../components/vitrine/Avis.astro';
 import Prestations from '../../components/commun/Prestations.astro';
 import PremiersGestes from '../../components/commun/PremiersGestes.astro';
+import Garanties from '../../components/commun/Garanties.astro';
 import type { Site, CleePage } from '../../lib/schema';
 import { lienSite } from '../../lib/liens';
 import { LIBELLES_PAGES } from '../../lib/secteurs';
@@ -143,6 +144,15 @@ const a = (p: CleePage) => site.pages.includes(p);
   }
 
   {
+    !urgent && site.garanties && (
+      <section class="section-p pg surface-carrelage" aria-labelledby="t-garanties">
+        <Titre id="t-garanties">Vos garanties</Titre>
+        <Garanties site={site} />
+      </section>
+    )
+  }
+
+  {
     g && aDesAvis && (
       <section class="section-p pg" aria-labelledby="t-avis">
         <Titre id="t-avis">Ils m’ont appelé pour ça</Titre>
@@ -151,7 +161,7 @@ const a = (p: CleePage) => site.pages.includes(p);
     )
   }
 
-  <section class="section-p pg surface-ardoise" aria-labelledby="t-action">
+  <section class="section-p pg surface-cuivre" aria-labelledby="t-action">
     <Titre id="t-action">{urgent ? 'Un problème maintenant ?' : 'Votre projet'}</Titre>
     <div class="actions-p">
       {
@@ -220,7 +230,7 @@ const a = (p: CleePage) => site.pages.includes(p);
     margin-bottom: var(--espace-4);
   }
 
-  .surface-ardoise :global(.bouton-p-contour) {
+  .surface-cuivre :global(.bouton-p-contour) {
     background: none;
     color: var(--couleur-texte);
     border: 2px solid currentColor;

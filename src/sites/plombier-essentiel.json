@@ -10,6 +10,11 @@
     "presentation": "Plombier chauffagiste installé à Ville-Exemple. Je travaille seul, je réponds moi-même au téléphone et je donne le prix avant de commencer."
   },
   "accroche": "Plombier à Ville-Exemple et 15 km autour",
+  "arguments": [
+    "Prix annoncé avant de commencer",
+    "Devis gratuit et écrit",
+    "Julien Lemoine répond lui-même"
+  ],
   "telephone": "02 00 00 00 00",
   "email": "contact@plomberie-lemoine.example",
   "adresse": {

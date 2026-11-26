@@ -113,7 +113,16 @@ const fermeture = site.fermetureExceptionnelle;
     return { ouvert: false, texte: 'Fermé', exceptionnel: fermeLe(date) };
   }
 
-  for (const bloc of document.querySelectorAll<HTMLElement>('[data-disponibilite]')) {
+  const blocs = document.querySelectorAll<HTMLElement>('[data-disponibilite]');
+  // Statut de la page (le même pour tous les blocs) : « Disponible maintenant » dans l'en-tête
+  // et pastille verte dans la barre Appeler du bas. Fermé : rien n'est ajouté.
+  if (blocs[0]) {
+    const ouvert = statut(JSON.parse(blocs[0].dataset.disponibilite!)).ouvert;
+    document.documentElement.dataset.dispo = ouvert ? 'ouvert' : 'ferme';
+    for (const mini of document.querySelectorAll<HTMLElement>('[data-dispo-mini]')) mini.hidden = !ouvert;
+  }
+
+  for (const bloc of blocs) {
     const donnees: Donnees = JSON.parse(bloc.dataset.disponibilite!);
     const s = statut(donnees);
     const ligne = bloc.querySelector<HTMLElement>('[data-statut]')!;

@@ -1,0 +1,121 @@
+---
+// Bandeau photo pleine largeur (Vitrine, Premium) : une photo de chantier et une phrase de
+// l'artisan, tirées du JSON (bandeau). Bureau : la phrase posée sur la photo, sous un voile uni
+// (pas de dégradé), comme le hero Premium. Mobile, ou démo sans photo : la phrase sous la photo,
+// sur l'ardoise. Aucune animation.
+import type { Site } from '../../lib/schema';
+import CadreImage from '../demo/CadreImage.astro';
+import { imageExiste } from '../../lib/images.mjs';
+
+interface Props {
+  site: Site;
+  /** Classe du bloc de texte, pour l'aligner sur la colonne de la gamme (page-v, pg…). */
+  interieur?: string;
+  class?: string;
+}
+const { site, interieur = 'page-v', class: classe } = Astro.props;
+const b = site.bandeau;
+const image = b ? site.images[b.image] : undefined;
+const avecPhoto = !!image && imageExiste(site.slug, image.fichier);
+---
+
+{
+  b && image && (
+    <figure class:list={['bandeau-photo', { 'bp-pose': avecPhoto }, classe]}>
+      <div class="bp-image">
+        <CadreImage site={site} image={image} sizes="100vw" />
+      </div>
+      <figcaption class:list={['bp-texte', 'surface-ardoise', interieur]}>
+        <blockquote>
+          <p>{b.texte}</p>
+        </blockquote>
+        {b.auteur && <p class="bp-auteur">{b.auteur}</p>}
+      </figcaption>
+    </figure>
+  )
+}
+
+<style>
+  .bandeau-photo {
+    display: grid;
+    margin: 0;
+    background: var(--ardoise);
+  }
+
+  .bp-image :global(img) {
+    display: block;
+    width: 100%;
+    height: clamp(14rem, 55vw, 22rem);
+    object-fit: cover;
+  }
+
+  .bp-texte {
+    padding-block: var(--espace-4);
+  }
+
+  .bp-texte blockquote {
+    margin: 0;
+  }
+
+  .bp-texte blockquote p {
+    max-width: 24ch;
+    font-family: var(--police-titres);
+    font-size: var(--taille-3);
+    font-stretch: var(--largeur-titres);
+    font-weight: var(--graisse-titres);
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    hyphens: manual;
+    text-wrap: balance;
+  }
+
+  .bp-auteur {
+    margin-top: var(--espace-2);
+    color: var(--couleur-texte-secondaire);
+    font-weight: 600;
+  }
+
+  @media (min-width: 48rem) {
+    /* Photo pleine hauteur, phrase posée en bas, voile uni pour la lisibilité */
+    .bp-pose {
+      grid-template: 1fr / 1fr;
+    }
+
+    .bp-pose > * {
+      grid-area: 1 / 1;
+    }
+
+    .bp-pose .bp-image {
+      position: relative;
+    }
+
+    .bp-pose .bp-image::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgb(20 26 28 / 0.55);
+    }
+
+    .bp-pose .bp-image :global(img) {
+      height: clamp(26rem, 42vw, 36rem);
+    }
+
+    .bp-pose .bp-texte {
+      position: relative;
+      z-index: 1;
+      align-self: end;
+      padding-block: var(--espace-5);
+      background: none;
+    }
+
+    .bp-texte blockquote p {
+      font-size: var(--taille-4);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .bp-texte blockquote p {
+      font-size: var(--taille-5);
+    }
+  }
+</style>
