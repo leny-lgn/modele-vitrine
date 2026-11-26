@@ -1,7 +1,7 @@
 ---
 // Tableau des tarifs « à partir de » : sobre, chiffres tabulaires, mention TTC.
 import type { Site } from '../../lib/schema';
-import { marquerAVerifier } from '../../lib/texte';
+import { contientAVerifier, marquerAVerifier } from '../../lib/texte';
 
 interface Props {
   tarifs: NonNullable<Site['tarifs']>;
@@ -13,9 +13,12 @@ interface Props {
 }
 const { tarifs, infoPrix = false, mention = true, class: classe } = Astro.props;
 const texteMention = mention ? tarifs.mention : undefined;
+// Démo : prix laissés à remplir, une ligne le dit avant le tableau.
+const prixARemplir = tarifs.lignes.some((l) => contientAVerifier(l.prix));
 ---
 
 <div class:list={['tarifs-v', classe]}>
+  {prixARemplir && <p class="tv-demo">Exemple de grille. Sur votre site&nbsp;: vos prix réels.</p>}
   <table>
     <thead>
       <tr>
@@ -28,7 +31,7 @@ const texteMention = mention ? tarifs.mention : undefined;
         tarifs.lignes.map((l) => (
           <tr>
             <th scope="row">{l.libelle}</th>
-            <td class="chiffres" set:html={marquerAVerifier(l.prix)} />
+            <td class="chiffres" set:html={marquerAVerifier(l.prix, 'votre tarif')} />
           </tr>
         ))
       }
@@ -48,6 +51,12 @@ const texteMention = mention ? tarifs.mention : undefined;
 <style>
   .tarifs-v {
     max-width: 44rem;
+  }
+
+  .tv-demo {
+    margin: 0 0 0.75rem;
+    color: var(--couleur-texte-secondaire);
+    font-size: var(--taille-petit);
   }
 
   table {

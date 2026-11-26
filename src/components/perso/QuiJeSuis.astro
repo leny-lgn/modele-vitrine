@@ -1,15 +1,20 @@
 ---
-// « Qui je suis » : photo facultative (public/images/accueil/<photo>) et quelques phrases.
+// « Qui je suis » : photo facultative (public/images/accueil/<photo>), l'origine du nom
+// (facultative) et quelques phrases.
+// Sans photo, tant que le site n'est pas publié : un cadre en pointillés montre la place
+// et le format attendus. Une fois publié, sans photo, le texte occupe seul la section.
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { MOI, NOM } from '../../lib/moi';
+import { MOI, PUBLIE } from '../../lib/moi';
 import { RACINE, cheminRelatif, urlImage } from '../../lib/images.mjs';
 import T from './T.astro';
 
 const photo = MOI.photo && existsSync(join(RACINE, cheminRelatif('accueil', MOI.photo))) ? MOI.photo : undefined;
+const cadre = !photo && !PUBLIE;
+const histoire = MOI.histoireNom;
 ---
 
-<div class:list={['qui', { 'avec-photo': photo }]}>
+<div class:list={['qui', { 'avec-photo': photo || cadre }]}>
   {
     photo && (
       <img
@@ -17,13 +22,38 @@ const photo = MOI.photo && existsSync(join(RACINE, cheminRelatif('accueil', MOI.
         src={urlImage('accueil', photo)}
         width="600"
         height="750"
-        alt={`Portrait de ${NOM}`}
+        alt={`Portrait de ${MOI.nom}`}
         loading="lazy"
         decoding="async"
       />
     )
   }
+  {
+    cadre && (
+      <div class="qui-cadre" aria-hidden="true">
+        <p class="qc-titre">Votre photo ici</p>
+        <p>
+          Déposer le fichier dans <code>public/images/accueil/</code>, puis écrire son nom dans{' '}
+          <code>moi.json</code> (champ <code>photo</code>).
+        </p>
+        <p>Portrait vertical 4:5, 1200 × 1500 px conseillé. Visage de face ou de trois-quarts, lumière du jour, fond simple.</p>
+        <p class="qc-note">Visible seulement tant que le site n’est pas publié.</p>
+      </div>
+    )
+  }
   <div class="qui-texte">
+    {
+      histoire && (
+        <>
+          <h3 class="qui-histoire-titre">
+            <T texte={histoire.titre} />
+          </h3>
+          <p class="qui-histoire">
+            <T texte={histoire.texte} />
+          </p>
+        </>
+      )
+    }
     {
       MOI.presentation.map((p) => (
         <p>
@@ -51,11 +81,57 @@ const photo = MOI.photo && existsSync(join(RACINE, cheminRelatif('accueil', MOI.
     margin-top: 0.9rem;
   }
 
+  .qui-histoire-titre {
+    margin-bottom: 0.4rem;
+    color: var(--dore);
+    font-size: 1.1875rem;
+    font-weight: var(--graisse-titres);
+  }
+
+  /* L'histoire du nom, séparée de la présentation par un filet. */
+  .qui-histoire {
+    margin-bottom: 1.25rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--filet);
+  }
+
   .qui-photo {
     width: 100%;
     max-width: 16rem;
     height: auto;
     border: 1px solid var(--filet);
+  }
+
+  /* Cadre provisoire, aux proportions de la photo (4:5). */
+  .qui-cadre {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.6rem;
+    width: 100%;
+    max-width: 16rem;
+    aspect-ratio: 4 / 5;
+    padding: 1.25rem;
+    border: 2px dashed var(--encre-2);
+    color: var(--encre-2);
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  .qui-cadre code {
+    color: var(--ivoire);
+    font-size: 0.8125rem;
+    overflow-wrap: anywhere;
+  }
+
+  .qc-titre {
+    color: var(--ivoire);
+    font-size: 1.0625rem;
+    font-weight: var(--graisse-titres);
+  }
+
+  .qc-note {
+    font-style: italic;
   }
 
   @media (min-width: 48rem) {

@@ -33,6 +33,8 @@ const moiSchema = z.object({
   zone: texte,
   disponibilites: texte,
   presentation: z.array(texte).min(1),
+  /** Facultatif : l'origine du nom commercial, affichée dans « Qui je suis ». */
+  histoireNom: z.object({ titre: texte, texte: texte }).optional(),
   /** Fichier dans public/images/accueil/ (vide : pas de photo). */
   photo: z.string(),
   mentionsLegales: z.object({

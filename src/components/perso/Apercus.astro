@@ -1,6 +1,7 @@
 ---
 // Aperçu du travail, dans le bandeau d'accueil : la capture ordinateur du modèle Premium,
-// la capture téléphone du modèle Vitrine posée devant. Tout le bloc mène à la grille des modèles.
+// la capture téléphone du modèle Vitrine posée devant, en bas à droite : sur la photo du modèle,
+// jamais sur son titre (à gauche dans la capture). Tout le bloc mène à la grille des modèles.
 // Généré depuis src/sites/ (premier secteur) ; les captures viennent de `npm run captures`.
 import { sitesParSecteur } from '../../lib/sites';
 import { infosSecteur, LIBELLES_GAMMES } from '../../lib/secteurs';
@@ -38,7 +39,7 @@ const petit = sites.vitrine ?? sites.essentiel ?? grand;
     .apercus {
       position: relative;
       display: block;
-      padding: 0 0 2.5rem 2.5rem;
+      padding: 0 2.5rem 2.5rem 0;
       color: var(--ivoire);
       text-decoration: none;
     }
@@ -58,7 +59,7 @@ const petit = sites.vitrine ?? sites.essentiel ?? grand;
 
     .ap-telephone {
       position: absolute;
-      left: 0;
+      right: 0;
       bottom: 0;
       width: 28%;
       border: 3px solid var(--nuit-fonce);
@@ -77,7 +78,7 @@ const petit = sites.vitrine ?? sites.essentiel ?? grand;
 
     .ap-legende {
       position: absolute;
-      right: 0;
+      left: 0;
       bottom: 0;
       font-size: 0.9375rem;
       font-weight: var(--graisse-lien);

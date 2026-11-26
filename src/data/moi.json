@@ -8,9 +8,9 @@
     "favicon": "haute-lice-favicon.svg"
   },
   "accroche": "Je crée des sites internet pour les commerçants et artisans de Lannion, Brest, Nantes et alentours.",
-  "enBref": "Étudiant à Lannion, alternant à Brest. Rendez-vous sur place quand c'est possible, sinon par téléphone ou en visio.",
+  "enBref": "Je viens vous voir sur place quand c'est possible, sinon par téléphone ou en visio.",
   "telephone": "0676380169",
-  "email": "leny_langon@yahoo.com",
+  "email": "contact@hautelice.fr",
   "metiers": [
     "Boulanger",
     "Boucher",
@@ -32,8 +32,12 @@
   ],
   "zone": "Lannion, Brest, Nantes et alentours",
   "disponibilites": "7/7, réponse dans la journée (le plus souvent après 18 h en semaine)",
+  "histoireNom": {
+    "titre": "Pourquoi Haute-Lice ?",
+    "texte": "La haute-lice est la technique des grandes tapisseries tissées à la main, comme aux Gobelins. Le licier travaille fil par fil, d'après un modèle peint qu'on appelle le carton, et vérifie son ouvrage dans un miroir. Je fais vos sites de la même façon : d'après un modèle choisi avec vous, page par page, en vérifiant chaque détail."
+  },
   "presentation": [
-    "Je suis étudiant à Lannion et alternant à Brest. Je crée des sites internet pour les commerçants et artisans de la région : simples, rapides et faits pour être trouvés sur Google.",
+    "Je suis Leny Langon, étudiant à Lannion et alternant à Brest. Je crée des sites internet pour les commerçants et artisans de la région : simples, rapides et faits pour être trouvés sur Google.",
     "Je m'occupe de tout, des textes à la mise en ligne, et le site vous appartient. Quand c'est possible, je viens vous rencontrer ; sinon, nous échangeons par téléphone ou en visio."
   ],
   "photo": "",

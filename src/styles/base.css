@@ -131,13 +131,19 @@ textarea {
   font-variant-numeric: tabular-nums;
 }
 
-/* Marqueur des informations à faire confirmer (visible en démo) */
-mark.a-verifier {
-  background: #fff1b8;
-  color: #4a3b00;
-  padding: 0 0.2em;
+/* Information propre à chaque artisan, à remplir sur le vrai site (démo uniquement) :
+   étiquette en pointillés, même langage que « Avis fictif » et les cadres d'images. */
+.a-completer {
+  padding: 0.05em 0.45em;
+  border: 1px dashed currentColor;
   border-radius: 2px;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 0.85em;
   font-weight: 600;
+  font-style: normal;
+  color: var(--couleur-texte-secondaire, currentColor);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 @media (prefers-reduced-motion: reduce) {

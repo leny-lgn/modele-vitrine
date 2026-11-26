@@ -4,7 +4,7 @@ import redirections from './scripts/redirections.mjs';
 
 // Adresse publique du déploiement, utilisée pour les URL absolues (canonique, Open Graph, JSON-LD, sitemap).
 // À changer ici quand le nom de domaine sera branché ; la variable SITE_URL la remplace au besoin.
-const site = process.env.SITE_URL || 'https://modele-vitrine.langonleny-pro.workers.dev';
+const site = process.env.SITE_URL || 'https://hautelice.fr';
 if (!/^https:\/\//.test(site)) {
   throw new Error(`Adresse du site invalide : « ${site} ». Elle doit commencer par https://`);
 }

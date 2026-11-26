@@ -7,7 +7,6 @@
   "artisan": {
     "prenom": "Julien",
     "nom": "Lemoine",
-    "depuis": 2012,
     "presentation": "Plombier chauffagiste installé à Ville-Exemple. Je travaille seul, je réponds moi-même au téléphone et je donne le prix avant de commencer."
   },
   "accroche": "Plombier à Ville-Exemple et 15 km autour",
@@ -75,7 +74,7 @@
   "urgences": {
     "actif": true,
     "plage": "Du lundi au samedi, 7 h – 21 h",
-    "delai": "[À VÉRIFIER] délai d'intervention réel annoncé par l'artisan",
+    "delai": "[À VÉRIFIER] votre délai d'intervention",
     "cas": [
       "Fuite d'eau",
       "WC ou évier bouché",
@@ -118,7 +117,7 @@
   ],
   "confiance": {
     "qualifications": [],
-    "assuranceDecennale": "[À VÉRIFIER] assureur et zone de couverture",
+    "assuranceDecennale": "[À VÉRIFIER] votre assureur et la zone couverte",
     "avis": []
   },
   "reseaux": {
