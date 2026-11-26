@@ -114,13 +114,6 @@ const jsonLd = estAccueil
   </head>
   <body>
     <a class="lien-evitement" href="#contenu">Aller au contenu</a>
-    {
-      !PUBLIE && (
-        <p class="bandeau-preparation" role="note">
-          Site en préparation
-        </p>
-      )
-    }
     <EnTete />
     <main id="contenu" tabindex="-1">
       <slot />
@@ -129,13 +122,3 @@ const jsonLd = estAccueil
   </body>
 </html>
 
-<style>
-  .bandeau-preparation {
-    padding: 0.35rem var(--marge);
-    /* Pas de trait ici : la ligne grise du menu, juste dessous, sépare déjà. */
-    font-size: 0.8125rem;
-    line-height: 1.4;
-    text-align: center;
-    color: var(--encre-2);
-  }
-</style>

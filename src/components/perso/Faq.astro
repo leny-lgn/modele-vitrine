@@ -2,10 +2,16 @@
 // Questions fréquentes : liste de questions dépliables (<details>), fonctionne sans JS.
 // Seules les questions s'affichent d'emblée ; la réponse s'ouvre au clic ou au clavier.
 // Avec JS : la réponse se déplie en douceur (hauteur animée, tous navigateurs). Sans JS : ouverture nette.
-import { MOI } from '../../lib/moi';
+// À côté (grand écran) : « Une autre question ? » avec le bouton Appeler et l'e-mail.
+import { MOI, aCompleter } from '../../lib/moi';
+import Appeler from './Appeler.astro';
+import { typoFr } from '../../lib/typo-fr';
 import T from './T.astro';
+
+const email = aCompleter(MOI.email) ? undefined : MOI.email;
 ---
 
+<div class="faq-zone">
 <div class="faq">
   {
     MOI.faq.map((f) => (
@@ -25,11 +31,57 @@ import T from './T.astro';
     ))
   }
 </div>
+<aside class="faq-autre" aria-label="Poser une autre question">
+  <p class="fa-titre">{typoFr('Une autre question ?')}</p>
+  <p><T texte={typoFr(`Appelez-moi ou écrivez-moi. Disponible ${MOI.disponibilites}.`)} /></p>
+  <Appeler />
+  {email && <p class="fa-email">Ou par e-mail&nbsp;: <a href={`mailto:${email}`}>{email}</a></p>}
+</aside>
+</div>
 
 <style>
+  .faq-zone {
+    display: grid;
+    gap: 2rem;
+    margin-top: 1.5rem;
+  }
+
+  .faq-autre {
+    align-self: start;
+    max-width: 26rem;
+    padding: 1.25rem;
+    border: 1px solid var(--filet);
+  }
+
+  .fa-titre {
+    font-size: 1.25rem;
+    font-weight: var(--graisse-titres);
+  }
+
+  .faq-autre > p + p {
+    margin-top: 0.35rem;
+  }
+
+  .faq-autre :global(.appeler) {
+    margin-top: 1rem;
+  }
+
+  .fa-email {
+    margin-top: 0.75rem;
+    color: var(--encre-2);
+    font-size: 0.9375rem;
+    overflow-wrap: anywhere;
+  }
+
+  @media (min-width: 64rem) {
+    .faq-zone {
+      grid-template-columns: minmax(0, 52rem) minmax(16rem, 1fr);
+      gap: 3rem;
+    }
+  }
+
   .faq {
     max-width: 52rem;
-    margin-top: 1.5rem;
     border-bottom: 1px solid var(--filet);
   }
 

@@ -41,7 +41,7 @@ const pages = site.pages as CleePage[];
   /* Mobile : la conduite continue le long de la liste et s'arrête sur la dernière page */
   .dist-collecteur {
     position: absolute;
-    left: calc(var(--x-fil) - 1px);
+    left: calc(var(--x-fil-mesure, var(--x-fil)) - 1px);
     top: 0;
     bottom: calc(var(--espace-5) + 1.4rem);
     width: 2px;
@@ -88,7 +88,7 @@ const pages = site.pages as CleePage[];
 
     /* Coude + collecteur : bordures gauche et basse, angle arrondi = coude à 90° */
     .dist-collecteur {
-      left: calc((100% - var(--pI)) / 2 + var(--pI) * var(--part-zg) - 1px);
+      left: calc(var(--x-fil-mesure, (100% - var(--pI)) / 2 + var(--pI) * var(--part-zg)) - 1px);
       right: 0;
       bottom: auto;
       width: auto;

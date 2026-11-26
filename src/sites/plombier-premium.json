@@ -292,10 +292,10 @@
   ],
   "images": {
     "hero": {
-      "fichier": "hero.webp",
-      "format": "16:9",
-      "alt": "Mains d'un plombier serrant un raccord en cuivre sous un évier",
-      "prompt": "Mains d'un plombier serrant un raccord en cuivre sous un évier, caisse à outils ouverte au premier plan flou, carrelage blanc en fond."
+      "fichier": "atelier.webp",
+      "format": "3:2",
+      "alt": "Établi de l'artisan : outils, raccords en laiton et en cuivre rangés dans des casiers",
+      "prompt": "Établi en bois dans un petit atelier, outils de plomberie rangés, raccords en laiton dans des casiers, lumière latérale."
     },
     "artisan": {
       "fichier": "artisan.webp",

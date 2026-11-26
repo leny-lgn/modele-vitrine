@@ -1,23 +1,28 @@
 ---
 // Les trois gammes côte à côte (colonnes d'annuaire), l'abonnement et les options.
 // `complet` : ajoute les options, autres services et conditions de paiement (page Tarifs).
-// `illustre` : une illustration par gamme et, sur mobile, un sélecteur qui montre une gamme à la fois
-// (boutons radio + CSS, sans JS). Accueil et page Tarifs.
+// `illustre` : une illustration par gamme. `choix` : sur mobile, un sélecteur qui montre une gamme
+// à la fois (boutons radio + CSS, sans JS) ; page Tarifs seulement (sur l'accueil, la section Modèles
+// a déjà son sélecteur de gamme : les trois offres s'y suivent).
+// Un point « Tout l'Essentiel » / « Tout le Vitrine » devient la phrase d'introduction de la liste.
 import { MOI, prixFr } from '../../lib/moi';
 import { sitesParSecteur } from '../../lib/sites';
 import { lienSite } from '../../lib/liens';
 import { infosSecteur } from '../../lib/secteurs';
 import type { Site } from '../../lib/schema';
 import T from './T.astro';
+import { typoFr } from '../../lib/typo-fr';
 import PilePages from './PilePages.astro';
 
 interface Props {
   complet?: boolean;
   illustre?: boolean;
+  choix?: boolean;
   /** Niveau du titre de chaque gamme. */
   niveau?: 2 | 3;
 }
-const { complet = false, illustre = false, niveau = 3 } = Astro.props;
+const { complet = false, illustre = false, choix = false, niveau = 3 } = Astro.props;
+const estBase = (x: string) => /^Tout /.test(x);
 const Titre = `h${niveau}` as 'h2' | 'h3';
 
 // Un modèle d'exemple par gamme : celui du premier secteur qui l'a.
@@ -27,9 +32,9 @@ for (const sites of sitesParSecteur().values()) {
 }
 ---
 
-<div class:list={['offres-bloc', { 'offres-choix': illustre }]}>
+<div class:list={['offres-bloc', { 'offres-choix': choix }]}>
 {
-  illustre && (
+  choix && (
     <fieldset class="of-choix">
       <legend class="visuellement-cache">Gamme affichée</legend>
       {MOI.gammes.map((g, i) => (
@@ -78,8 +83,13 @@ for (const sites of sitesParSecteur().values()) {
               <dd class="valeur">{g.delai}</dd>
             </div>
           </dl>
+          {g.inclus.filter(estBase).map((i) => (
+            <p class="of-base">
+              <T texte={typoFr(`${i}, plus :`)} />
+            </p>
+          ))}
           <ul class="of-inclus">
-            {g.inclus.map((i) => (
+            {g.inclus.filter((i) => !estBase(i)).map((i) => (
               <li>
                 <T texte={i} />
               </li>
@@ -302,6 +312,15 @@ for (const sites of sitesParSecteur().values()) {
     margin-top: 0.75rem;
   }
 
+  .of-base {
+    margin-top: 0.75rem;
+    font-weight: var(--graisse-forte);
+  }
+
+  .of-base + .of-inclus {
+    margin-top: 0.25rem;
+  }
+
   .of-inclus {
     margin-top: 0.75rem;
     padding: 0;
@@ -433,6 +452,12 @@ for (const sites of sitesParSecteur().values()) {
     .offre:first-child {
       padding-left: 0;
       border-left: 0;
+    }
+
+    /* « À qui sert la gamme » sur deux lignes réservées : les prix restent alignés. */
+    .of-pourqui {
+      min-height: 3em;
+      line-height: 1.5;
     }
   }
 </style>

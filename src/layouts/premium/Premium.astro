@@ -99,9 +99,10 @@ const { site, page, titre, description, entree = 'gauche' } = Astro.props;
     grid-row: auto;
   }
 
-  /* Débord à gauche : de l'écran jusqu'au tracé (mobile : pleine largeur, sous le texte) */
+  /* Débord à gauche : de l'écran jusqu'au tracé. Mobile : de la colonne de texte au bord droit,
+     pour que la conduite (à gauche) passe à côté des photos au lieu de les traverser. */
   [data-gamme='premium'] .pg > .fuite-g {
-    grid-column: plein-start / plein-end;
+    grid-column: texte-start / plein-end;
   }
 
   [data-gamme='premium'] .pg > .fuite-d {
@@ -139,9 +140,11 @@ const { site, page, titre, description, entree = 'gauche' } = Astro.props;
     row-gap: var(--espace-3);
   }
 
+  /* Bureau : 5,5 rem au-dessus et au-dessous (11 rem entre deux sections) ;
+     × 1,5 laissait près de 270 px de vide, qui se lisaient comme des trous. */
   @media (min-width: 56rem) {
     [data-gamme='premium'] .section-p {
-      padding-block: calc(var(--espace-5) * 1.5);
+      padding-block: var(--espace-5);
     }
   }
 
@@ -310,7 +313,7 @@ const { site, page, titre, description, entree = 'gauche' } = Astro.props;
 
   @media (min-width: 56rem) {
     :root[data-gamme='premium'] .pied-de-page {
-      padding-left: calc((100% - var(--pI)) / 2 + var(--pI) * var(--part-zg) + var(--retrait));
+      padding-left: calc(var(--x-fil-mesure, (100% - var(--pI)) / 2 + var(--pI) * var(--part-zg)) + var(--retrait));
     }
   }
 </style>

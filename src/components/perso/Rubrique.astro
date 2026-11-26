@@ -1,12 +1,13 @@
 ---
-// Une rubrique d'annuaire par secteur : les trois modèles en trois tailles d'annonce.
-// Essentiel = une ligne, Vitrine = un encadré, Premium = une pleine annonce avec capture.
+// Une rubrique d'annuaire par secteur : les trois modèles côte à côte, en trois cartes de même
+// largeur, chacune avec la capture ordinateur de son modèle. Seul le cadre s'affirme avec la gamme
+// (filet seul, encadré, cadre épais) : l'annonce « grandit » sans que l'Essentiel paraisse orphelin.
+// Pas de prix ni de numéro fictif ici : la page sert à voir les modèles, Tarifs à comparer les prix.
 // Générée depuis src/sites/ : chaque nouveau secteur apparaît seul.
 import type { Gamme, Site } from '../../lib/schema';
 import { infosSecteur, LIBELLES_GAMMES } from '../../lib/secteurs';
 import { lienSite } from '../../lib/liens';
-import { gamme, prixFr } from '../../lib/moi';
-import { telephoneFr } from '../../lib/typo-fr';
+import { gamme } from '../../lib/moi';
 import Capture from './Capture.astro';
 import T from './T.astro';
 
@@ -22,7 +23,7 @@ const TitreAnnonce = `h${niveau + 1}` as 'h3' | 'h4';
 const libelle = infosSecteur(secteur).libelle;
 const idRubrique = `rubrique-${secteur}`;
 
-const pluriel = (n: number, mot: string) => `${n} ${mot}${n > 1 ? 's' : ''}`;
+const pluriel = (n: number, mot: string) => `${n} ${mot}${n > 1 ? 's' : ''}`;
 function nbPages(site: Site): string {
   const chantiers = site.gamme === 'premium' ? site.realisations.filter((r) => r.slug).length : 0;
   return chantiers
@@ -38,40 +39,21 @@ function nbPages(site: Site): string {
       (['essentiel', 'vitrine', 'premium'] as const).map((g) => {
         const site = sites[g];
         if (!site) return null;
-        const offre = gamme(g);
         return (
           <article class:list={['annonce', `annonce-${g}`]}>
-            {g === 'premium' && (
-              <Capture
-                slug={site.slug}
-                vue="bureau"
-                alt={`Page d’accueil du modèle ${libelle} Premium, sur ordinateur`}
-                sizes="(min-width: 76rem) 560px, (min-width: 48rem) 45vw, 92vw"
-              />
-            )}
-            {g !== 'premium' && (
-              <Capture
-                slug={site.slug}
-                vue="mobile"
-                class="an-capture-mobile"
-                alt={`Page d’accueil du modèle ${libelle} ${LIBELLES_GAMMES[g]}, sur téléphone`}
-                sizes={g === 'vitrine' ? '8rem' : '5rem'}
-              />
-            )}
+            <Capture
+              slug={site.slug}
+              vue="bureau"
+              alt={`Page d’accueil du modèle ${libelle} ${LIBELLES_GAMMES[g]}, sur ordinateur`}
+              sizes="(min-width: 56rem) 30vw, 92vw"
+            />
             <div class="an-texte">
               <TitreAnnonce class="an-gamme">{LIBELLES_GAMMES[g]}</TitreAnnonce>
-              <p class="an-ligne">
-                <span class="an-nom">{site.nom}</span>
-                <span class="an-suite">
-                  <span class="conduite" aria-hidden="true" />
-                  <span class="an-tel">
-                    {telephoneFr(site.telephone)} <span class="an-fictif">(n°&nbsp;fictif)</span>
-                  </span>
-                </span>
+              <p class="an-pourqui">
+                <T texte={gamme(g).pourQui} />
               </p>
-              {g !== 'essentiel' && <p class="an-accroche">{site.accroche}</p>}
               <p class="an-details">
-                {nbPages(site)} · <span class="mono"><T texte={prixFr(offre.prix)} /></span>
+                {site.nom} · {nbPages(site)}
               </p>
               <a class="an-lien" href={lienSite(site)}>
                 Ouvrir le modèle {LIBELLES_GAMMES[g]}
@@ -94,11 +76,35 @@ function nbPages(site: Site): string {
     display: grid;
     gap: 1.25rem;
     margin-top: 1.25rem;
-    align-items: start;
   }
 
   .annonce {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 0.9rem;
+    border: 1px solid var(--filet-doux);
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease;
+  }
+
+  /* L'annonce s'affirme avec la gamme : filet discret, encadré, cadre épais. */
+  .annonce-vitrine {
+    border-color: var(--filet);
+    background: var(--feuille);
+  }
+
+  .annonce-premium {
+    border: 2px solid var(--filet);
+    background: var(--feuille);
+  }
+
+  .annonce :global(.capture) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--filet-doux);
   }
 
   /* Toute l'annonce est cliquable ; le lien reste le seul élément interactif. */
@@ -108,81 +114,26 @@ function nbPages(site: Site): string {
     inset: 0;
   }
 
-  .annonce {
-    transition:
-      background-color 150ms ease,
-      border-color 150ms ease;
-  }
-
   /* Survol de l'annonce : léger éclaircissement, cadre doré */
   .annonce:has(.an-lien:hover) {
     background: rgb(239 232 216 / 0.06);
     border-color: var(--dore);
   }
 
+  .an-texte {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    margin-top: 0.9rem;
+  }
+
   .an-gamme {
-    font-size: 1rem;
+    font-size: 1.25rem;
     font-weight: var(--graisse-titres);
   }
 
-  .an-ligne {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.4rem;
+  .an-pourqui {
     margin-top: 0.2rem;
-  }
-
-  .an-nom {
-    font-weight: var(--graisse-forte);
-    hyphens: none;
-  }
-
-  /* Points de conduite et numéro restent ensemble : s'ils passent à la ligne, les points suivent. */
-  .an-suite {
-    display: flex;
-    flex: 1 1 auto;
-    align-items: baseline;
-    gap: 0.4rem;
-  }
-
-  .conduite {
-    flex: 1 1 1.5rem;
-    min-width: 1.5rem;
-    border-bottom: 1px dotted var(--encre-2);
-    transform: translateY(-0.3em);
-  }
-
-  /* Numéro de l'entreprise fictive : en texte courant, jamais dans la police réservée au vrai numéro.
-     Numéro et « (n° fictif) » insécables chacun : la mention passe à la ligne plutôt que déborder sur la capture. */
-  .an-tel {
-    min-width: 0;
-    font-size: 0.9375rem;
-  }
-
-  /* Mobile : le numéro passe sous le nom, sur sa propre ligne (points de conduite devant),
-     et « (n° fictif) » toujours à la ligne dessous : même coupure dans les trois annonces,
-     jamais de débordement sur la capture. */
-  @media (max-width: 47.99rem) {
-    .an-suite {
-      flex-basis: 100%;
-    }
-
-    .an-tel {
-      white-space: nowrap;
-    }
-
-    .an-fictif {
-      display: block;
-    }
-  }
-
-  .an-fictif {
-    color: var(--encre-2);
-  }
-
-  .an-accroche {
-    margin-top: 0.35rem;
     hyphens: manual;
   }
 
@@ -192,118 +143,22 @@ function nbPages(site: Site): string {
     font-size: 0.9375rem;
   }
 
+  /* Liens alignés en bas des trois cartes. */
   .an-lien {
     display: inline-flex;
     align-items: center;
+    align-self: flex-start;
     min-height: 2.75rem;
+    margin-top: auto;
+    padding-top: 0.5rem;
     font-weight: var(--graisse-lien);
     color: var(--dore);
   }
 
-  /* Essentiel : une ligne d'annuaire, sans cadre */
-  .annonce-essentiel {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 4.5rem;
-    gap: 0.75rem;
-    align-items: start;
-    padding-block: 0.5rem;
-    border-bottom: 1px solid var(--filet);
-  }
-
-  /* Vitrine : encadré au filet fin, capture téléphone à droite */
-  .annonce-vitrine {
-    background: var(--feuille);
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 6.5rem;
-    gap: 1rem;
-    padding: 0.9rem;
-    border: 1px solid var(--filet);
-  }
-
-  .annonce-essentiel :global(.an-capture-mobile),
-  .annonce-vitrine :global(.an-capture-mobile) {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .annonce-essentiel .an-texte,
-  .annonce-vitrine .an-texte {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  /* Premium : pleine annonce, cadre épais, capture bureau en tête */
-  .annonce-premium {
-    background: var(--feuille);
-    padding: 0.9rem;
-    border: 2px solid var(--filet);
-  }
-
-  .annonce-premium .an-texte {
-    margin-top: 0.9rem;
-  }
-
-  .annonce-premium .an-gamme {
-    font-size: 1.25rem;
-  }
-
-  .annonce-premium .an-nom {
-    font-size: 1.125rem;
-  }
-
-  /* Tablette : Essentiel et Vitrine côte à côte, Premium en pleine largeur dessous. */
-  @media (min-width: 48rem) {
+  @media (min-width: 56rem) {
     .annonces {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 1.5rem;
-    }
-
-    .annonce-premium {
-      grid-column: 1 / -1;
-    }
-  }
-
-  /* Bureau : les trois tailles d'annonce sur une ligne. */
-  @media (min-width: 64rem) {
-    .annonces {
-      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.35fr) minmax(0, 1.7fr);
-      gap: 0;
-    }
-
-    .annonce-premium {
-      grid-column: auto;
-    }
-
-    .annonce {
-      margin-inline: 0.75rem;
-    }
-
-    .annonce:first-child {
-      margin-left: 0;
-    }
-
-    .annonce:last-child {
-      margin-right: 0;
-    }
-
-    .annonce-vitrine {
-      grid-template-columns: minmax(0, 1fr) 5.5rem;
-    }
-
-    /* Colonne Essentiel étroite : la petite capture passe au-dessus du texte. */
-    .annonce-essentiel {
-      grid-template-columns: minmax(0, 1fr);
-    }
-
-    .annonce-essentiel :global(.an-capture-mobile) {
-      grid-column: 1;
-      grid-row: 1;
-      width: 4.5rem;
-    }
-
-    .annonce-essentiel .an-texte {
-      grid-column: 1;
-      grid-row: 2;
     }
   }
 </style>

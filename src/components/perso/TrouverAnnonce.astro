@@ -1,18 +1,18 @@
 ---
 // « Votre métier, votre taille d'annonce » : une page d'annuaire où l'annonce du modèle
 // grandit selon la gamme choisie (une ligne, un encadré, une pleine annonce).
-// À côté de l'annonce : ce que la gamme ajoute à la précédente et les gammes au-dessus
-// (un clic les sélectionne). Seulement la différence : le détail complet reste dans Tarifs.
+// À côté de l'annonce : à qui sert la gamme et ce qu'elle ajoute à la précédente, sans prix
+// ni délai : cette section sert à voir les modèles, la section Tarifs à comparer les prix.
 // Sans JS : le choix de gamme marche (CSS :has, labels) ; le choix du métier est masqué.
 // Générée depuis src/sites/ et moi.json : chaque nouveau secteur apparaît seul.
 import type { Gamme, Site } from '../../lib/schema';
 import { infosSecteur, LIBELLES_GAMMES } from '../../lib/secteurs';
 import { lienSite } from '../../lib/liens';
-import { MOI, gamme, prixFr, villesFr } from '../../lib/moi';
-import { telephoneFr } from '../../lib/typo-fr';
+import { MOI, gamme, villesFr } from '../../lib/moi';
 import { sitesParSecteur } from '../../lib/sites';
 import Capture from './Capture.astro';
 import T from './T.astro';
+import { typoFr } from '../../lib/typo-fr';
 
 const GAMMES_ORDRE = ['essentiel', 'vitrine', 'premium'] as const;
 const secteurs = [...sitesParSecteur().entries()];
@@ -28,13 +28,6 @@ function ajouts(id: Gamme): string[] {
   return gamme(id).inclus.filter((x) => !/^Tout /.test(x) && !dessous.has(x));
 }
 const precedente = (id: Gamme) => GAMMES_ORDRE[GAMMES_ORDRE.indexOf(id) - 1] as Gamme | undefined;
-const audessus = (id: Gamme) => GAMMES_ORDRE.slice(GAMMES_ORDRE.indexOf(id) + 1) as Gamme[];
-// Gamme la plus haute : on propose les autres, de la plus proche à la plus simple.
-const autres = (id: Gamme) =>
-  audessus(id).length > 0 ? audessus(id) : (GAMMES_ORDRE.filter((g) => g !== id).reverse() as Gamme[]);
-const titreAutres = (id: Gamme) =>
-  audessus(id).length === 0 ? 'Les autres gammes' : audessus(id).length > 1 ? 'Les gammes au-dessus' : 'La gamme au-dessus';
-
 const pluriel = (n: number, mot: string) => `${n} ${mot}${n > 1 ? 's' : ''}`;
 function nbPages(site: Site): string {
   const chantiers = site.gamme === 'premium' ? site.realisations.filter((r) => r.slug).length : 0;
@@ -85,12 +78,8 @@ function nbPages(site: Site): string {
                 id={`tr-g-${g}`}
                 value={g}
                 checked={g === 'vitrine'}
-                aria-labelledby={`tr-gn-${g} tr-gp-${g}`}
               />
-              <span class="tr-g-nom" id={`tr-gn-${g}`}>{LIBELLES_GAMMES[g]}</span>
-              <span class="tr-g-prix mono" id={`tr-gp-${g}`}>
-                <T texte={prixFr(gamme(g).prix)} />
-              </span>
+              <span class="tr-g-nom">{LIBELLES_GAMMES[g]}</span>
             </label>
           ))
         }
@@ -132,16 +121,10 @@ function nbPages(site: Site): string {
                     <div class="tr-texte">
                       <p class="tr-ligne">
                         <strong class="tr-nom">{site.nom}</strong>
-                        <span class="tr-suite">
-                          <span class="conduite" aria-hidden="true" />
-                          <span class="tr-tel">
-                            {telephoneFr(site.telephone)} <span class="tr-fictif">(n°&nbsp;fictif)</span>
-                          </span>
-                        </span>
                       </p>
                       {g !== 'essentiel' && <p class="tr-accroche">{site.accroche}</p>}
                       <p class="tr-details">
-                        {LIBELLES_GAMMES[g]} · {nbPages(site)} · <span class="mono"><T texte={prixFr(gamme(g).prix)} /></span>
+                        {LIBELLES_GAMMES[g]} · {nbPages(site)}
                       </p>
                       <a class="tr-lien" href={lienSite(site)}>
                         Ouvrir le modèle {LIBELLES_GAMMES[g]}
@@ -151,34 +134,13 @@ function nbPages(site: Site): string {
                   </div>
 
                   <div class="tr-plus">
-                    {g !== 'essentiel' && (
-                      <div class="tr-plus-bloc">
-                        <p class="tr-fiche-pourqui">
-                          <T texte={`${gamme(g).pourQui}.`} />
-                        </p>
-                        <dl class="points tr-fiche-faits">
-                          <div>
-                            <dt>Pages</dt>
-                            <dd class="valeur">
-                              <T texte={gamme(g).pages} />
-                            </dd>
-                          </div>
-                          <div>
-                            <dt>Délai</dt>
-                            <dd class="valeur">
-                              <T texte={gamme(g).delai} />
-                            </dd>
-                          </div>
-                        </dl>
-                        <p class="tr-fiche-note">
-                          <T texte={MOI.noteDelais} />
-                        </p>
-                      </div>
-                    )}
+                    <p class="tr-fiche-pourqui">
+                      <T texte={`${gamme(g).pourQui}.`} />
+                    </p>
                     {precedente(g) && ajouts(g).length > 0 && (
                       <div class="tr-plus-bloc">
                         <p class="tr-plus-titre">
-                          <T texte={`En plus de la gamme ${LIBELLES_GAMMES[precedente(g)!]} :`} />
+                          <T texte={typoFr(`En plus de la gamme ${LIBELLES_GAMMES[precedente(g)!]} :`)} />
                         </p>
                         <ul class="tr-plus-liste">
                           {ajouts(g).map((x) => (
@@ -189,29 +151,7 @@ function nbPages(site: Site): string {
                         </ul>
                       </div>
                     )}
-                    {autres(g).length > 0 && (
-                      <div class="tr-plus-bloc">
-                        <p class="tr-plus-titre">{titreAutres(g)}</p>
-                        <ul class="tr-options">
-                          {autres(g).map((h) => (
-                            <li>
-                              <label class="tr-option" for={`tr-g-${h}`}>
-                                <span class="tr-o-tete">
-                                  <span class="tr-o-nom">{LIBELLES_GAMMES[h]}</span>
-                                  <span class="conduite" aria-hidden="true" />
-                                  <span class="mono">
-                                    <T texte={prixFr(gamme(h).prix)} />
-                                  </span>
-                                </span>
-                                <span class="tr-o-detail">
-                                  <T texte={audessus(g).includes(h) ? ajouts(h).join(' · ') : gamme(h).pourQui} />
-                                </span>
-                              </label>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+                    <a class="tr-vers-tarifs" href="#tarifs">Comparer les prix des trois gammes</a>
                   </div>
                 </article>
               );
@@ -315,8 +255,7 @@ function nbPages(site: Site): string {
   .tr-gamme {
     display: grid;
     align-content: center;
-    gap: 0.1rem;
-    min-height: 3.5rem;
+    min-height: 3rem;
     padding: 0.45rem 0.6rem;
     cursor: pointer;
     background: var(--feuille);
@@ -339,18 +278,9 @@ function nbPages(site: Site): string {
     line-height: 1.2;
   }
 
-  .tr-g-prix {
-    font-size: 0.875rem;
-    line-height: 1.2;
-  }
-
   .tr-gamme:has(input:checked) {
     background: var(--dore);
     color: var(--sur-dore);
-  }
-
-  .tr-gamme:has(input:checked) :global(.a-completer) {
-    color: #3d3000;
   }
 
   .tr-gamme:has(input:focus-visible) {
@@ -494,14 +424,14 @@ function nbPages(site: Site): string {
     margin-top: 0.9rem;
   }
 
-  /* À côté de l'annonce : ce que la gamme ajoute, puis les gammes au-dessus.
+  /* À côté de l'annonce : à qui sert la gamme, ce qu'elle ajoute, le renvoi vers les prix.
      Simple filet à gauche : un renvoi d'annuaire, pas une annonce (pas de cadre dans le cadre). */
   .tr-plus {
     padding: 0.25rem 0 0.25rem 1.25rem;
     border-left: 1px solid var(--filet);
   }
 
-  .tr-plus-bloc + .tr-plus-bloc {
+  .tr-plus-bloc {
     margin-top: 1.25rem;
   }
 
@@ -509,22 +439,11 @@ function nbPages(site: Site): string {
     font-weight: var(--graisse-titres);
   }
 
-  /* Vitrine et Premium (annonces hautes) : en tête du renvoi, à qui sert la gamme,
-     puis pages et délai, en lignes à points de conduite. Tout vient de moi.json. */
+  /* En tête du renvoi, à qui sert la gamme (moi.json). */
   .tr-fiche-pourqui {
     font-size: 1.125rem;
     font-weight: var(--graisse-forte);
     line-height: 1.3;
-  }
-
-  .tr-fiche-faits {
-    margin-top: 0.5rem;
-  }
-
-  .tr-fiche-note {
-    margin-top: 0.35rem;
-    color: var(--encre-2);
-    font-size: 0.9375rem;
   }
 
   .tr-plus-liste {
@@ -548,64 +467,9 @@ function nbPages(site: Site): string {
     border-top: 2px solid var(--dore);
   }
 
-  .tr-options {
-    margin-top: 0.25rem;
-    padding: 0;
-    list-style: none;
-  }
-
-  .tr-options li + li {
-    border-top: 1px solid var(--filet-doux);
-  }
-
-  /* Une gamme au-dessus : un clic la sélectionne dans les onglets (label du bouton radio). */
-  .tr-option {
-    display: grid;
-    gap: 0.15rem;
-    min-height: 2.75rem;
-    padding-block: 0.6rem;
-    cursor: pointer;
-  }
-
-  .tr-o-tete {
-    display: flex;
-    align-items: baseline;
-    gap: 0.4rem;
-    font-weight: var(--graisse-forte);
-  }
-
-  .tr-o-nom {
-    color: var(--dore);
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
-  }
-
   /* Pas de césure dans les renvois : des points courts, coupés entre les mots seulement. */
   .tr-plus {
     hyphens: none;
-  }
-
-  .tr-o-detail {
-    color: var(--encre-2);
-    font-size: 0.9375rem;
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .tr-o-nom {
-      transition: color 150ms ease;
-    }
-
-    .tr-option:hover .tr-o-nom {
-      color: var(--dore-vif);
-    }
-  }
-
-  /* Points de conduite : « Nom ······ numéro », « Gamme ······ prix » */
-  .conduite {
-    flex: 1 1 1.5rem;
-    min-width: 1.5rem;
-    border-bottom: 1px dotted var(--encre-2);
-    transform: translateY(-0.3em);
   }
 
   .tr-ligne {
@@ -620,25 +484,6 @@ function nbPages(site: Site): string {
     hyphens: none;
   }
 
-  .tr-suite {
-    display: flex;
-    flex: 1 1 auto;
-    align-items: baseline;
-    gap: 0.4rem;
-  }
-
-  /* Le numéro et « (n° fictif) » sont insécables chacun : sur une colonne étroite (Essentiel
-     sur mobile), la mention passe à la ligne au lieu de déborder sur la capture. */
-  .tr-tel {
-    min-width: 0;
-    font-size: 0.9375rem;
-  }
-
-  .tr-fictif,
-  .tr-details {
-    color: var(--encre-2);
-  }
-
   .tr-accroche {
     margin-top: 0.35rem;
     hyphens: manual;
@@ -646,7 +491,17 @@ function nbPages(site: Site): string {
 
   .tr-details {
     margin-top: 0.35rem;
+    color: var(--encre-2);
     font-size: 0.9375rem;
+  }
+
+  .tr-vers-tarifs {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    margin-top: 1rem;
+    font-weight: var(--graisse-lien);
+    color: var(--ivoire);
   }
 
   .tr-lien {

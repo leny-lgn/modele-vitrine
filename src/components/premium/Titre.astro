@@ -1,7 +1,7 @@
 ---
 // Titre de section Premium, branché sur le fil par un raccord : un té sur la conduite et
 // une courte dérivation jusqu'au titre. Le titre doit être posé dans la colonne `texte`
-// de la grille .pg (le té tombe alors exactement sur le tracé). Bureau seulement.
+// de la grille .pg (le té tombe alors exactement sur le tracé), sur mobile comme sur bureau.
 interface Props {
   id: string;
   niveau?: 1 | 2 | 3;
@@ -31,7 +31,7 @@ const Balise = `h${niveau}` as 'h1' | 'h2' | 'h3';
   }
 
   .raccord {
-    display: none;
+    display: block;
     position: absolute;
     right: calc(100% + 0.5rem);
     top: 0.45em;
@@ -43,13 +43,7 @@ const Balise = `h${niveau}` as 'h1' | 'h2' | 'h3';
     stroke-width: 2;
   }
 
-  @media (min-width: 56rem) {
-    .raccord {
-      display: block;
-    }
-  }
-
-  @media (prefers-reduced-motion: no-preference) and (min-width: 56rem) {
+  @media (prefers-reduced-motion: no-preference) {
     :global(html:not([data-fil='vu'])) .raccord {
       animation: raccord-poser 220ms ease-out 900ms backwards;
     }

@@ -1,5 +1,7 @@
 ---
 // Barre « Modèles » fixée en bas d'écran, générée depuis src/sites/. Démo uniquement.
+// Mobile (< 48 rem) : repliée par défaut en une pastille « Modèles » au-dessus de la barre Appeler,
+// pour que la démo ressemble au vrai site ; un toucher l'ouvre. Sans JS : barre toujours ouverte.
 import { sitesParSecteur } from '../../lib/sites';
 import { lienSite, LIEN_GRILLE, LIEN_ACCUEIL } from '../../lib/liens';
 import { NOM } from '../../lib/moi';
@@ -19,6 +21,7 @@ const autresSecteurs = [...groupes.entries()].filter(([s]) => s !== site.secteur
   site.demo && (
     <>
       <script is:inline>
+        document.documentElement.classList.add('mm-js');
         try {
           if (sessionStorage.getItem('menu-modeles') === 'masque')
             document.documentElement.dataset.menuModeles = 'masque';
@@ -98,8 +101,10 @@ const autresSecteurs = [...groupes.entries()].filter(([s]) => s !== site.secteur
       memoriser(true);
       afficher.focus();
     });
+    // « ouvert » : affiche la barre partout (sur mobile, elle est repliée sans cet état).
+    // Non mémorisé : sur mobile, chaque page s'ouvre avec la pastille seule.
     afficher.addEventListener('click', () => {
-      delete racine.dataset.menuModeles;
+      racine.dataset.menuModeles = 'ouvert';
       memoriser(false);
       masquer.focus();
     });
@@ -280,5 +285,22 @@ const autresSecteurs = [...groupes.entries()].filter(([s]) => s !== site.secteur
 
   :global(html[data-menu-modeles='masque']) .mm-languette:not([hidden]) {
     display: inline-flex;
+  }
+
+  /* Mobile, avec JS : pastille « Modèles » seule tant que la barre n'est pas ouverte.
+     Elle flotte à droite, juste au-dessus de la barre Appeler, sans la couvrir. */
+  @media (max-width: 47.99rem) {
+    :global(html.mm-js:not([data-menu-modeles='ouvert'])) .mm-barre {
+      display: none;
+    }
+
+    :global(html.mm-js:not([data-menu-modeles='ouvert'])) .mm-languette:not([hidden]) {
+      display: inline-flex;
+      bottom: 0.5rem;
+      padding-inline: 0.9rem;
+      border-bottom: 1px solid #45484b;
+      border-radius: 999px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 0.25);
+    }
   }
 </style>

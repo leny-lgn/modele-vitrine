@@ -37,7 +37,28 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
         <p class="plaque-nom">{site.nom}</p>
         <h1 id="titre-page" class="plaque-accroche">{site.accroche}</h1>
       </div>
-      <Disponibilite site={site} class="plaque-dispo" />
+      <div class="plaque-fiche">
+        <Disponibilite site={site} class="plaque-dispo" />
+        {/* Bureau seulement : la fiche complète la moitié droite (brief : pas de grande photo).
+            Sur mobile, ces lignes sont dans les blocs Zone et Contact, plus bas. */}
+        <dl class="fiche-faits">
+          {site.zone.rayonKm && (
+            <div>
+              <dt>Zone</dt>
+              <dd>
+                {site.zone.rayonKm}&nbsp;km autour de {site.adresse.ville}
+                <span class="fiche-communes">{site.zone.communes.join(' · ')}</span>
+              </dd>
+            </div>
+          )}
+          <div>
+            <dt>Adresse</dt>
+            <dd>
+              {site.adresse.rue}, {site.adresse.codePostal}&nbsp;{site.adresse.ville}
+            </dd>
+          </div>
+        </dl>
+      </div>
       <div class="plaque-action">
         <Appeler site={site} class="appeler-grand" />
         {nomArtisan && <p class="plaque-interlocuteur">Au téléphone&nbsp;: {nomArtisan}</p>}
@@ -232,10 +253,14 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
     text-wrap: pretty;
   }
 
-  .plaque :global(.plaque-dispo) {
+  .plaque-fiche {
     grid-area: dispo;
     padding-top: var(--espace-2);
     border-top: 1px solid var(--couleur-trait);
+  }
+
+  .fiche-faits {
+    display: none;
   }
 
   .plaque :global(.dispo-statut) {
@@ -287,17 +312,11 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
     font-size: var(--taille-petit);
   }
 
-  /* Bureau : comme le Premium, la plaque remplit la fenêtre (sous le bandeau de démo), plafonnée à
-     56 rem. Fond ardoise uni, sans grande photo (brief Essentiel) ; le contenu est centré en hauteur. */
+  /* Bureau : fond ardoise uni, sans grande photo (brief Essentiel). Hauteur selon le contenu :
+     la plaque plein écran laissait de grands vides au-dessus et au-dessous du nom. */
   @media (min-width: 48rem) {
     .plaque {
-      display: grid;
-      align-content: center;
-      min-height: min(calc(100svh - 2rem), 56rem);
-    }
-
-    .plaque {
-      padding-block: var(--espace-4) var(--espace-5);
+      padding-block: var(--espace-5);
     }
 
     /* Le nom occupe la plaque comme une enseigne */
@@ -326,12 +345,34 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
       align-items: start;
     }
 
-    .plaque :global(.plaque-dispo) {
-      align-self: end;
-      padding-top: 0;
-      padding-left: var(--espace-3);
-      border-top: 0;
-      border-left: 1px solid var(--couleur-trait);
+    /* La fiche : disponibilité, zone et adresse, encadrées comme une plaque technique. */
+    .plaque-fiche {
+      align-self: center;
+      padding: var(--espace-3);
+      border: 1px solid var(--couleur-trait);
+    }
+
+    .fiche-faits {
+      display: grid;
+      gap: var(--espace-2);
+      margin-top: var(--espace-3);
+      padding-top: var(--espace-3);
+      border-top: 1px solid var(--couleur-trait);
+    }
+
+    .fiche-faits dt {
+      color: var(--couleur-texte-secondaire);
+      font-size: var(--taille-petit);
+    }
+
+    .fiche-faits dd {
+      margin: 0.15rem 0 0;
+    }
+
+    .fiche-communes {
+      display: block;
+      color: var(--couleur-texte-secondaire);
+      font-size: var(--taille-petit);
     }
   }
 

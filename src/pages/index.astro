@@ -132,8 +132,8 @@ const autreMetier = typoFr(
 
   .ouverture :global(.fond-bandeau) {
     z-index: -1;
-    --barre: #182023;
-    --barre-forte: #212a2e;
+    --barre: #141b1e; /* atténué : décor discret, ne doit pas évoquer une page en chargement */
+    --barre-forte: #192226;
   }
 
   .ouverture .rubrique-h1 {
@@ -217,6 +217,29 @@ const autreMetier = typoFr(
 
   .sans-coupure {
     white-space: nowrap;
+  }
+
+  /* Grand écran : le texte à gauche, le bouton à droite, sur toute la largeur. */
+  @media (min-width: 48rem) {
+    .tarifs-aide {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.5rem 2rem;
+      align-items: center;
+      max-width: none;
+      padding: 1.5rem;
+    }
+
+    .tarifs-aide > :global(*) {
+      grid-column: 1;
+      margin-top: 0;
+    }
+
+    .tarifs-aide > :global(:last-child) {
+      grid-column: 2;
+      grid-row: 1 / 3;
+      margin-top: 0;
+    }
   }
 
   .ta-titre {

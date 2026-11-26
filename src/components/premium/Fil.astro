@@ -51,10 +51,41 @@ const cle = `fil-${slug}`;
   </div>
 </div>
 
+<script>
+  // Calage du tracé sur les raccords. L'abscisse de la conduite est calculée en CSS à partir de la
+  // largeur de page (--pI) ; Safari résout ce calcul autrement dans `left` et `padding` que dans la
+  // grille des sections : le tracé, le collecteur du bas de page et le pied de page partaient
+  // plusieurs dizaines de pixels trop à gauche. On mesure donc le té du premier raccord (posé par la
+  // grille, juste partout) et on publie sa position dans --x-fil-mesure, que reprennent Fil,
+  // Distribution et le pied de page. Sans JS, le calcul CSS reste en place.
+  // Page sans raccord (Devis) : on part du titre de page, posé dans la colonne de texte, moins le
+  // retrait entre le tracé et le texte.
+  const racine = document.documentElement;
+  const raccord = document.querySelector<SVGElement>('.reseau .raccord');
+  const titre = raccord ? null : document.querySelector<HTMLElement>('.reseau .tp-titre');
+  const retraitPx = () => {
+    const v = getComputedStyle(racine).getPropertyValue('--retrait').trim();
+    const n = parseFloat(v);
+    return v.endsWith('rem') ? n * parseFloat(getComputedStyle(racine).fontSize) : n;
+  };
+  if (raccord || titre) {
+    const caler = () => {
+      const gauche = raccord
+        ? raccord.getBoundingClientRect().left
+        : titre!.getBoundingClientRect().left - retraitPx();
+      const x = gauche - racine.getBoundingClientRect().left;
+      if (x > 0) racine.style.setProperty('--x-fil-mesure', `${Math.round(x)}px`);
+    };
+    caler();
+    new ResizeObserver(caler).observe(racine);
+    window.addEventListener('load', caler, { once: true });
+  }
+</script>
+
 <style>
   .fil {
-    /* Abscisse du tracé = ligne « zd-start » de la grille .pg */
-    --x: var(--x-fil);
+    /* Abscisse du tracé = ligne « zd-start » de la grille .pg (mesurée en JS si possible) */
+    --x: var(--x-fil-mesure, var(--x-fil));
     --haut: 0px;
     position: absolute;
     inset: 0;
@@ -91,7 +122,7 @@ const cle = `fil-${slug}`;
 
   @media (min-width: 56rem) {
     .fil {
-      --x: calc((100% - var(--pI)) / 2 + var(--pI) * var(--part-zg));
+      --x: var(--x-fil-mesure, calc((100% - var(--pI)) / 2 + var(--pI) * var(--part-zg)));
     }
 
     /* Hauteur du titre de page : la conduite arrive en face de ses capitales */

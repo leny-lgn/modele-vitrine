@@ -79,6 +79,7 @@
         "Tout l'Essentiel",
         "Tarifs, réalisations avant/après, avis",
         "Indicateur « ouvert maintenant »",
+        "Un détail graphique propre à votre métier",
         "2 allers-retours de modifications"
       ]
     },
@@ -186,6 +187,17 @@
       "texte": "Le site est publié, relié à votre fiche Google, et il vous appartient."
     }
   ],
+  "preparerEchange": {
+    "titre": "Pour préparer notre premier échange",
+    "intro": "Rien d'obligatoire : c'est seulement pour gagner du temps.",
+    "points": [
+      "Votre métier, et ce que vous voulez mettre en avant.",
+      "L'adresse de votre site actuel ou de votre page Facebook, si vous en avez une.",
+      "Quelques photos de votre commerce ou de votre travail, même prises au téléphone.",
+      "Vos horaires et la zone où vous travaillez.",
+      "Un ou deux sites que vous aimez bien, de votre métier ou non."
+    ]
+  },
   "faq": [
     {
       "q": "Combien de temps pour avoir mon site ?",

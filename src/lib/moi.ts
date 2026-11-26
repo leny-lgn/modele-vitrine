@@ -35,6 +35,8 @@ const moiSchema = z.object({
   presentation: z.array(texte).min(1),
   /** Facultatif : l'origine du nom commercial, affichée dans « Qui je suis ». */
   histoireNom: z.object({ titre: texte, texte: texte }).optional(),
+  /** Facultatif : ce qu'il est utile de préparer avant le premier échange (page Contact). */
+  preparerEchange: z.object({ titre: texte, intro: texte, points: z.array(texte).min(1) }).optional(),
   /** Fichier dans public/images/accueil/ (vide : pas de photo). */
   photo: z.string(),
   mentionsLegales: z.object({

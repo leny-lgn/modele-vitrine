@@ -1,20 +1,17 @@
 ---
 // « Qui je suis » : photo facultative (public/images/accueil/<photo>), l'origine du nom
-// (facultative) et quelques phrases.
-// Sans photo, tant que le site n'est pas publié : un cadre en pointillés montre la place
-// et le format attendus. Une fois publié, sans photo, le texte occupe seul la section.
+// (facultative) et quelques phrases. Sans photo, le texte occupe seul la section.
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { MOI, PUBLIE } from '../../lib/moi';
+import { MOI } from '../../lib/moi';
 import { RACINE, cheminRelatif, urlImage } from '../../lib/images.mjs';
 import T from './T.astro';
 
 const photo = MOI.photo && existsSync(join(RACINE, cheminRelatif('accueil', MOI.photo))) ? MOI.photo : undefined;
-const cadre = !photo && !PUBLIE;
 const histoire = MOI.histoireNom;
 ---
 
-<div class:list={['qui', { 'avec-photo': photo || cadre }]}>
+<div class:list={['qui', { 'avec-photo': photo }]}>
   {
     photo && (
       <img
@@ -28,39 +25,28 @@ const histoire = MOI.histoireNom;
       />
     )
   }
-  {
-    cadre && (
-      <div class="qui-cadre" aria-hidden="true">
-        <p class="qc-titre">Votre photo ici</p>
-        <p>
-          Déposer le fichier dans <code>public/images/accueil/</code>, puis écrire son nom dans{' '}
-          <code>moi.json</code> (champ <code>photo</code>).
-        </p>
-        <p>Portrait vertical 4:5, 1200 × 1500 px conseillé. Visage de face ou de trois-quarts, lumière du jour, fond simple.</p>
-        <p class="qc-note">Visible seulement tant que le site n’est pas publié.</p>
-      </div>
-    )
-  }
   <div class="qui-texte">
     {
       histoire && (
-        <>
+        <div class="qui-histoire">
           <h3 class="qui-histoire-titre">
             <T texte={histoire.titre} />
           </h3>
-          <p class="qui-histoire">
+          <p>
             <T texte={histoire.texte} />
           </p>
-        </>
+        </div>
       )
     }
-    {
-      MOI.presentation.map((p) => (
-        <p>
-          <T texte={p} />
-        </p>
-      ))
-    }
+    <div class="qui-presentation">
+      {
+        MOI.presentation.map((p) => (
+          <p>
+            <T texte={p} />
+          </p>
+        ))
+      }
+    </div>
   </div>
 </div>
 
@@ -77,7 +63,7 @@ const histoire = MOI.histoireNom;
     line-height: 1.5;
   }
 
-  .qui-texte p + p {
+  .qui-presentation p + p {
     margin-top: 0.9rem;
   }
 
@@ -102,36 +88,25 @@ const histoire = MOI.histoireNom;
     border: 1px solid var(--filet);
   }
 
-  /* Cadre provisoire, aux proportions de la photo (4:5). */
-  .qui-cadre {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.6rem;
-    width: 100%;
-    max-width: 16rem;
-    aspect-ratio: 4 / 5;
-    padding: 1.25rem;
-    border: 2px dashed var(--encre-2);
-    color: var(--encre-2);
-    font-size: 0.875rem;
-    line-height: 1.4;
-  }
+  /* Grand écran sans photo : l'histoire du nom à gauche, la présentation à droite. */
+  @media (min-width: 64rem) {
+    .qui:not(.avec-photo) .qui-texte:has(.qui-histoire) {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 3rem;
+      max-width: none;
+    }
 
-  .qui-cadre code {
-    color: var(--ivoire);
-    font-size: 0.8125rem;
-    overflow-wrap: anywhere;
-  }
+    .qui:not(.avec-photo) .qui-histoire {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
 
-  .qc-titre {
-    color: var(--ivoire);
-    font-size: 1.0625rem;
-    font-weight: var(--graisse-titres);
-  }
-
-  .qc-note {
-    font-style: italic;
+    .qui:not(.avec-photo) .qui-presentation {
+      padding-left: 3rem;
+      border-left: 1px solid var(--filet);
+    }
   }
 
   @media (min-width: 48rem) {

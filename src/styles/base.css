@@ -61,6 +61,13 @@ body:has(.menu-modeles) {
   --hauteur-menu: 2.75rem;
 }
 
+/* Mobile : menu replié en pastille flottante (voir MenuModeles), il ne réserve plus de bande. */
+@media (max-width: 47.99rem) {
+  html.mm-js:not([data-menu-modeles='ouvert']) body:has(.menu-modeles) {
+    --hauteur-menu: 0rem;
+  }
+}
+
 h1,
 h2,
 h3,
@@ -69,6 +76,20 @@ h4 {
   line-height: 1.15;
   hyphens: manual;
   text-wrap: balance;
+}
+
+/* Colonnes courtes (avis, listes, annotations, tableaux) : pas de césure automatique,
+   on passe à la ligne entre les mots (« dé-croché », « bai-gnoire » gênaient la lecture).
+   La césure reste active dans les paragraphes de texte courant. */
+blockquote,
+li,
+dt,
+dd,
+td,
+th,
+figcaption {
+  hyphens: manual;
+  text-wrap: pretty;
 }
 
 p,

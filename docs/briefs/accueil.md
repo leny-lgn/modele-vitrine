@@ -62,7 +62,7 @@ La structure « annuaire » (rubriques, points de conduite, tailles d'annonce) e
 ├───────────────────────────────────────────────┤
 │ CONTACT : téléphone, e-mail, zone, horaires   │
 └───────────────────────────────────────────────┘
-Mobile : barre fixe « Appeler » en bas.
+Mobile : pas de barre « Appeler » fixe (décision du 26 novembre 2026) : le bouton Appeler du bandeau suffit.
 ```
 
 ## Questions fréquentes à prévoir
@@ -94,6 +94,6 @@ Mobile : barre fixe « Appeler » en bas.
 - Pas de faux avis, pas de chiffres inventés (« 50 clients satisfaits »).
 
 ## Avant publication
-Tant que `publie` vaut false dans `src/data/moi.json` : `noindex` partout et petit
-bandeau « Site en préparation ». La construction refuse `publie: true` s'il reste un
+Tant que `publie` vaut false dans `src/data/moi.json` : `noindex` partout (le bandeau
+« Site en préparation » a été retiré le 26 novembre 2026, à la demande de l'auteur). La construction refuse `publie: true` s'il reste un
 `[À COMPLÉTER]` (SIRET, prix, téléphone…).

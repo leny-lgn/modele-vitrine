@@ -7,6 +7,7 @@ import T from '../components/perso/T.astro';
 import { MOI } from '../lib/moi';
 
 const premiere = MOI.etapes[0];
+const preparer = MOI.preparerEchange;
 ---
 
 <Perso titre="Contact" description={`Contact : téléphone, e-mail et zone d’intervention. ${MOI.accroche}`}>
@@ -14,16 +15,37 @@ const premiere = MOI.etapes[0];
   <div class="suite-page">
   <div class="page page-large tete">
     <Coordonnees />
-    {
-      premiere && (
-        <div class="suite">
-          <h2 class="su-titre">Après votre appel</h2>
-          <p>
-            <T texte={premiere.texte} />
-          </p>
-        </div>
-      )
-    }
+    <div class="cote">
+      {
+        premiere && (
+          <div class="suite">
+            <h2 class="su-titre">Après votre appel</h2>
+            <p>
+              <T texte={premiere.texte} />
+            </p>
+          </div>
+        )
+      }
+      {
+        preparer && (
+          <div class="suite preparer">
+            <h2 class="su-titre">
+              <T texte={preparer.titre} />
+            </h2>
+            <p>
+              <T texte={preparer.intro} />
+            </p>
+            <ul class="pr-liste">
+              {preparer.points.map((x) => (
+                <li>
+                  <T texte={x} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </div>
   </div>
   </div>
 </Perso>
@@ -52,6 +74,10 @@ const premiere = MOI.etapes[0];
       padding: 1.5rem;
       border: 1px solid var(--filet);
     }
+
+    .suite + .suite {
+      margin-top: 1.25rem;
+    }
   }
 
   .su-titre {
@@ -61,6 +87,27 @@ const premiere = MOI.etapes[0];
 
   .suite p {
     margin-top: 0.3rem;
+  }
+
+  .pr-liste {
+    margin-top: 0.75rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pr-liste li {
+    position: relative;
+    padding-block: 0.2rem;
+    padding-left: 1.1rem;
+  }
+
+  .pr-liste li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.85em;
+    width: 0.55rem;
+    border-top: 2px solid var(--dore);
   }
 
 </style>

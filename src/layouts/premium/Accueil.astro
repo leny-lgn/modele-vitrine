@@ -1,6 +1,8 @@
 ---
-// Accueil Premium. Hero photo plein écran, titre sur une plaque ardoise ; la conduite sort
-// du bas de la plaque et chaque section s'y branche. Ordre : dépannage (le chemin court),
+// Accueil Premium. Hero éditorial : photo de l'atelier plein écran, titre très grand posé sur la
+// photo (voile uni, pas de dégradé), bande ardoise pleine largeur dessous avec disponibilité et
+// boutons ; la conduite sort du bas du hero et chaque section s'y branche.
+// Sur mobile (et sans photo), le titre passe sous la photo, sur l'ardoise. Ordre : dépannage (le chemin court),
 // installation, rénovation + un chantier, tarifs, l'artisan, avis, zone, contact.
 import Premium from './Premium.astro';
 import Titre from '../../components/premium/Titre.astro';
@@ -36,6 +38,7 @@ const hero = site.images.hero;
 // Démo sans photo : le cadre (chemin, prompt, bouton Copier) reste lisible au-dessus de la plaque.
 const heroAttente = !!hero && !imageExiste(site.slug, hero.fichier);
 const imgInstallation = installation?.image ? site.images[installation.image] : undefined;
+const imgRenovation = renovation?.image ? site.images[renovation.image] : undefined;
 const imgArtisan = site.images.artisan;
 
 // Les noms composés (« Ville-Exemple ») ne se coupent pas au trait d'union dans le grand titre.
@@ -55,25 +58,27 @@ const sansCesure = (t: string) =>
         </div>
       )
     }
-    <div class="hp-plaque surface-ardoise">
-      <h1 id="titre-accueil" class="hp-titre" set:html={sansCesure(site.accroche)} />
+    <h1 id="titre-accueil" class="hp-titre surface-ardoise" set:html={sansCesure(site.accroche)} />
+    <div class="hp-bande surface-ardoise">
       <Disponibilite site={site} class="hp-dispo" />
-      <div class="actions-p hp-actions">
-        <Appeler site={site} class="bouton-p" />
-        {a('devis') && (
-          <a class="bouton-p-contour" href={lienSite(site, 'devis')}>
-            Demander un devis
-          </a>
-        )}
+      <div class="hp-agir">
+        <div class="actions-p hp-actions">
+          <Appeler site={site} class="bouton-p" />
+          {a('devis') && (
+            <a class="bouton-p-contour" href={lienSite(site, 'devis')}>
+              Demander un devis
+            </a>
+          )}
+        </div>
+        {
+          (nomArtisan || site.tarifs?.devisGratuit) && (
+            <p class="note-p hp-precision">
+              {nomArtisan && <>Au téléphone&nbsp;: {nomArtisan}.</>}
+              {site.tarifs?.devisGratuit && <> Devis gratuit.</>}
+            </p>
+          )
+        }
       </div>
-      {
-        (nomArtisan || site.tarifs?.devisGratuit) && (
-          <p class="note-p hp-precision">
-            {nomArtisan && <>Au téléphone&nbsp;: {nomArtisan}.</>}
-            {site.tarifs?.devisGratuit && <> Devis gratuit.</>}
-          </p>
-        )
-      }
     </div>
   </section>
 
@@ -149,8 +154,13 @@ const sansCesure = (t: string) =>
 
   {
     renovation && (
-      <section class="section-p pg sec-renovation" aria-labelledby="t-renovation" style="--rangs: 2">
+      <section class="section-p pg sec-renovation" aria-labelledby="t-renovation" style="--rangs: 4">
         <Titre id="t-renovation">{renovation.groupe}</Titre>
+        {imgRenovation && (
+          <div class="fuite-g photo-p ph-carree">
+            <CadreImage site={site} image={imgRenovation} sizes="(min-width: 56rem) 34vw, 100vw" />
+          </div>
+        )}
         {renovation.intro && <p class="chapo-p">{renovation.intro}</p>}
         <ul class="liste-p deux-colonnes">
           {renovation.items.map((i) => (
@@ -159,7 +169,7 @@ const sansCesure = (t: string) =>
         </ul>
         {chantier && (
           <>
-            <div class="fuite-d sr-avant-apres">
+            <div class="sr-avant-apres">
               <AvantApres
                 site={site}
                 avant={site.images[chantier.avant!]}
@@ -296,7 +306,7 @@ const sansCesure = (t: string) =>
   }
 
   .hp-photo {
-    height: max(10rem, 30svh);
+    height: max(10rem, 26svh);
     overflow: hidden;
   }
 
@@ -313,21 +323,17 @@ const sansCesure = (t: string) =>
     border-width: 2px;
   }
 
-  .hp-plaque {
-    position: relative;
-    padding: var(--espace-3) var(--marge-page) var(--espace-4);
-  }
-
+  /* Mobile et démo sans photo : le titre sur l'ardoise, sous la photo. */
   .hp-titre {
+    padding: var(--espace-3) var(--marge-page) 0;
     font-size: var(--titre-une);
     line-height: 0.9;
     text-transform: uppercase;
     letter-spacing: 0;
-    max-width: 13ch;
   }
 
-  .hero-p :global(.hp-dispo) {
-    margin-top: var(--espace-2);
+  .hp-bande {
+    padding: var(--espace-2) var(--marge-page) var(--espace-4);
   }
 
   .hero-p :global(.dispo-horaires) {
@@ -357,50 +363,74 @@ const sansCesure = (t: string) =>
   }
 
   @media (min-width: 56rem) {
-    /* Plein écran : la photo occupe tout, la plaque se pose en bas à gauche */
-    .hero-p {
+    /* Plein écran : la photo occupe le haut, le titre très grand posé dessus,
+       la bande ardoise sur toute la largeur en bas. */
+    /* Hauteur de la fenêtre moins l'en-tête, le bandeau et le menu de démo :
+       la bande (disponibilité, boutons) reste entière au premier écran. */
+    .hero-p:not(.hero-attente) {
       grid-template: 1fr auto / 1fr;
-      min-height: min(calc(100svh - 6.5rem), 64rem);
+      min-height: min(calc(100svh - 8.5rem - var(--hauteur-menu, 0rem)), 64rem);
     }
 
-    .hp-photo {
-      grid-area: 1 / 1 / 3 / 2;
-      height: auto;
-      min-height: 0;
+    .hero-p:not(.hero-attente) .hp-photo {
+      grid-area: 1 / 1 / 2 / 2;
       position: relative;
+      height: auto;
+      min-height: 22rem;
     }
 
-    .hp-photo > :global(*) {
+    .hero-p:not(.hero-attente) .hp-photo > :global(*) {
       position: absolute;
       inset: 0;
     }
 
-    .hp-plaque {
-      grid-area: 2 / 1 / 3 / 2;
-      justify-self: start;
-      /* Plaque limitée à un peu plus de la moitié de la colonne : la photo reste lisible */
-      width: calc((100% - var(--pI)) / 2 + var(--pI) * 0.56);
-      padding: var(--espace-3) var(--espace-4) var(--espace-3) calc((100% - var(--pI)) / 2);
+    /* Voile uni sur la photo (pas de dégradé) : le titre ivoire reste lisible partout. */
+    .hero-p:not(.hero-attente) .hp-photo::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgb(20 26 28 / 0.58);
     }
 
-    .hp-titre {
-      max-width: none;
-      /* L'accroche est une phrase, pas un mot : taille plafonnée pour tenir en trois lignes */
-      font-size: clamp(2.6rem, 0.6rem + 4.2vw, 4.5rem);
+    .hero-p:not(.hero-attente) .hp-titre {
+      grid-area: 1 / 1 / 2 / 2;
+      align-self: end;
+      position: relative;
+      z-index: 1;
+      max-width: 18ch;
+      padding: 0 0 var(--espace-4) calc((100% - var(--pI)) / 2);
+      background: none;
+      /* Très grand : l'accroche tient en deux ou trois lignes, comme une enseigne. */
+      font-size: clamp(3.5rem, 0.5rem + 6.4vw, 8rem);
+      line-height: 0.88;
+    }
+
+    .hp-bande {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: var(--espace-2) var(--espace-5);
+      align-items: center;
+      padding: var(--espace-3) calc((100% - var(--pI)) / 2);
+    }
+
+    .hp-agir {
+      justify-self: end;
     }
 
     .hp-actions {
-      margin-top: var(--espace-3);
+      margin-top: 0;
     }
 
-    .hero-attente {
-      grid-template-rows: auto auto;
-      min-height: 0;
+    .hp-precision {
+      text-align: right;
     }
 
     .hero-attente .hp-photo {
-      grid-area: 1 / 1 / 2 / 2;
       height: 15rem;
+    }
+
+    .hero-attente .hp-titre {
+      padding-inline: calc((100% - var(--pI)) / 2);
     }
   }
 
