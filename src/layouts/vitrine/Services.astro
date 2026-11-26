@@ -5,6 +5,7 @@ import TetePage from '../../components/vitrine/TetePage.astro';
 import TitreSection from '../../components/vitrine/TitreSection.astro';
 import Urgences from '../../components/vitrine/Urgences.astro';
 import CadreImage from '../../components/demo/CadreImage.astro';
+import Prestations from '../../components/commun/Prestations.astro';
 import type { Site } from '../../lib/schema';
 import { lienSite } from '../../lib/liens';
 
@@ -43,18 +44,28 @@ const groupes = site.services.map((g) => ({ ...g, id: ancre(g.groupe) }));
       return (
         <>
           <section class="section-v groupe" id={g.id} aria-labelledby={`titre-${g.id}`}>
-            <div class:list={['page-v', 'groupe-grille', { 'avec-image': image }]}>
+            <div class:list={['page-v', 'groupe-grille', { 'avec-image': image || g.deroule?.length }]}>
               <div>
                 <TitreSection id={`titre-${g.id}`}>{g.groupe}</TitreSection>
-                <ul class="liste-v groupe-liste">
-                  {g.items.map((item) => (
-                    <li>{item}</li>
-                  ))}
-                </ul>
+                <Prestations items={g.items} class="groupe-liste" />
               </div>
-              {image && (
-                <div class="groupe-photo">
-                  <CadreImage site={site} image={image} sizes="(min-width: 64rem) 26rem, 100vw" />
+              {(image || g.deroule?.length) && (
+                <div class="groupe-cote">
+                  {image && (
+                    <div class="groupe-photo">
+                      <CadreImage site={site} image={image} sizes="(min-width: 64rem) 26rem, 100vw" />
+                    </div>
+                  )}
+                  {g.deroule && g.deroule.length > 0 && (
+                    <div class="groupe-deroule">
+                      <h3>Comment ça se passe</h3>
+                      <ol>
+                        {g.deroule.map((etape) => (
+                          <li>{etape}</li>
+                        ))}
+                      </ol>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -106,13 +117,43 @@ const groupes = site.services.map((g) => ({ ...g, id: ancre(g.groupe) }));
     gap: var(--espace-3);
   }
 
-  .groupe-liste li {
+  .groupe-liste :global(.pr-nom) {
     font-size: var(--taille-1);
-    line-height: 1.35;
+  }
+
+  .groupe-cote {
+    display: grid;
+    gap: var(--espace-3);
+    align-content: start;
   }
 
   .groupe-photo {
     max-width: 26rem;
+  }
+
+  .groupe-deroule {
+    max-width: 26rem;
+  }
+
+  .groupe-deroule h3 {
+    margin-bottom: var(--espace-1);
+    font-size: var(--taille-1);
+  }
+
+  /* Étapes reliées par un filet cuivre vertical : un bout de conduite, pas de numéros décoratifs */
+  .groupe-deroule ol {
+    list-style: none;
+    padding: 0 0 0 var(--espace-2);
+    border-left: 2px solid var(--cuivre);
+  }
+
+  .groupe-deroule li {
+    color: var(--couleur-texte-secondaire);
+    line-height: 1.5;
+  }
+
+  .groupe-deroule li + li {
+    margin-top: var(--espace-1);
   }
 
   @media (min-width: 64rem) {
@@ -123,7 +164,7 @@ const groupes = site.services.map((g) => ({ ...g, id: ancre(g.groupe) }));
     }
 
     .groupe-liste {
-      max-width: 36rem;
+      max-width: 38rem;
     }
   }
 

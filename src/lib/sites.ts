@@ -4,6 +4,8 @@ import { siteSchema, GAMMES, type Site, type Gamme } from './schema';
 import { typoFr } from './typo-fr';
 
 const A_VERIFIER = '[À VÉRIFIER]';
+/** Valeur d'exemple, autorisée seulement en démo (prix, délai, assurance…) : affichée avec la mention « exemple ». */
+const EXEMPLE = '[EXEMPLE]';
 
 // Clés dont la valeur est technique : jamais transformée par typoFr.
 const CLES_TECHNIQUES = new Set([
@@ -43,11 +45,11 @@ function appliquerTypo<T>(valeur: T, cle?: string): T {
   return valeur;
 }
 
-function cheminsAVerifier(valeur: unknown, chemin: string[] = []): string[] {
-  if (typeof valeur === 'string') return valeur.includes(A_VERIFIER) ? [chemin.join('.')] : [];
-  if (Array.isArray(valeur)) return valeur.flatMap((v, i) => cheminsAVerifier(v, [...chemin, String(i)]));
+function cheminsAvec(marqueur: string, valeur: unknown, chemin: string[] = []): string[] {
+  if (typeof valeur === 'string') return valeur.includes(marqueur) ? [chemin.join('.')] : [];
+  if (Array.isArray(valeur)) return valeur.flatMap((v, i) => cheminsAvec(marqueur, v, [...chemin, String(i)]));
   if (valeur && typeof valeur === 'object') {
-    return Object.entries(valeur).flatMap(([k, v]) => cheminsAVerifier(v, [...chemin, k]));
+    return Object.entries(valeur).flatMap(([k, v]) => cheminsAvec(marqueur, v, [...chemin, k]));
   }
   return [];
 }
@@ -102,11 +104,13 @@ function valider(fichier: string, brut: unknown): Site {
   });
 
   if (!site.demo) {
-    const restants = cheminsAVerifier(brut);
-    if (restants.length) {
-      erreurs.push(
-        `demo: false mais il reste ${restants.length} ${A_VERIFIER} :\n${restants.map((c) => `      · ${c}`).join('\n')}`,
-      );
+    for (const marqueur of [A_VERIFIER, EXEMPLE]) {
+      const restants = cheminsAvec(marqueur, brut);
+      if (restants.length) {
+        erreurs.push(
+          `demo: false mais il reste ${restants.length} ${marqueur} :\n${restants.map((c) => `      · ${c}`).join('\n')}`,
+        );
+      }
     }
     // Avis fictifs de démonstration : interdits sur un vrai site.
     const exemples = (site.confiance as { avisExemples?: unknown[] } | undefined)?.avisExemples;
@@ -162,4 +166,4 @@ export function sitesParSecteur(): Map<string, Partial<Record<Gamme, Site>>> {
   return groupes;
 }
 
-export { A_VERIFIER };
+export { A_VERIFIER, EXEMPLE };

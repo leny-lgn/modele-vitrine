@@ -1,0 +1,56 @@
+---
+// « En attendant l'artisan » : un geste simple par situation d'urgence (couper l'eau…).
+// Conseils généraux tirés du JSON (premiersGestes), jamais une promesse d'intervention.
+import type { Site } from '../../lib/schema';
+
+interface Props {
+  site: Site;
+  class?: string;
+}
+const { site, class: classe } = Astro.props;
+const gestes = site.premiersGestes;
+---
+
+{
+  gestes.length > 0 && (
+    <dl class:list={['gestes', classe]}>
+      {gestes.map((g) => (
+        <div>
+          <dt>{g.cas}</dt>
+          <dd>{g.geste}</dd>
+        </div>
+      ))}
+    </dl>
+  )
+}
+
+<style>
+  /* Une colonne sur mobile ; côte à côte dès que la place le permet (2, 3 ou 4 gestes).
+     Chaque geste porte son filet du haut : il suit la colonne, sans double trait. */
+  .gestes {
+    display: grid;
+    gap: 0 var(--espace-4);
+    margin: 0;
+  }
+
+  .gestes > div {
+    padding-block: 0.85rem;
+    border-top: 1px solid var(--couleur-trait);
+  }
+
+  .gestes dt {
+    font-weight: 700;
+  }
+
+  .gestes dd {
+    margin: 0.25rem 0 0;
+    color: var(--couleur-texte-secondaire);
+    line-height: 1.5;
+  }
+
+  @media (min-width: 48rem) {
+    .gestes {
+      grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    }
+  }
+</style>

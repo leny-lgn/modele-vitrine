@@ -1,0 +1,53 @@
+---
+// Liste détaillée des prestations d'un groupe : libellé en gras, puis une ou deux phrases
+// (ce que ça comprend, comment ça se passe). Les pages de service s'en servent ; les accueils
+// gardent la liste courte des libellés.
+import type { Site } from '../../lib/schema';
+import { nomPrestation, textePrestation } from '../../lib/services';
+
+interface Props {
+  items: Site['services'][number]['items'];
+  class?: string;
+}
+const { items, class: classe } = Astro.props;
+---
+
+<ul class:list={['prestations', classe]}>
+  {
+    items.map((p) => {
+      const texte = textePrestation(p);
+      return (
+        <li>
+          <span class="pr-nom">{nomPrestation(p)}</span>
+          {texte && <p class="pr-texte">{texte}</p>}
+        </li>
+      );
+    })
+  }
+</ul>
+
+<style>
+  .prestations {
+    list-style: none;
+    padding: 0;
+    border-top: 1px solid var(--couleur-trait);
+  }
+
+  .prestations li {
+    padding-block: 0.85rem;
+    border-bottom: 1px solid var(--couleur-trait);
+  }
+
+  .pr-nom {
+    display: block;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .pr-texte {
+    max-width: 38rem;
+    margin-top: 0.3rem;
+    color: var(--couleur-texte-secondaire);
+    line-height: 1.5;
+  }
+</style>

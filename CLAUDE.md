@@ -78,6 +78,11 @@ fonctions de base.
 2. Ne jamais inventer de fait : année, certification (RGE, Qualibat, PG…), assurance, prix,
    délai d'intervention, avis, nombre de clients. Inconnu = `[À VÉRIFIER]`.
    Si `demo: false`, la construction échoue s'il reste un `[À VÉRIFIER]`.
+   Exception démo (entreprise fictive) : prix, délai, assurance, moyens de paiement peuvent
+   recevoir une valeur d'exemple plausible préfixée `[EXEMPLE]` (ex. `"[EXEMPLE] 40 €"`).
+   Elle s'affiche avec une mention discrète « (exemple) », ou une seule ligne par tableau
+   (« Prix d'exemple pour la démonstration »). Si `demo: false`, la construction échoue
+   s'il reste un `[EXEMPLE]`.
 3. Jamais de faux avis ni de chiffres inventés. En démo, la section avis montre des
    emplacements clairement marqués « Exemple d'avis » ou reste masquée.
 4. `demo: true` : `<meta name="robots" content="noindex">`, BandeauDemo

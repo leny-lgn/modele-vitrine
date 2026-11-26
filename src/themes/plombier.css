@@ -88,6 +88,13 @@
   color: var(--couleur-texte);
 }
 
+/* Surface claire (carrelage blanc du brief) : une bande plus lumineuse que le zinc,
+   pour rythmer une page sans ajouter de décor. Gris texte sur blanc : 5,6:1 ; cuivre foncé : 5,5:1. */
+[data-secteur='plombier'] .surface-carrelage {
+  --couleur-fond: #ffffff;
+  background: var(--couleur-fond);
+}
+
 [data-secteur='plombier'] body {
   font-size: var(--taille-texte);
   font-stretch: 100%;

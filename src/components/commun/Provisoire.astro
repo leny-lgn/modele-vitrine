@@ -1,6 +1,7 @@
 ---
 // Contenu provisoire des pages tant que les layouts de gamme n'existent pas
 // (remplacé par les prompts 01 à 03). Montre les composants communs et les cadres d'images.
+import { nomPrestation } from '../../lib/services';
 import type { Site, CleePage } from '../../lib/schema';
 import { lienSite } from '../../lib/liens';
 import { LIBELLES_PAGES, LIBELLES_GAMMES } from '../../lib/secteurs';
@@ -61,7 +62,7 @@ const images = Object.entries(site.images);
                   <h3>{g.groupe}</h3>
                   <ul>
                     {g.items.map((item) => (
-                      <li>{item}</li>
+                      <li>{nomPrestation(item)}</li>
                     ))}
                   </ul>
                 </div>

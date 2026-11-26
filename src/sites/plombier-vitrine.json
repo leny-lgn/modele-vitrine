@@ -74,13 +74,31 @@
   "urgences": {
     "actif": true,
     "plage": "Du lundi au samedi, 7 h – 21 h",
-    "delai": "[À VÉRIFIER] votre délai d'intervention",
+    "delai": "[EXEMPLE] dans la journée si vous appelez avant 16 h",
     "cas": [
       "Fuite d'eau",
       "WC ou évier bouché",
       "Plus d'eau chaude"
     ]
   },
+  "premiersGestes": [
+    {
+      "cas": "Fuite d'eau",
+      "geste": "Fermez le robinet d'arrivée d'eau, souvent près du compteur. Si l'eau approche d'une prise, coupez l'électricité."
+    },
+    {
+      "cas": "WC ou évier bouché",
+      "geste": "N'utilisez plus l'évacuation. Pas de soude ni de déboucheur chimique : ils abîment les tuyaux."
+    },
+    {
+      "cas": "Plus d'eau chaude",
+      "geste": "Regardez le disjoncteur du chauffe-eau dans le tableau électrique. Si l'appareil fuit, coupez son courant et son arrivée d'eau."
+    },
+    {
+      "cas": "Chasse d'eau qui coule",
+      "geste": "Fermez le petit robinet sous ou derrière le réservoir. Le reste de la maison garde l'eau."
+    }
+  ],
   "fermetureExceptionnelle": null,
   "zone": {
     "rayonKm": 15,
@@ -96,34 +114,81 @@
     {
       "groupe": "Dépannage",
       "items": [
-        "Recherche et réparation de fuite",
-        "Débouchage WC, évier, canalisations",
-        "Remplacement de robinetterie",
-        "Chasse d'eau qui coule"
+        {
+          "nom": "Recherche et réparation de fuite",
+          "texte": "Je cherche d'où vient l'eau avant de casser quoi que ce soit. Réparation sur place quand la pièce est dans le camion."
+        },
+        {
+          "nom": "Débouchage WC, évier, canalisations",
+          "texte": "Ventouse, furet ou démontage du siphon selon le cas. Je vous explique la cause, pour que ça ne recommence pas."
+        },
+        {
+          "nom": "Remplacement de robinetterie",
+          "texte": "Mitigeur, robinet d'arrêt, flexible qui fuit. Vous achetez l'appareil ou je l'apporte, au choix."
+        },
+        {
+          "nom": "Chasse d'eau qui coule",
+          "texte": "Mécanisme ou joint remplacé. Une chasse qui coule sans arrêt se voit vite sur la facture d'eau."
+        }
       ],
-      "image": "detail2"
+      "image": "detail2",
+      "deroule": [
+        "Au téléphone, vous décrivez le problème. Je vous dis ce que vous pouvez faire tout de suite, comme couper l'arrivée d'eau.",
+        "Sur place, je cherche la cause et je vous annonce le prix avant de commencer.",
+        "Je répare, je teste avec vous et je vous laisse une facture détaillée."
+      ]
     },
     {
       "groupe": "Installation",
       "items": [
-        "Chauffe-eau électrique et thermodynamique",
-        "Adoucisseur d'eau",
-        "Raccordement électroménager"
+        {
+          "nom": "Chauffe-eau électrique et thermodynamique",
+          "texte": "Capacité choisie selon le nombre de personnes, ancien appareil déposé et emporté, groupe de sécurité neuf."
+        },
+        {
+          "nom": "Adoucisseur d'eau",
+          "texte": "Posé sur l'arrivée d'eau, avec un robinet d'eau non adoucie en cuisine. Réglé selon la dureté de votre eau."
+        },
+        {
+          "nom": "Raccordement électroménager",
+          "texte": "Lave-linge, lave-vaisselle, réfrigérateur avec arrivée d'eau : alimentation, évacuation et vanne d'arrêt."
+        }
       ],
-      "image": "detail1"
+      "image": "detail1",
+      "deroule": [
+        "Visite chez vous : je regarde la place disponible, l'arrivée d'eau et l'électricité.",
+        "Devis écrit, avec la référence de l'appareil et le détail de la pose.",
+        "Pose, mise en service et explications sur l'entretien."
+      ]
     },
     {
       "groupe": "Rénovation",
       "items": [
-        "Salle de bain complète",
-        "Douche à l'italienne",
-        "Mise aux normes de l'installation"
-      ]
+        {
+          "nom": "Salle de bain complète",
+          "texte": "Dépose, réseau d'eau neuf, évacuations, pose des équipements. Je coordonne avec le carreleur et l'électricien."
+        },
+        {
+          "nom": "Douche à l'italienne",
+          "texte": "Évacuation reprise avec la bonne pente, étanchéité sous le carrelage, essais en eau avant de refermer."
+        },
+        {
+          "nom": "Mise aux normes de l'installation",
+          "texte": "Groupe de sécurité, réducteur de pression, robinets d'arrêt par pièce : ce qui manque est listé sur le devis."
+        }
+      ],
+      "deroule": [
+        "Visite et relevé des mesures chez vous.",
+        "Devis détaillé poste par poste, avec un planning.",
+        "Dépose, réseau neuf, pose des équipements, essais d'étanchéité.",
+        "Réception du chantier ensemble, pièce par pièce."
+      ],
+      "image": "renovation"
     }
   ],
   "confiance": {
     "qualifications": [],
-    "assuranceDecennale": "[À VÉRIFIER] votre assureur et la zone couverte",
+    "assuranceDecennale": "[EXEMPLE] Assureur-Exemple, contrat n° 000 000, travaux en France métropolitaine",
     "avis": [],
     "avisExemples": [
       {
@@ -171,25 +236,34 @@
   "tarifs": {
     "mention": "Prix TTC indicatifs, confirmés par devis avant toute intervention.",
     "devisGratuit": true,
-    "infoPrix": "[À VÉRIFIER] votre affichage des prix de dépannage. Obligatoire pour les dépannages à domicile (arrêté du 24 janvier 2017) : taux horaire, frais de déplacement, devis écrit au-delà de 150 € TTC.",
+    "infoPrix": "[EXEMPLE] Taux horaire et frais de déplacement affichés ci-dessus, et rappelés par écrit avant toute intervention. Devis écrit au-delà de 150 € TTC (arrêté du 24 janvier 2017).",
     "lignes": [
       {
         "libelle": "Déplacement (zone d'intervention)",
-        "prix": "[À VÉRIFIER]"
+        "prix": "[EXEMPLE] 40 €"
       },
       {
         "libelle": "Main-d'œuvre, l'heure",
-        "prix": "[À VÉRIFIER]"
+        "prix": "[EXEMPLE] 60 €"
       },
       {
         "libelle": "Débouchage simple",
-        "prix": "à partir de [À VÉRIFIER]"
+        "prix": "[EXEMPLE] à partir de 90 €"
       },
       {
         "libelle": "Remplacement mitigeur (hors fourniture)",
-        "prix": "à partir de [À VÉRIFIER]"
+        "prix": "[EXEMPLE] à partir de 80 €"
+      },
+      {
+        "libelle": "Mécanisme de chasse d'eau remplacé",
+        "prix": "[EXEMPLE] à partir de 110 €"
+      },
+      {
+        "libelle": "Pose chauffe-eau 200 L (hors appareil)",
+        "prix": "[EXEMPLE] à partir de 350 €"
       }
-    ]
+    ],
+    "devis": "Gratuit, écrit, avant tous travaux."
   },
   "realisations": [
     {
@@ -203,6 +277,18 @@
       "avant": "avant2",
       "apres": "apres2",
       "description": "Ancien chauffe-eau électrique remplacé par un modèle thermodynamique, dans un cellier, en une journée."
+    },
+    {
+      "titre": "Fuite sous un évier au Village",
+      "avant": "avant3",
+      "apres": "apres3",
+      "description": "Joint de siphon fendu et flexible usé, remplacés en une heure. Meuble laissé ouvert pour sécher."
+    },
+    {
+      "titre": "Adoucisseur posé à Vallée-Fictive",
+      "avant": "avant4",
+      "apres": "apres4",
+      "description": "Adoucisseur installé sur l'arrivée d'eau, avec un robinet d'eau non adoucie en cuisine. Une demi-journée."
     }
   ],
   "images": {
@@ -259,6 +345,62 @@
       "format": "1200x630",
       "alt": "Aperçu du site Plomberie Lemoine",
       "prompt": "Même sujet que l'image principale, cadrage plus serré, espace libre à gauche."
+    },
+    "avant3": {
+      "fichier": "realisation-3-avant.webp",
+      "format": "4:3",
+      "alt": "Meuble sous évier mouillé, bassine sous le siphon",
+      "prompt": "Meuble sous évier de cuisine ouvert, siphon blanc avec des traces d'eau, bassine posée dessous, fond du meuble gonflé par l'humidité, cadrage de face."
+    },
+    "apres3": {
+      "fichier": "realisation-3-apres.webp",
+      "format": "4:3",
+      "alt": "Même meuble sous évier, siphon et flexibles neufs, fond sec",
+      "prompt": "Le même meuble sous évier, même cadrage de face : siphon et flexibles inox neufs, fond du meuble sec et propre."
+    },
+    "avant4": {
+      "fichier": "realisation-4-avant.webp",
+      "format": "4:3",
+      "alt": "Arrivée d'eau dans un garage, ancien robinet d'arrêt entartré",
+      "prompt": "Arrivée d'eau dans un garage : compteur, tuyau en cuivre terni le long d'un mur en parpaing peint, ancien robinet d'arrêt avec des traces de calcaire, cadrage de face."
+    },
+    "apres4": {
+      "fichier": "realisation-4-apres.webp",
+      "format": "4:3",
+      "alt": "Adoucisseur neuf posé contre le même mur, raccords en cuivre neufs",
+      "prompt": "Le même mur de garage, même cadrage de face : adoucisseur d'eau neuf blanc posé au sol, raccords en cuivre neufs, vannes de dérivation alignées."
+    },
+    "renovation": {
+      "fichier": "renovation-finie.webp",
+      "format": "1:1",
+      "alt": "Salle de bain refaite : douche à l'italienne, paroi vitrée et robinetterie laiton",
+      "prompt": "Salle de bain rénovée et vide, douche à l'italienne avec paroi vitrée fixe, carrelage grand format gris clair, robinetterie en laiton brossé, lumière douce d'une fenêtre."
     }
-  }
+  },
+  "faq": [
+    {
+      "question": "Intervenez-vous le samedi ?",
+      "reponse": "Oui pour les urgences, du lundi au samedi de 7 h à 21 h. Les travaux prévus se font du lundi au vendredi."
+    },
+    {
+      "question": "Combien coûte le déplacement ?",
+      "reponse": "[EXEMPLE] 40 € TTC dans la zone d'intervention. Le prix est annoncé au téléphone, avant que je me déplace."
+    },
+    {
+      "question": "Le devis est-il payant ?",
+      "reponse": "Non, il est gratuit et écrit. Pour un dépannage de plus de 150 € TTC, il vous est remis avant de commencer."
+    },
+    {
+      "question": "Comment peut-on payer ?",
+      "reponse": "[EXEMPLE] Chèque, virement ou carte bancaire. Facture détaillée remise à la fin de l'intervention."
+    },
+    {
+      "question": "Ma commune n'est pas dans la liste.",
+      "reponse": "Appelez avant : je vous dis tout de suite si je peux venir, et à quel prix."
+    },
+    {
+      "question": "Fournissez-vous le matériel ?",
+      "reponse": "Oui, ou vous l'achetez vous-même : c'est indiqué sur le devis, ligne par ligne."
+    }
+  ]
 }

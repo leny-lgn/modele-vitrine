@@ -4,6 +4,7 @@
 // boutons ; la conduite sort du bas du hero et chaque section s'y branche.
 // Sur mobile (et sans photo), le titre passe sous la photo, sur l'ardoise. Ordre : dépannage (le chemin court),
 // installation, rénovation + un chantier, tarifs, l'artisan, avis, zone, contact.
+import { nomPrestation } from '../../lib/services';
 import Premium from './Premium.astro';
 import Titre from '../../components/premium/Titre.astro';
 import Appeler from '../../components/commun/Appeler.astro';
@@ -15,6 +16,8 @@ import Tarifs from '../../components/vitrine/Tarifs.astro';
 import Zone from '../../components/vitrine/Zone.astro';
 import Avis from '../../components/vitrine/Avis.astro';
 import Coordonnees from '../../components/vitrine/Coordonnees.astro';
+import Carte from '../../components/commun/Carte.astro';
+import Faq from '../../components/commun/Faq.astro';
 import type { Site, CleePage } from '../../lib/schema';
 import { lienSite } from '../../lib/liens';
 import { echapper, marquerAVerifier } from '../../lib/texte';
@@ -42,6 +45,8 @@ const imgRenovation = renovation?.image ? site.images[renovation.image] : undefi
 const imgArtisan = site.images.artisan;
 /** Photo d'outils en face des tarifs (colonne de gauche), si le JSON la déclare. */
 const imgOutils = site.images.outils;
+/** Photo en face des avis (chantier laissé propre), si le JSON la déclare. */
+const imgProprete = site.images.proprete;
 
 // Les noms composés (« Ville-Exemple ») ne se coupent pas au trait d'union dans le grand titre.
 const sansCesure = (t: string) =>
@@ -113,7 +118,7 @@ const sansCesure = (t: string) =>
         )}
         <ul class="liste-p deux-colonnes">
           {depannage.items.map((i) => (
-            <li>{i}</li>
+            <li>{nomPrestation(i)}</li>
           ))}
         </ul>
         <div class="actions-p">
@@ -140,7 +145,7 @@ const sansCesure = (t: string) =>
         {installation.intro && <p class="chapo-p">{installation.intro}</p>}
         <ul class="liste-p">
           {installation.items.map((i) => (
-            <li>{i}</li>
+            <li>{nomPrestation(i)}</li>
           ))}
         </ul>
         {a('installation') && (
@@ -166,7 +171,7 @@ const sansCesure = (t: string) =>
         {renovation.intro && <p class="chapo-p">{renovation.intro}</p>}
         <ul class="liste-p deux-colonnes">
           {renovation.items.map((i) => (
-            <li>{i}</li>
+            <li>{nomPrestation(i)}</li>
           ))}
         </ul>
         {chantier && (
@@ -219,10 +224,10 @@ const sansCesure = (t: string) =>
                   <dt>Prix</dt>
                   <dd>{site.tarifs.mention}</dd>
                 </div>
-                {site.tarifs.devisGratuit && (
+                {site.tarifs.devis && (
                   <div>
                     <dt>Devis</dt>
-                    <dd>Gratuit, écrit, avant tout travaux.</dd>
+                    <dd>{site.tarifs.devis}</dd>
                   </div>
                 )}
               </dl>
@@ -230,7 +235,7 @@ const sansCesure = (t: string) =>
           </div>
         )}
         <div class="texte-p">
-          <Tarifs tarifs={site.tarifs} mention={false} />
+          <Tarifs tarifs={site.tarifs} mention={false} devis={!site.tarifs.devis} />
           {a('depannage') && (
             <p>
               <a class="lien-p" href={`${lienSite(site, 'depannage')}#t-prix`}>
@@ -290,15 +295,38 @@ const sansCesure = (t: string) =>
     }
   </section>
 
-  <section class="section-p pg" aria-labelledby="t-avis">
+  <section class="section-p pg" aria-labelledby="t-avis" style="--rangs: 1">
     <Titre id="t-avis">Avis</Titre>
+    {
+      imgProprete && (
+        <div class="zg photo-p ac-photo-bureau">
+          <CadreImage site={site} image={imgProprete} sizes="(min-width: 56rem) 30vw, 100vw" />
+        </div>
+      )
+    }
     <Avis site={site} />
   </section>
 
-  <section class="section-p pg" aria-labelledby="t-zone">
+  <section class="section-p pg" aria-labelledby="t-zone" style="--rangs: 1">
     <Titre id="t-zone">Zone d’intervention</Titre>
-    <Zone site={site} />
+    <div class="zg ac-zone-carte">
+      <Carte site={site} />
+    </div>
+    <Zone site={site} carte={false} />
   </section>
+
+  {
+    site.faq.length > 0 && (
+      <section class="section-p pg" aria-labelledby="t-faq" style="--rangs: 1">
+        <Titre id="t-faq">Questions</Titre>
+        <div class="zg ac-faq-zg">
+          <p class="ac-faq-appel">Une autre question&#8239;? {nomArtisan ? `${nomArtisan} répond lui-même.` : 'Appelez.'}</p>
+          <Appeler site={site} class="bouton-p" />
+        </div>
+        <Faq site={site} class="texte-p ac-faq" />
+      </section>
+    )
+  }
 
   <section class="section-p pg surface-ardoise sec-contact" aria-labelledby="t-contact" style="--rangs: 2">
     <Titre id="t-contact">Contact</Titre>
@@ -497,10 +525,33 @@ const sansCesure = (t: string) =>
     align-content: start;
   }
 
-  /* Mobile : la photo d'outils n'ajoute rien sous le tableau ; seules les annotations restent. */
+  /* Mobile : la photo d'outils n'ajoute rien sous le tableau ; seules les annotations restent.
+     Même chose pour la photo en face des avis. */
   @media (max-width: 55.99rem) {
-    .ac-tarifs-zg .photo-p {
+    .ac-tarifs-zg .photo-p,
+    .ac-photo-bureau {
       display: none;
+    }
+  }
+
+  .ac-faq-zg {
+    display: grid;
+    gap: var(--espace-2);
+    align-content: start;
+    justify-items: start;
+  }
+
+  .ac-faq-appel {
+    font-size: var(--taille-1);
+    font-weight: 600;
+    line-height: 1.3;
+    max-width: 20ch;
+  }
+
+  /* Mobile : l'appel passe sous les questions (ordre du code inversé pour la lecture) */
+  @media (max-width: 55.99rem) {
+    .ac-faq-zg {
+      order: 1;
     }
   }
 </style>

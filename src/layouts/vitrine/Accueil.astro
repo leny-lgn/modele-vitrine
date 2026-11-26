@@ -1,6 +1,7 @@
 ---
 // Accueil Vitrine : la structure complète du brief, dans l'ordre.
 // Hero → urgences → services → tarifs → réalisation → zone → confiance → contact.
+import { nomPrestation } from '../../lib/services';
 import Vitrine from './Vitrine.astro';
 import Appeler from '../../components/commun/Appeler.astro';
 import Disponibilite from '../../components/commun/Disponibilite.astro';
@@ -13,6 +14,7 @@ import AvantApres from '../../components/vitrine/AvantApres.astro';
 import Zone from '../../components/vitrine/Zone.astro';
 import Avis from '../../components/vitrine/Avis.astro';
 import Coordonnees from '../../components/vitrine/Coordonnees.astro';
+import Faq from '../../components/commun/Faq.astro';
 import type { Site, CleePage } from '../../lib/schema';
 import { lienSite } from '../../lib/liens';
 import { echapper, marquerAVerifier } from '../../lib/texte';
@@ -40,6 +42,11 @@ const sansCesure = (t: string) =>
     .join(' ');
 const imgArtisan = site.images.artisan;
 const chantier = site.realisations.find((r) => r.avant && r.apres && site.images[r.avant] && site.images[r.apres]);
+const autresChantiers = site.realisations
+  .map((r, i) => ({ r, i }))
+  .filter(({ r }) => r !== chantier);
+// « Comment ça se passe » : le déroulé du premier groupe qui en a un (le dépannage).
+const groupeDeroule = site.services.find((g) => g.deroule && g.deroule.length > 0);
 ---
 
 <Vitrine site={site} page="accueil">
@@ -84,7 +91,7 @@ const chantier = site.realisations.find((r) => r.avant && r.apres && site.images
                 <h3>{g.groupe}</h3>
                 <ul>
                   {g.items.map((i) => (
-                    <li>{i}</li>
+                    <li>{nomPrestation(i)}</li>
                   ))}
                 </ul>
               </div>
@@ -103,13 +110,28 @@ const chantier = site.realisations.find((r) => r.avant && r.apres && site.images
   }
 
   {
+    groupeDeroule && (
+      <section class="section-v" aria-labelledby="titre-deroule">
+        <div class="page-v">
+          <TitreSection id="titre-deroule">Comment se passe un {groupeDeroule.groupe.toLowerCase()}</TitreSection>
+          <ol class="deroule-v">
+            {groupeDeroule.deroule!.map((etape) => (
+              <li>{etape}</li>
+            ))}
+          </ol>
+        </div>
+      </section>
+    )
+  }
+
+  {
     site.tarifs && site.tarifs.lignes.length > 0 && (
-      <section class="section-v" aria-labelledby="titre-tarifs">
+      <section class="section-v surface-carrelage" aria-labelledby="titre-tarifs">
         <div class="page-v">
           <TitreSection id="titre-tarifs">Tarifs</TitreSection>
           <div class="tarifs-grille">
             <div>
-              <Tarifs tarifs={site.tarifs} mention={false} />
+              <Tarifs tarifs={site.tarifs} mention={false} devis={false} />
               {a('tarifs') && (
                 <p>
                   <a class="lien-v" href={lienSite(site, 'tarifs')}>
@@ -149,6 +171,22 @@ const chantier = site.realisations.find((r) => r.avant && r.apres && site.images
             <div class="realisation-texte">
               <h3>{chantier.titre}</h3>
               {chantier.description && <p set:html={marquerAVerifier(chantier.description)} />}
+              {autresChantiers.length > 0 && (
+                <div class="autres-chantiers">
+                  <h4>Autres chantiers</h4>
+                  <ul class="liste-v">
+                    {autresChantiers.map(({ r, i }) =>
+                      a('realisations') ? (
+                        <li>
+                          <a href={`${lienSite(site, 'realisations')}#chantier-${i}`}>{r.titre}</a>
+                        </li>
+                      ) : (
+                        <li>{r.titre}</li>
+                      ),
+                    )}
+                  </ul>
+                </div>
+              )}
               {a('realisations') && site.realisations.length > 1 && (
                 <p>
                   <a class="lien-v" href={lienSite(site, 'realisations')}>
@@ -210,6 +248,17 @@ const chantier = site.realisations.find((r) => r.avant && r.apres && site.images
       <Avis site={site} class="confiance-avis" />
     </div>
   </section>
+
+  {
+    site.faq.length > 0 && (
+      <section class="section-v surface-carrelage" aria-labelledby="titre-faq">
+        <div class="page-v">
+          <TitreSection id="titre-faq">Questions fréquentes</TitreSection>
+          <Faq site={site} colonnes />
+        </div>
+      </section>
+    )
+  }
 
   <section class="section-v surface-ardoise" aria-labelledby="titre-contact">
     <div class="page-v">
@@ -363,6 +412,28 @@ const chantier = site.realisations.find((r) => r.avant && r.apres && site.images
     }
   }
 
+  /* ——— Déroulé : trois temps côte à côte, chacun sous un trait cuivre (un tronçon de conduite) ——— */
+  .deroule-v {
+    display: grid;
+    gap: var(--espace-3);
+    list-style: none;
+    padding: 0;
+  }
+
+  .deroule-v li {
+    padding-top: var(--espace-2);
+    border-top: 2px solid var(--cuivre);
+    font-size: var(--taille-1);
+    line-height: 1.4;
+  }
+
+  @media (min-width: 48rem) {
+    .deroule-v {
+      grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+      gap: var(--espace-4);
+    }
+  }
+
   /* ——— Tarifs ——— */
   .section-v :global(.tarifs-v) + p {
     margin-top: var(--espace-1);
@@ -413,11 +484,39 @@ const chantier = site.realisations.find((r) => r.avant && r.apres && site.images
     margin-top: var(--espace-1);
   }
 
+  .realisation-texte > .autres-chantiers {
+    margin-top: var(--espace-3);
+  }
+
+  .autres-chantiers h4 {
+    margin-bottom: var(--espace-1);
+    color: var(--couleur-texte-secondaire);
+    font-size: var(--taille-petit);
+    font-weight: 600;
+  }
+
+  .autres-chantiers li:has(a) {
+    padding-block: 0;
+  }
+
+  .autres-chantiers a {
+    display: block;
+    padding-block: 0.65rem;
+    color: var(--couleur-texte);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .autres-chantiers a:hover {
+    color: var(--couleur-lien);
+    text-decoration: underline;
+  }
+
   @media (min-width: 64rem) {
     .realisation-une {
       grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
       gap: var(--espace-4);
-      align-items: end;
+      align-items: start;
     }
   }
 

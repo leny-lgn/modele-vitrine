@@ -74,7 +74,7 @@
   "urgences": {
     "actif": true,
     "plage": "Du lundi au samedi, 7 h – 21 h",
-    "delai": "[À VÉRIFIER] votre délai d'intervention",
+    "delai": "[EXEMPLE] dans la journée si vous appelez avant 16 h",
     "cas": [
       "Fuite d'eau",
       "WC ou évier bouché",
@@ -82,6 +82,24 @@
       "Chasse d'eau qui coule sans arrêt"
     ]
   },
+  "premiersGestes": [
+    {
+      "cas": "Fuite d'eau",
+      "geste": "Fermez le robinet d'arrivée d'eau, souvent près du compteur. Si l'eau approche d'une prise, coupez l'électricité."
+    },
+    {
+      "cas": "WC ou évier bouché",
+      "geste": "N'utilisez plus l'évacuation. Pas de soude ni de déboucheur chimique : ils abîment les tuyaux."
+    },
+    {
+      "cas": "Plus d'eau chaude",
+      "geste": "Regardez le disjoncteur du chauffe-eau dans le tableau électrique. Si l'appareil fuit, coupez son courant et son arrivée d'eau."
+    },
+    {
+      "cas": "Chasse d'eau qui coule",
+      "geste": "Fermez le petit robinet sous ou derrière le réservoir. Le reste de la maison garde l'eau."
+    }
+  ],
   "fermetureExceptionnelle": null,
   "zone": {
     "rayonKm": 15,
@@ -97,10 +115,22 @@
     {
       "groupe": "Dépannage",
       "items": [
-        "Recherche et réparation de fuite",
-        "Débouchage WC, évier, canalisations",
-        "Remplacement de robinetterie",
-        "Chasse d'eau qui coule"
+        {
+          "nom": "Recherche et réparation de fuite",
+          "texte": "Je cherche d'où vient l'eau avant de casser quoi que ce soit. Réparation sur place quand la pièce est dans le camion."
+        },
+        {
+          "nom": "Débouchage WC, évier, canalisations",
+          "texte": "Ventouse, furet ou démontage du siphon selon le cas. Je vous explique la cause, pour que ça ne recommence pas."
+        },
+        {
+          "nom": "Remplacement de robinetterie",
+          "texte": "Mitigeur, robinet d'arrêt, flexible qui fuit. Vous achetez l'appareil ou je l'apporte, au choix."
+        },
+        {
+          "nom": "Chasse d'eau qui coule",
+          "texte": "Mécanisme ou joint remplacé. Une chasse qui coule sans arrêt se voit vite sur la facture d'eau."
+        }
       ],
       "page": "depannage",
       "image": "intervention",
@@ -115,9 +145,18 @@
     {
       "groupe": "Installation",
       "items": [
-        "Chauffe-eau électrique et thermodynamique",
-        "Adoucisseur d'eau",
-        "Raccordement électroménager"
+        {
+          "nom": "Chauffe-eau électrique et thermodynamique",
+          "texte": "Capacité choisie selon le nombre de personnes, ancien appareil déposé et emporté, groupe de sécurité neuf."
+        },
+        {
+          "nom": "Adoucisseur d'eau",
+          "texte": "Posé sur l'arrivée d'eau, avec un robinet d'eau non adoucie en cuisine. Réglé selon la dureté de votre eau."
+        },
+        {
+          "nom": "Raccordement électroménager",
+          "texte": "Lave-linge, lave-vaisselle, réfrigérateur avec arrivée d'eau : alimentation, évacuation et vanne d'arrêt."
+        }
       ],
       "page": "installation",
       "image": "detail1",
@@ -132,9 +171,18 @@
     {
       "groupe": "Rénovation",
       "items": [
-        "Salle de bain complète",
-        "Douche à l'italienne",
-        "Mise aux normes de l'installation"
+        {
+          "nom": "Salle de bain complète",
+          "texte": "Dépose, réseau d'eau neuf, évacuations, pose des équipements. Je coordonne avec le carreleur et l'électricien."
+        },
+        {
+          "nom": "Douche à l'italienne",
+          "texte": "Évacuation reprise avec la bonne pente, étanchéité sous le carrelage, essais en eau avant de refermer."
+        },
+        {
+          "nom": "Mise aux normes de l'installation",
+          "texte": "Groupe de sécurité, réducteur de pression, robinets d'arrêt par pièce : ce qui manque est listé sur le devis."
+        }
       ],
       "page": "renovation",
       "image": "detail2",
@@ -150,7 +198,7 @@
   ],
   "confiance": {
     "qualifications": [],
-    "assuranceDecennale": "[À VÉRIFIER] votre assureur et la zone couverte",
+    "assuranceDecennale": "[EXEMPLE] Assureur-Exemple, contrat n° 000 000, travaux en France métropolitaine",
     "avis": [],
     "avisExemples": [
       {
@@ -206,21 +254,31 @@
     "lignes": [
       {
         "libelle": "Déplacement (zone d'intervention)",
-        "prix": "[À VÉRIFIER]"
+        "prix": "[EXEMPLE] 40 €"
       },
       {
         "libelle": "Main-d'œuvre, l'heure",
-        "prix": "[À VÉRIFIER]"
+        "prix": "[EXEMPLE] 60 €"
       },
       {
         "libelle": "Débouchage simple",
-        "prix": "à partir de [À VÉRIFIER]"
+        "prix": "[EXEMPLE] à partir de 90 €"
       },
       {
         "libelle": "Remplacement mitigeur (hors fourniture)",
-        "prix": "à partir de [À VÉRIFIER]"
+        "prix": "[EXEMPLE] à partir de 80 €"
+      },
+      {
+        "libelle": "Mécanisme de chasse d'eau remplacé",
+        "prix": "[EXEMPLE] à partir de 110 €"
+      },
+      {
+        "libelle": "Pose chauffe-eau 200 L (hors appareil)",
+        "prix": "[EXEMPLE] à partir de 350 €"
       }
-    ]
+    ],
+    "devis": "Gratuit, écrit, avant tous travaux.",
+    "infoPrix": "[EXEMPLE] Taux horaire et frais de déplacement affichés ci-dessus, et rappelés par écrit avant toute intervention. Devis écrit au-delà de 150 € TTC (arrêté du 24 janvier 2017)."
   },
   "realisations": [
     {
@@ -294,6 +352,67 @@
       "galerie": [
         "detail1"
       ]
+    },
+    {
+      "titre": "Fuite sous un évier au Village",
+      "avant": "avant3",
+      "apres": "apres3",
+      "description": "Joint de siphon fendu et flexible usé, remplacés en une heure. Meuble laissé ouvert pour sécher.",
+      "slug": "fuite-evier-le-village",
+      "commune": "Le Village",
+      "duree": "1 heure",
+      "groupe": "Dépannage",
+      "contexte": "Une flaque sous le meuble de cuisine chaque matin. La cliente avait déjà fermé le robinet sous l'évier.",
+      "etapes": [
+        {
+          "titre": "Recherche",
+          "texte": "Siphon démonté, flexibles contrôlés un par un."
+        },
+        {
+          "titre": "Réparation",
+          "texte": "Joint et flexible remplacés, raccords resserrés."
+        },
+        {
+          "titre": "Contrôle",
+          "texte": "Évier rempli et vidé plusieurs fois, aucune goutte sous le siphon."
+        }
+      ],
+      "materiaux": [
+        "Joint de siphon",
+        "Flexible inox"
+      ],
+      "galerie": []
+    },
+    {
+      "titre": "Adoucisseur posé à Vallée-Fictive",
+      "avant": "avant4",
+      "apres": "apres4",
+      "description": "Adoucisseur installé sur l'arrivée d'eau, avec un robinet d'eau non adoucie en cuisine. Une demi-journée.",
+      "slug": "adoucisseur-vallee-fictive",
+      "commune": "Vallée-Fictive",
+      "duree": "une demi-journée",
+      "groupe": "Installation",
+      "contexte": "Une eau très calcaire : traces blanches sur la robinetterie et bouilloire entartrée en quelques semaines.",
+      "etapes": [
+        {
+          "titre": "Mesure",
+          "texte": "Dureté de l'eau mesurée au robinet, place repérée près du compteur."
+        },
+        {
+          "titre": "Pose",
+          "texte": "Vannes de dérivation, raccords en cuivre, évacuation vers l'égout."
+        },
+        {
+          "titre": "Réglage",
+          "texte": "Dureté réglée, premier sel chargé, entretien expliqué."
+        }
+      ],
+      "materiaux": [
+        "Adoucisseur",
+        "Vannes de dérivation",
+        "Tube cuivre"
+      ],
+      "galerie": []
     }
   ],
   "images": {
@@ -386,6 +505,36 @@
       "format": "4:5",
       "alt": "Clés, pince et raccords en laiton posés sur un établi",
       "prompt": "Vue de dessus d'un établi en bois : clé à molette, pince multiprise, raccords en laiton et un rouleau de ruban téflon, rangés côte à côte, lumière latérale douce."
+    },
+    "avant3": {
+      "fichier": "realisation-3-avant.webp",
+      "format": "4:3",
+      "alt": "Meuble sous évier mouillé, bassine sous le siphon",
+      "prompt": "Meuble sous évier de cuisine ouvert, siphon blanc avec des traces d'eau, bassine posée dessous, fond du meuble gonflé par l'humidité, cadrage de face."
+    },
+    "apres3": {
+      "fichier": "realisation-3-apres.webp",
+      "format": "4:3",
+      "alt": "Même meuble sous évier, siphon et flexibles neufs, fond sec",
+      "prompt": "Le même meuble sous évier, même cadrage de face : siphon et flexibles inox neufs, fond du meuble sec et propre."
+    },
+    "avant4": {
+      "fichier": "realisation-4-avant.webp",
+      "format": "4:3",
+      "alt": "Arrivée d'eau dans un garage, ancien robinet d'arrêt entartré",
+      "prompt": "Arrivée d'eau dans un garage : compteur, tuyau en cuivre terni le long d'un mur en parpaing peint, ancien robinet d'arrêt avec des traces de calcaire, cadrage de face."
+    },
+    "apres4": {
+      "fichier": "realisation-4-apres.webp",
+      "format": "4:3",
+      "alt": "Adoucisseur neuf posé contre le même mur, raccords en cuivre neufs",
+      "prompt": "Le même mur de garage, même cadrage de face : adoucisseur d'eau neuf blanc posé au sol, raccords en cuivre neufs, vannes de dérivation alignées."
+    },
+    "proprete": {
+      "fichier": "chantier-propre.webp",
+      "format": "4:5",
+      "alt": "Sol protégé par une bâche à l'entrée d'une salle de bain en travaux",
+      "prompt": "Seuil d'une salle de bain en travaux, sol du couloir protégé par une bâche grise bien tendue, caisse à outils fermée posée dessus, aspirateur de chantier rangé contre le mur, lumière naturelle."
     }
   },
   "objet3d": {
@@ -399,5 +548,31 @@
   "description": "Plomberie Lemoine, plombier chauffagiste à Ville-Exemple et 15 km autour : dépannage, chauffe-eau, salle de bain. Prix donné avant de commencer.",
   "devis": {
     "intro": "Décrivez vos travaux. Je vous rappelle pour poser les questions utiles, puis je passe voir si c'est nécessaire."
-  }
+  },
+  "faq": [
+    {
+      "question": "Intervenez-vous le samedi ?",
+      "reponse": "Oui pour les urgences, du lundi au samedi de 7 h à 21 h. Les travaux prévus se font du lundi au vendredi."
+    },
+    {
+      "question": "Combien coûte le déplacement ?",
+      "reponse": "[EXEMPLE] 40 € TTC dans la zone d'intervention. Le prix est annoncé au téléphone, avant que je me déplace."
+    },
+    {
+      "question": "Le devis est-il payant ?",
+      "reponse": "Non, il est gratuit et écrit. Pour un dépannage de plus de 150 € TTC, il vous est remis avant de commencer."
+    },
+    {
+      "question": "Comment peut-on payer ?",
+      "reponse": "[EXEMPLE] Chèque, virement ou carte bancaire. Facture détaillée remise à la fin de l'intervention."
+    },
+    {
+      "question": "Ma commune n'est pas dans la liste.",
+      "reponse": "Appelez avant : je vous dis tout de suite si je peux venir, et à quel prix."
+    },
+    {
+      "question": "Fournissez-vous le matériel ?",
+      "reponse": "Oui, ou vous l'achetez vous-même : c'est indiqué sur le devis, ligne par ligne."
+    }
+  ]
 }

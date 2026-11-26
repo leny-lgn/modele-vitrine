@@ -72,11 +72,15 @@ const { site, page, titre, description } = Astro.props;
     padding-block: var(--espace-4);
   }
 
-  [data-gamme='vitrine'] .section-v + .section-v:not(.surface-ardoise, .section-v-suite) {
+  /* Filet entre deux sections claires seulement : une bande (ardoise ou carrelage) se sépare seule. */
+  [data-gamme='vitrine']
+    .section-v:not(.surface-ardoise, .surface-carrelage)
+    + .section-v:not(.surface-ardoise, .surface-carrelage, .section-v-suite) {
     border-top: 1px solid var(--couleur-trait);
   }
 
-  [data-gamme='vitrine'] .surface-ardoise + .section-v {
+  [data-gamme='vitrine'] .surface-ardoise + .section-v,
+  [data-gamme='vitrine'] .surface-carrelage + .section-v {
     border-top: 0;
   }
 

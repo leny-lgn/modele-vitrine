@@ -1,7 +1,7 @@
 ---
 // Tableau des tarifs « à partir de » : sobre, chiffres tabulaires, mention TTC.
 import type { Site } from '../../lib/schema';
-import { contientAVerifier, marquerAVerifier } from '../../lib/texte';
+import { contientAVerifier, contientExemple, marquerAVerifier } from '../../lib/texte';
 
 interface Props {
   tarifs: NonNullable<Site['tarifs']>;
@@ -9,15 +9,20 @@ interface Props {
   infoPrix?: boolean;
   /** Affiche la mention TTC sous le tableau (masquée si la page l'affiche déjà en tête). */
   mention?: boolean;
+  /** Affiche « Devis gratuit » sous le tableau (masqué si un encart voisin le dit déjà). */
+  devis?: boolean;
   class?: string;
 }
-const { tarifs, infoPrix = false, mention = true, class: classe } = Astro.props;
+const { tarifs, infoPrix = false, mention = true, devis = true, class: classe } = Astro.props;
 const texteMention = mention ? tarifs.mention : undefined;
-// Démo : prix laissés à remplir, une ligne le dit avant le tableau.
-const prixARemplir = tarifs.lignes.some((l) => contientAVerifier(l.prix));
+const devisGratuit = devis && tarifs.devisGratuit;
+// Démo : prix d'exemple ou laissés à remplir, une seule ligne le dit avant le tableau.
+const prixExemple = tarifs.lignes.some((l) => contientExemple(l.prix));
+const prixARemplir = !prixExemple && tarifs.lignes.some((l) => contientAVerifier(l.prix));
 ---
 
 <div class:list={['tarifs-v', classe]}>
+  {prixExemple && <p class="tv-demo">Prix d’exemple pour la démonstration. Sur votre site&nbsp;: vos prix réels.</p>}
   {prixARemplir && <p class="tv-demo">Exemple de grille. Sur votre site&nbsp;: vos prix réels.</p>}
   <table>
     <thead>
@@ -31,17 +36,17 @@ const prixARemplir = tarifs.lignes.some((l) => contientAVerifier(l.prix));
         tarifs.lignes.map((l) => (
           <tr>
             <th scope="row">{l.libelle}</th>
-            <td class="chiffres" set:html={marquerAVerifier(l.prix, 'votre tarif')} />
+            <td class="chiffres" set:html={marquerAVerifier(l.prix, 'votre tarif', 'aucune')} />
           </tr>
         ))
       }
     </tbody>
   </table>
   {
-    (texteMention || tarifs.devisGratuit) && (
+    (texteMention || devisGratuit) && (
       <p class="tv-mention">
         {texteMention}
-        {tarifs.devisGratuit && <strong class="tv-devis"> Devis gratuit.</strong>}
+        {devisGratuit && <strong class="tv-devis"> Devis gratuit.</strong>}
       </p>
     )
   }

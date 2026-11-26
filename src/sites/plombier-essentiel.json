@@ -74,13 +74,27 @@
   "urgences": {
     "actif": true,
     "plage": "Du lundi au samedi, 7 h – 21 h",
-    "delai": "[À VÉRIFIER] votre délai d'intervention",
+    "delai": "[EXEMPLE] dans la journée si vous appelez avant 16 h",
     "cas": [
       "Fuite d'eau",
       "WC ou évier bouché",
       "Plus d'eau chaude"
     ]
   },
+  "premiersGestes": [
+    {
+      "cas": "Fuite d'eau",
+      "geste": "Fermez le robinet d'arrivée d'eau, souvent près du compteur. Si l'eau approche d'une prise, coupez l'électricité."
+    },
+    {
+      "cas": "WC ou évier bouché",
+      "geste": "N'utilisez plus l'évacuation. Pas de soude ni de déboucheur chimique : ils abîment les tuyaux."
+    },
+    {
+      "cas": "Plus d'eau chaude",
+      "geste": "Regardez le disjoncteur du chauffe-eau dans le tableau électrique. Si l'appareil fuit, coupez son courant et son arrivée d'eau."
+    }
+  ],
   "fermetureExceptionnelle": null,
   "zone": {
     "rayonKm": 15,
@@ -117,7 +131,7 @@
   ],
   "confiance": {
     "qualifications": [],
-    "assuranceDecennale": "[À VÉRIFIER] votre assureur et la zone couverte",
+    "assuranceDecennale": "[EXEMPLE] Assureur-Exemple, contrat n° 000 000, travaux en France métropolitaine",
     "avis": []
   },
   "reseaux": {

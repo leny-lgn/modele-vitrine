@@ -69,7 +69,8 @@ export const siteSchema = z.looseObject({
     .array(
       z.object({
         groupe: texte,
-        items: z.array(texte),
+        /** Prestations : un libellé seul, ou un libellé et une ou deux phrases (ce que ça comprend). */
+        items: z.array(z.union([texte, z.object({ nom: texte, texte: z.string().optional() })])),
         /** Clé d'une entrée de `images` illustrant ce groupe (page Services). */
         image: z.string().optional(),
         /** Premium : clé de la page dédiée à ce groupe (dépannage, installation, rénovation). */
@@ -88,12 +89,18 @@ export const siteSchema = z.looseObject({
     .object({
       mention: z.string().optional(),
       devisGratuit: z.boolean().optional(),
+      /** Précision sur le devis (« Gratuit, écrit, avant tous travaux. ») */
+      devis: z.string().optional(),
       /** Information légale sur les prix des dépannages à domicile (arrêté du 24 janvier 2017). */
       infoPrix: z.string().optional(),
       lignes: z.array(z.object({ libelle: texte, prix: texte })),
     })
     .optional(),
   confiance: z.looseObject({}).optional(),
+  /** Gestes à faire en attendant l'artisan (couper l'eau…) : conseils généraux, jamais une promesse. */
+  premiersGestes: z.array(z.object({ cas: texte, geste: texte })).optional().default([]),
+  /** Questions fréquentes. Les réponses ne disent que ce que l'artisan a fourni. */
+  faq: z.array(z.object({ question: texte, reponse: texte })).optional().default([]),
   reseaux: z.record(z.string(), z.string()).optional(),
   mentionsLegales: z.object({
     formeJuridique: texte,

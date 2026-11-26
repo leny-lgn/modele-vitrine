@@ -2,6 +2,8 @@
 // Gamme Essentiel : une seule page, « on vous trouve et on vous appelle ».
 // Plaque (hero ardoise) → urgences → l'artisan → prestations → zone → horaires et contact.
 // Aucun élément signature, aucune animation : des filets fins comme seul décor.
+import { nomPrestation } from '../../lib/services';
+import PremiersGestes from '../../components/commun/PremiersGestes.astro';
 import Base from '../Base.astro';
 import Appeler from '../../components/commun/Appeler.astro';
 import Disponibilite from '../../components/commun/Disponibilite.astro';
@@ -73,7 +75,12 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
           <h2 id="titre-urgences">Urgences</h2>
           <div class="bloc-contenu">
             {urgences.plage && <p class="urgences-plage chiffres">{urgences.plage}</p>}
-            {urgences.cas?.length && (
+            {site.premiersGestes.length > 0 ? (
+              <>
+                <p class="note">Ce que vous pouvez faire en attendant mon arrivée&nbsp;:</p>
+                <PremiersGestes site={site} class="gestes-essentiel" />
+              </>
+            ) : urgences.cas?.length && (
               <ul class="liste-filets liste-urgences">
                 {urgences.cas.map((c) => (
                   <li>{c}</li>
@@ -144,7 +151,7 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
                 <dd>
                   <ul>
                     {g.items.map((i) => (
-                      <li>{i}</li>
+                      <li>{nomPrestation(i)}</li>
                     ))}
                   </ul>
                 </dd>

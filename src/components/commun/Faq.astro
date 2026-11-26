@@ -1,0 +1,95 @@
+---
+// Questions fréquentes, en <details> : lisibles et dépliables sans JavaScript.
+// Les réponses viennent du JSON (faq) ; une valeur d'exemple de la démo y est signalée « (exemple) ».
+import type { Site } from '../../lib/schema';
+import { marquerAVerifier } from '../../lib/texte';
+
+interface Props {
+  site: Site;
+  class?: string;
+  /** Deux colonnes sur grand écran (pleine largeur de page). */
+  colonnes?: boolean;
+}
+const { site, class: classe, colonnes = false } = Astro.props;
+const faq = site.faq;
+const moitie = Math.ceil(faq.length / 2);
+const groupes = colonnes ? [faq.slice(0, moitie), faq.slice(moitie)] : [faq];
+---
+
+{
+  faq.length > 0 && (
+    <div class:list={['faq', { 'faq-colonnes': colonnes }, classe]}>
+      {groupes.map((liste) => (
+        <div class="faq-colonne">
+          {liste.map((q) => (
+            <details>
+              <summary>{q.question}</summary>
+              <p set:html={marquerAVerifier(q.reponse)} />
+            </details>
+          ))}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+<style>
+  .faq {
+    display: grid;
+    gap: 0 var(--espace-4);
+  }
+
+  .faq-colonne {
+    border-top: 1px solid var(--couleur-trait);
+  }
+
+  details {
+    border-bottom: 1px solid var(--couleur-trait);
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--espace-2);
+    min-height: 3.25rem;
+    padding-block: 0.6rem;
+    font-weight: 700;
+    line-height: 1.3;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Plus / moins dessiné en CSS, couleur d'accent : pas d'icône générique */
+  summary::after {
+    content: '';
+    flex: none;
+    width: 0.8rem;
+    height: 0.8rem;
+    background:
+      linear-gradient(var(--couleur-accent), var(--couleur-accent)) center / 100% 2px no-repeat,
+      linear-gradient(var(--couleur-accent), var(--couleur-accent)) center / 2px 100% no-repeat;
+  }
+
+  details[open] summary::after {
+    background: linear-gradient(var(--couleur-accent), var(--couleur-accent)) center / 100% 2px no-repeat;
+  }
+
+  details p {
+    max-width: 38rem;
+    padding-bottom: 1rem;
+    color: var(--couleur-texte-secondaire);
+    line-height: 1.55;
+  }
+
+  @media (min-width: 64rem) {
+    .faq-colonnes {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+    }
+  }
+</style>

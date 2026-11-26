@@ -5,6 +5,7 @@ import type { Site } from '../../lib/schema';
 import TitreSection from './TitreSection.astro';
 import Appeler from '../commun/Appeler.astro';
 import { marquerAVerifier } from '../../lib/texte';
+import PremiersGestes from '../commun/PremiersGestes.astro';
 
 interface Props {
   site: Site;
@@ -35,6 +36,12 @@ const u = site.urgences?.actif ? site.urgences : undefined;
             </p>
           )}
         </div>
+        {site.premiersGestes.length > 0 && (
+          <div class="uv-gestes">
+            <h3 id={`titre-${id}-gestes`}>En attendant mon arrivée</h3>
+            <PremiersGestes site={site} />
+          </div>
+        )}
       </div>
     </section>
   )
@@ -68,6 +75,16 @@ const u = site.urgences?.actif ? site.urgences : undefined;
     display: grid;
     gap: var(--espace-2);
     margin-top: var(--espace-3);
+  }
+
+  .uv-gestes {
+    margin-top: var(--espace-4);
+  }
+
+  .uv-gestes h3 {
+    margin-bottom: var(--espace-2);
+    font-size: var(--taille-2);
+    line-height: 1.1;
   }
 
   .uv-delai {
