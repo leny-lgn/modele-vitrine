@@ -1,17 +1,70 @@
 ---
 // Pied de page commun : coordonnées et liens légaux.
+// Premium : version développée sur ardoise (grand nom, numéro en cuivre, horaires résumés),
+// pour finir des pages très travaillées autrement que par trois lignes en petit.
 import type { Site } from '../../lib/schema';
 import { telephoneFr, telHref } from '../../lib/typo-fr';
-import { lienSite } from '../../lib/liens';
+import { lienSite, type CibleLien } from '../../lib/liens';
 import { contientAVerifier } from '../../lib/texte';
+import { resumeHoraires } from '../../lib/horaires';
 
 interface Props {
   site: Site;
+  page?: CibleLien;
   class?: string;
 }
-const { site, class: classe } = Astro.props;
+const { site, page, class: classe } = Astro.props;
 const email = site.email && !contientAVerifier(site.email) ? site.email : undefined;
+const premium = site.gamme === 'premium';
+const horaires = premium ? resumeHoraires(site.horaires) : [];
+// Accueil et L'artisan (Premium) finissent déjà par une section « Contact » complète :
+// le pied de page n'y répète pas les coordonnées (nom et liens légaux seulement).
+const sansRedite = premium && (page === 'accueil' || page === 'artisan');
 ---
+
+{
+  premium ? (
+    <footer class:list={['pied-de-page', 'pdp-premium', 'surface-ardoise', classe]}>
+      <p class="pdp-grand-nom">{site.nom}</p>
+      <div class:list={['pdp-colonnes', { 'pdp-seul': sansRedite }]}>
+        {!sansRedite && (
+        <>
+        <div>
+          <a href={telHref(site.telephone)} class="pdp-tel chiffres">
+            {telephoneFr(site.telephone)}
+          </a>
+          <address>
+            {site.adresse.rue}
+            <br />
+            {site.adresse.codePostal}&nbsp;{site.adresse.ville}
+            {email && (
+              <>
+                <br />
+                <a href={`mailto:${email}`}>{email}</a>
+              </>
+            )}
+          </address>
+        </div>
+        <div>
+          <p class="pdp-libelle">Horaires</p>
+          <ul class="pdp-horaires chiffres">
+            {horaires.map((r) => (
+              <li>
+                {r.jours}&nbsp;: {r.plages}
+              </li>
+            ))}
+            {site.urgences?.actif && site.urgences.plage && <li>Urgences&nbsp;: {site.urgences.plage}</li>}
+          </ul>
+        </div>
+        </>
+        )}
+        <ul class="pdp-legal">
+          <li><a href={lienSite(site, 'mentions-legales')}>Mentions légales</a></li>
+          <li><a href={lienSite(site, 'confidentialite')}>Confidentialité</a></li>
+        </ul>
+      </div>
+    </footer>
+  ) : (
 
 <footer class:list={['pied-de-page', classe]}>
   <div class="pdp-coordonnees">
@@ -35,6 +88,8 @@ const email = site.email && !contientAVerifier(site.email) ? site.email : undefi
     <li><a href={lienSite(site, 'confidentialite')}>Confidentialité</a></li>
   </ul>
 </footer>
+  )
+}
 
 <style>
   .pied-de-page {
@@ -65,5 +120,96 @@ const email = site.email && !contientAVerifier(site.email) ? site.email : undefi
   .pdp-legal {
     list-style: none;
     padding: 0;
+  }
+
+  /* ——— Premium ——— */
+  .pdp-premium {
+    display: block;
+    padding-block: var(--espace-5);
+    border-top: 0;
+  }
+
+  .pdp-grand-nom {
+    font-size: var(--titre-section);
+    font-stretch: 75%;
+    font-weight: 800;
+    line-height: 0.92;
+    text-transform: uppercase;
+    hyphens: none;
+  }
+
+  .pdp-colonnes {
+    display: grid;
+    gap: var(--espace-3) var(--espace-4);
+    margin-top: var(--espace-4);
+  }
+
+  /* Pied de page réduit (accueil, L'artisan) : nom et liens légaux, sans grand vide. */
+  .pdp-premium:has(.pdp-seul) {
+    padding-block: var(--espace-4);
+  }
+
+  .pdp-seul {
+    margin-top: var(--espace-2);
+  }
+
+  .pdp-tel {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--cuivre-clair);
+    font-size: var(--taille-2);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .pdp-premium address {
+    margin-top: var(--espace-1);
+    color: var(--couleur-texte-secondaire);
+  }
+
+  .pdp-libelle {
+    font-weight: 700;
+  }
+
+  .pdp-horaires {
+    margin-top: var(--espace-1);
+    padding: 0;
+    list-style: none;
+    color: var(--couleur-texte-secondaire);
+  }
+
+  .pdp-horaires li + li {
+    margin-top: 0.2rem;
+  }
+
+  @media (min-width: 56rem) {
+    /* Colonnes à la largeur de leur contenu (l'e-mail ne se coupe pas), liens légaux à droite. */
+    .pdp-colonnes {
+      grid-template-columns: max-content max-content minmax(0, 1fr);
+      align-items: start;
+    }
+
+    /* Version réduite : le nom à gauche, les liens légaux à droite, sur la même ligne. */
+    .pdp-premium:has(.pdp-seul) {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: var(--espace-4);
+    }
+
+    .pdp-seul {
+      margin-top: 0;
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .pdp-premium .pdp-legal {
+      justify-self: end;
+      white-space: nowrap;
+    }
+
+    .pdp-premium address a {
+      overflow-wrap: normal;
+    }
   }
 </style>

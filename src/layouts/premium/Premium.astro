@@ -99,14 +99,16 @@ const { site, page, titre, description, entree = 'gauche' } = Astro.props;
     grid-row: auto;
   }
 
-  /* Débord à gauche : de l'écran jusqu'au tracé. Mobile : de la colonne de texte au bord droit,
-     pour que la conduite (à gauche) passe à côté des photos au lieu de les traverser. */
+  /* Débord à gauche : de l'écran jusqu'au tracé (bureau). Mobile : dans la colonne de texte,
+     marge droite comprise, comme les autres photos (la conduite passe à côté, à gauche). */
   [data-gamme='premium'] .pg > .fuite-g {
-    grid-column: texte-start / plein-end;
+    grid-column: texte-start / zd-end;
   }
 
+  /* « Fuite à droite » : la photo reste dans la colonne de texte, alignée sur la marge droite,
+     comme partout ailleurs (elle touchait le bord de l'écran sur certaines pages seulement). */
   [data-gamme='premium'] .pg > .fuite-d {
-    grid-column: texte-start / plein-end;
+    grid-column: texte-start / zd-end;
   }
 
   /* Zone gauche : annotations du plan, sous le texte sur mobile */

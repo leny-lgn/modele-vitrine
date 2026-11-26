@@ -1,10 +1,10 @@
 ---
 // Tête des pages internes Premium. Sur bureau, la conduite arrive par la gauche en face
-// du titre (voir Fil, entree="gauche") ; sous elle, dans la zone gauche : disponibilité et
-// bouton Appeler. Sur mobile, ils suivent directement le titre : visibles sans défiler.
+// du titre (voir Fil, entree="gauche") ; sous elle, dans la zone gauche : une ligne de
+// disponibilité (statut + urgences). Le bloc complet reste sur l'accueil ; le numéro est dans
+// l'en-tête (bureau) et la barre Appeler (mobile).
 // Slot « zg » : ajouté en tête de la zone gauche (ex. fiche d'un chantier).
 import type { Site } from '../../lib/schema';
-import Appeler from '../commun/Appeler.astro';
 import Disponibilite from '../commun/Disponibilite.astro';
 import { echapper } from '../../lib/texte';
 
@@ -31,8 +31,7 @@ const titreHtml = titre
     {
       contact && (
         <div class="tp-contact">
-          <Disponibilite site={site} />
-          <Appeler site={site} class="bouton-p" />
+          <Disponibilite site={site} compact />
         </div>
       )
     }
@@ -50,7 +49,8 @@ const titreHtml = titre
   }
 
   .tp-titre {
-    font-size: var(--titre-page);
+    /* Plafond en vw : « THERMODYNAMIQUE » (un seul mot, jamais coupé) tient dans un écran de 375 px. */
+    font-size: min(var(--titre-page), 9.6vw);
     line-height: 0.9;
     text-transform: uppercase;
     letter-spacing: 0;

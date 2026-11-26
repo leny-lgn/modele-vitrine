@@ -1,9 +1,9 @@
 ---
-// Tête des pages internes : titre relié au tracé, phrase d'introduction,
-// disponibilité et bouton Appeler visibles sans défiler sur mobile.
+// Tête des pages internes : titre relié au tracé, phrase d'introduction, et une seule ligne de
+// disponibilité (statut + urgences). Le bloc complet (horaires, gros bouton) reste sur l'accueil :
+// ici, le numéro est déjà dans l'en-tête (bureau) et dans la barre Appeler (mobile).
 import type { Site } from '../../lib/schema';
 import TitreSection from './TitreSection.astro';
-import Appeler from '../commun/Appeler.astro';
 import Disponibilite from '../commun/Disponibilite.astro';
 
 interface Props {
@@ -22,8 +22,7 @@ const { site, titre, intro } = Astro.props;
       <slot />
     </div>
     <div class="tp-contact">
-      <Disponibilite site={site} />
-      <Appeler site={site} class="bouton-v" />
+      <Disponibilite site={site} compact />
     </div>
   </div>
 </section>

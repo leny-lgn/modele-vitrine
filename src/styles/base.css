@@ -171,6 +171,12 @@ textarea {
   color: var(--couleur-texte-secondaire, currentColor);
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
+  /* Étiquette d'un seul tenant : elle passe entière à la ligne suivante au lieu d'être coupée
+     en morceaux (« votre / tarif ») ; coupée seulement si elle est plus longue que la ligne. */
+  display: inline-block;
+  max-width: 100%;
+  line-height: 1.35;
+  text-indent: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -207,7 +213,10 @@ textarea {
   white-space: normal !important;
 }
 
-/* Tableau d'horaires : une plage par ligne quand c'est possible, coupée après la virgule sinon. */
-.horaires td {
-  white-space: normal !important;
+/* Tableau d'horaires, sur mobile seulement : coupé après la virgule si la plage ne tient pas
+   (petit écran, texte agrandi). Sur ordinateur, chaque plage reste sur une ligne. */
+@media (max-width: 35.99rem) {
+  .horaires td {
+    white-space: normal !important;
+  }
 }

@@ -66,6 +66,20 @@ const pages = site.pages as CleePage[];
     hyphens: manual;
   }
 
+  /* Mobile : deux colonnes, titres un cran plus petits (les 7 pages tenaient presque un écran). */
+  @media (max-width: 55.99rem) {
+    .dist-liste {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--espace-2);
+      row-gap: 0.25rem;
+    }
+
+    .dist-liste a {
+      font-size: min(var(--taille-2), 7vw);
+    }
+  }
+
   .dist-liste a:hover {
     color: var(--cuivre-fonce);
   }
@@ -141,13 +155,42 @@ const pages = site.pages as CleePage[];
     }
   }
 
+  /* Page en cours hors de la première rangée (pas de piquage au-dessus d'elle) : la vanne se pose
+     devant son nom, à sa hauteur, au lieu de flotter entre deux rangées. */
+  @media (min-width: 56rem) {
+    .dist-liste li:nth-child(n + 3).dist-ici::after {
+      left: -1.1rem;
+      top: calc(var(--espace-3) + 1.375rem - 5px);
+    }
+  }
+
+  /* Grand écran : 4 colonnes (4 + 3 pour 7 pages) au lieu de 3, plus de « Devis » seul sur sa ligne ;
+     les 4 premières pages sont piquées sur le collecteur. */
   @media (min-width: 72rem) {
     .dist-liste {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      column-gap: var(--espace-2);
     }
 
-    .dist-liste li:nth-child(3)::before {
+    /* « RÉALISATIONS » doit tenir dans un quart de colonne : taille liée à la largeur d'écran. */
+    .dist-liste a {
+      font-size: min(var(--taille-3), 2vw);
+    }
+
+    .dist-liste li:nth-child(3)::before,
+    .dist-liste li:nth-child(4)::before {
       display: block;
+    }
+
+    .dist-liste li:nth-child(3).dist-ici::after,
+    .dist-liste li:nth-child(4).dist-ici::after {
+      left: -4px;
+      top: -6px;
+    }
+
+    .dist-liste li:nth-child(n + 5).dist-ici::after {
+      left: -1.1rem;
+      top: calc(var(--espace-3) + 1.375rem - 5px);
     }
   }
 </style>

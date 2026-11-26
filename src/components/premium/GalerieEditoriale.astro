@@ -1,8 +1,8 @@
 ---
 // Galerie éditoriale (gamme Premium), posée le long du fil.
-// - Entrées avec texte (liste des chantiers) : une rangée par entrée, la photo déborde
-//   alternativement vers le bord gauche puis vers le bord droit de l'écran, le texte
-//   reste accroché au tracé.
+// - Entrées avec texte (liste des chantiers) : une rangée par entrée, toutes présentées de la
+//   même façon dans la colonne de texte : grande photo, puis titre, précisions et lien.
+//   (L'alternance gauche/droite donnait deux chantiers de poids très différent.)
 // - Photos seules (galerie d'un chantier) : grande photo puis photos plus petites,
 //   décalées, de la colonne de texte au bord droit.
 // Aucune animation au défilement.
@@ -36,9 +36,9 @@ const avecTexte = entrees.some((e) => e.titre || e.texte);
 {
   avecTexte ? (
     <div class:list={['galerie-ed', classe]}>
-      {entrees.map((e, i) => (
-        <article class:list={['pg', 'ge-rangee', i % 2 ? 'ge-droite' : 'ge-gauche']}>
-          <div class:list={['ge-photo', i % 2 ? 'fuite-d' : 'fuite-g']}>
+      {entrees.map((e) => (
+        <article class="pg ge-rangee">
+          <div class="ge-photo">
             {/* Le lien n'entoure qu'une vraie photo : jamais le cadre de démo (il contient un bouton) */}
             {e.lien && imageExiste(site.slug, e.image.fichier) ? (
               <a href={e.lien} tabindex="-1" aria-hidden="true">
@@ -48,7 +48,7 @@ const avecTexte = entrees.some((e) => e.titre || e.texte);
               <CadreImage site={site} image={e.image} sizes="(min-width: 56rem) 60vw, 100vw" />
             )}
           </div>
-          <div class:list={['ge-texte', { zg: i % 2 === 1 }]}>
+          <div class="ge-texte">
             {e.titre && (
               <Titre class="ge-titre">{e.lien ? <a href={e.lien}>{e.titre}</a> : e.titre}</Titre>
             )}
@@ -114,7 +114,8 @@ const avecTexte = entrees.some((e) => e.titre || e.texte);
   }
 
   .ge-titre {
-    font-size: var(--taille-4);
+    /* Plafond en vw : les mots longs (« THERMODYNAMIQUE ») tiennent sur mobile. */
+    font-size: min(var(--taille-4), 9.6vw);
     line-height: 0.95;
     text-transform: uppercase;
   }
@@ -138,17 +139,8 @@ const avecTexte = entrees.some((e) => e.titre || e.texte);
       gap: calc(var(--espace-5) * 1.5);
     }
 
-    /* Placement : .fuite-g / .fuite-d / .zg (grille .pg). Le texte se cale en bas de la photo. */
-    .ge-texte {
-      align-self: end;
-    }
-
     .ge-titre {
       font-size: var(--taille-5);
-    }
-
-    .ge-droite .ge-titre {
-      font-size: var(--taille-4);
     }
   }
 

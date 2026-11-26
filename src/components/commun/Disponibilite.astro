@@ -7,8 +7,11 @@ import { resumeHoraires } from '../../lib/horaires';
 interface Props {
   site: Pick<Site, 'horaires' | 'urgences' | 'fermetureExceptionnelle'>;
   class?: string;
+  /** Pages internes : le statut et les urgences seulement ; les horaires détaillés ne restent
+      que si le JS ne tourne pas (le statut ne peut alors pas être calculé). */
+  compact?: boolean;
 }
-const { site, class: classe } = Astro.props;
+const { site, class: classe, compact = false } = Astro.props;
 const resume = resumeHoraires(site.horaires);
 const donnees = JSON.stringify({
   horaires: site.horaires,
@@ -17,7 +20,7 @@ const donnees = JSON.stringify({
 const fermeture = site.fermetureExceptionnelle;
 ---
 
-<div class:list={['disponibilite', classe]} data-disponibilite={donnees}>
+<div class:list={['disponibilite', classe, { 'dispo-compacte': compact }]} data-disponibilite={donnees}>
   <p class="dispo-statut" data-statut hidden></p>
   {
     fermeture?.message && (
@@ -26,7 +29,7 @@ const fermeture = site.fermetureExceptionnelle;
       </p>
     )
   }
-  <p class="dispo-horaires chiffres">
+  <p class="dispo-horaires chiffres" data-horaires-detail={compact ? '' : undefined}>
     {
       resume.map((r, i) => (
         <>
@@ -117,6 +120,9 @@ const fermeture = site.fermetureExceptionnelle;
     ligne.textContent = s.texte;
     ligne.classList.toggle('est-ouvert', s.ouvert);
     ligne.hidden = false;
+    // Version compacte : le statut remplace le détail des horaires.
+    const detail = bloc.querySelector<HTMLElement>('[data-horaires-detail]');
+    if (detail) detail.hidden = true;
     const message = bloc.querySelector<HTMLElement>('[data-fermeture]');
     if (message) message.hidden = !s.exceptionnel;
   }

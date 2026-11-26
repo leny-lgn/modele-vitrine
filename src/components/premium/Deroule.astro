@@ -52,7 +52,10 @@ const liste = etapes.map((e) => (typeof e === 'string' ? { texte: e } : e));
     margin-top: 0.35rem;
   }
 
-  .sans-titre p {
+  /* Même taille avec ou sans titre d'étape : le texte courant paraissait minuscule sous
+     les très grands titres de la page de chantier. */
+  .deroule p {
+    max-width: 34rem;
     font-size: var(--taille-1);
     line-height: 1.4;
   }

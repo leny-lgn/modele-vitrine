@@ -74,7 +74,7 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
           <div class="bloc-contenu">
             {urgences.plage && <p class="urgences-plage chiffres">{urgences.plage}</p>}
             {urgences.cas?.length && (
-              <ul class="liste-filets">
+              <ul class="liste-filets liste-urgences">
                 {urgences.cas.map((c) => (
                   <li>{c}</li>
                 ))}
@@ -460,6 +460,22 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
     font-weight: 600;
   }
 
+  /* Bureau : les cas d'urgence côte à côte (trois colonnes au plus) sur toute la largeur,
+     au lieu d'une liste étroite avec un grand vide à droite. */
+  @media (min-width: 48rem) {
+    .liste-urgences {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+      column-gap: var(--espace-3);
+      max-width: none;
+      border-top: 0;
+    }
+
+    .liste-urgences li {
+      border-top: 1px solid var(--couleur-trait);
+    }
+  }
+
   /* ——— L'artisan ——— */
   .artisan-grille {
     display: grid;
@@ -499,10 +515,11 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
       grid-template-columns: 22rem minmax(0, 1fr) 14rem;
     }
 
+    /* En haut, à la hauteur du portrait (en bas, elle paraissait détachée du bloc). */
     .artisan-detail {
       display: block;
       grid-column: 3;
-      align-self: end;
+      align-self: start;
     }
   }
 

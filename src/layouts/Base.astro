@@ -47,7 +47,7 @@ const favicon = imageExiste(site.slug, 'favicon.svg') ? urlImage(site.slug, 'fav
     <main id="contenu" tabindex="-1">
       <slot />
     </main>
-    <PiedDePage site={site} />
+    <PiedDePage site={site} page={page} />
     <Appeler site={site} variante="barre" />
     {site.demo && <MenuModeles site={site} />}
   </body>
