@@ -278,6 +278,16 @@ const groupes = site.services.map((g) => g.groupe);
     text-align: left;
   }
 
+  /* Mobile : bouton sur toute la largeur, libellé sur une ligne (taille liée à l'écran). */
+  @media (max-width: 30rem) {
+    .devis-form button {
+      justify-self: stretch;
+      padding-inline: 1rem;
+      font-size: min(var(--taille-1), 5.2vw);
+      text-align: center;
+    }
+  }
+
   .devis-etat:not(:empty) {
     padding: var(--espace-2);
     border-left: 2px solid var(--cuivre-fonce);

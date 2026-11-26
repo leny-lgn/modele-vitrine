@@ -174,9 +174,17 @@ const services = site.services.map((g) => ({
     min-height: 2.75rem;
   }
 
+  /* Liens légaux côte à côte, jamais coupés au milieu. */
   .pdp-legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.5rem;
     list-style: none;
     padding: 0;
+  }
+
+  .pdp-legal a {
+    white-space: nowrap;
   }
 
   /* ——— Vitrine : horaires résumés et numéro mis en avant (plus simple que le Premium) ——— */

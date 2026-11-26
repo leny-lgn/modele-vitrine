@@ -502,6 +502,24 @@ const imgPremierGroupe = premierGroupe?.image ? site.images[premierGroupe.image]
     border-top: 3px solid var(--couleur-accent);
   }
 
+  /* Mobile : sans cadre latéral, le bouton « Appeler le … » prend toute la largeur sur une ligne. */
+  @media (max-width: 40rem) {
+    .tarifs-encart {
+      justify-items: stretch;
+      padding: var(--espace-3) 0 0;
+      border: 0;
+      border-top: 3px solid var(--couleur-accent);
+    }
+
+    .tarifs-encart :global(.bouton-v) {
+      padding-inline: 1rem;
+    }
+
+    .tarifs-encart .lien-v {
+      justify-self: start;
+    }
+  }
+
   .te-titre {
     font-family: var(--police-titres);
     font-size: var(--taille-2);

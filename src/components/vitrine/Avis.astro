@@ -32,7 +32,8 @@ const exemples = avis.length === 0 && fictifs.length === 0 && site.demo && !grou
 
 {
   avis.length > 0 && (
-    <ul class:list={['avis-v', classe]}>
+    <div class:list={['avis-reels', classe]}>
+    <ul class="avis-v" data-avis-repliable>
       {avis.map((a) => (
         <li>
           <figure>
@@ -49,6 +50,7 @@ const exemples = avis.length === 0 && fictifs.length === 0 && site.demo && !grou
         </li>
       ))}
     </ul>
+    </div>
   )
 }
 {
@@ -57,7 +59,7 @@ const exemples = avis.length === 0 && fictifs.length === 0 && site.demo && !grou
       <p class="af-avertissement">
         Avis fictifs, rédigés pour la démonstration. Sur le site réel&nbsp;: vos avis Google, recopiés mot pour mot.
       </p>
-      <ul class="avis-v">
+      <ul class="avis-v" data-avis-repliable>
         {fictifs.map((a) => (
           <li>
             <p class="af-marque">Avis fictif</p>
@@ -94,7 +96,65 @@ const exemples = avis.length === 0 && fictifs.length === 0 && site.demo && !grou
   )
 }
 
+<script>
+  // Mobile : un seul avis affiché, les autres derrière « Voir les N autres avis ».
+  // Sans JS, ou sur grand écran, tous les avis restent visibles.
+  const mobile = window.matchMedia('(max-width: 47.99rem)');
+  for (const liste of document.querySelectorAll<HTMLUListElement>('[data-avis-repliable]')) {
+    const n = liste.children.length - 1;
+    if (n < 1) continue;
+    const bouton = document.createElement('button');
+    bouton.type = 'button';
+    bouton.className = 'av-plus';
+    bouton.textContent = n > 1 ? `Voir les ${n} autres avis` : 'Voir l’autre avis';
+    bouton.addEventListener('click', () => {
+      liste.classList.remove('av-replie');
+      bouton.remove();
+      const suivant = liste.children[1] as HTMLElement | undefined;
+      if (suivant) {
+        suivant.tabIndex = -1;
+        suivant.focus();
+      }
+    });
+    liste.classList.add('av-replie');
+    liste.after(bouton);
+    const suivre = () => (bouton.hidden = !mobile.matches);
+    suivre();
+    mobile.addEventListener('change', suivre);
+  }
+</script>
+
 <style>
+  @media (max-width: 47.99rem) {
+    .av-replie > li:nth-child(n + 2) {
+      display: none;
+    }
+  }
+
+  :global(.av-plus) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    margin-top: var(--espace-1);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--couleur-lien);
+    font: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+
+  :global(.av-plus[hidden]) {
+    display: none;
+  }
+
+  .avis-v li:focus {
+    outline: none;
+  }
+
   .avis-v {
     display: grid;
     gap: var(--espace-3);

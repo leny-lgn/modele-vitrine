@@ -407,10 +407,16 @@
       "format": "1:1",
       "alt": "Salle de bain refaite : douche à l'italienne, paroi vitrée et robinetterie laiton",
       "prompt": "Salle de bain rénovée et vide, douche à l'italienne avec paroi vitrée fixe, carrelage grand format gris clair, robinetterie en laiton brossé, lumière douce d'une fenêtre."
+    },
+    "intervention": {
+      "fichier": "intervention.webp",
+      "format": "3:2",
+      "alt": "Intervention sous un évier",
+      "prompt": "Plombier allongé sous un évier de cuisine, lampe frontale allumée, vue de côté, visage non visible."
     }
   },
   "bandeau": {
-    "image": "apres1",
+    "image": "intervention",
     "texte": "Je réponds moi-même au téléphone et je donne le prix avant de commencer.",
     "auteur": "Julien Lemoine, plombier à Ville-Exemple"
   },

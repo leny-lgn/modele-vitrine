@@ -19,6 +19,12 @@ const devisGratuit = devis && tarifs.devisGratuit;
 // Démo : prix d'exemple ou laissés à remplir, une seule ligne le dit avant le tableau.
 const prixExemple = tarifs.lignes.some((l) => contientExemple(l.prix));
 const prixARemplir = !prixExemple && tarifs.lignes.some((l) => contientAVerifier(l.prix));
+// « à partir de » en petit au-dessus du montant : sur mobile, le prix ne se coupe plus au hasard.
+const prix = (texte: string) =>
+  marquerAVerifier(texte, 'votre tarif', 'aucune').replace(
+    /^(à partir de)(?:\s|&nbsp;|\u00a0)+/i,
+    '<span class="tv-apartir">$1</span> ',
+  );
 ---
 
 <div class:list={['tarifs-v', classe]}>
@@ -36,7 +42,7 @@ const prixARemplir = !prixExemple && tarifs.lignes.some((l) => contientAVerifier
         tarifs.lignes.map((l) => (
           <tr>
             <th scope="row">{l.libelle}</th>
-            <td class="chiffres" set:html={marquerAVerifier(l.prix, 'votre tarif', 'aucune')} />
+            <td class="chiffres" set:html={prix(l.prix)} />
           </tr>
         ))
       }
@@ -103,11 +109,22 @@ const prixARemplir = !prixExemple && tarifs.lignes.some((l) => contientAVerifier
     white-space: nowrap;
   }
 
-  /* Sur petit écran, le prix « à partir de [À VÉRIFIER] » passe sous le libellé */
+  td :global(.tv-apartir) {
+    color: var(--couleur-texte-secondaire);
+    font-size: var(--taille-petit);
+    font-weight: 500;
+  }
+
+  /* Petit écran : « à partir de » sur sa ligne, en petit, au-dessus du montant. */
   @media (max-width: 30rem) {
     td {
       white-space: normal;
-      min-width: 7rem;
+      min-width: 6rem;
+    }
+
+    td :global(.tv-apartir) {
+      display: block;
+      line-height: 1.2;
     }
   }
 
