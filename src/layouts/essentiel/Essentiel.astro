@@ -411,14 +411,14 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
     height: auto;
     aspect-ratio: 3 / 2;
     object-fit: cover;
-    /* Photo en 4:3 : on garde la tête, les mains sur le raccord et les genoux. */
-    object-position: 50% 38%;
+    /* Photo en 4:3 : on garde la tête et les mains sur le raccord. */
+    object-position: 50% 28%;
   }
 
   @media (min-width: 48rem) {
     .bandeau-metier :global(.bandeau-metier-image) {
       aspect-ratio: 5 / 2;
-      max-height: 32rem;
+      max-height: 26rem;
     }
   }
 
@@ -531,6 +531,13 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
 
   .urgences-plage {
     font-weight: 600;
+  }
+
+  /* La liste des gestes est un composant : la marge entre enfants de .bloc-contenu
+     (style limité à ce fichier) ne l'atteint pas. Sans elle, le filet du haut des gestes
+     collait à la phrase d'introduction et passait pour un soulignement isolé. */
+  .bloc-contenu :global(.gestes-essentiel) {
+    margin-top: var(--espace-2);
   }
 
   /* Bureau : les cas d'urgence côte à côte (trois colonnes au plus) sur toute la largeur,
