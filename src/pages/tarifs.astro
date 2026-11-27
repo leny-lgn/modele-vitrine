@@ -6,9 +6,15 @@ import Offres from '../components/perso/Offres.astro';
 import Etapes from '../components/perso/Etapes.astro';
 import Faq from '../components/perso/Faq.astro';
 import { LIEN_GRILLE } from '../lib/liens';
+import { MOI, prixFr, prixPlancher, villesFr } from '../lib/moi';
+import { typoFr } from '../lib/typo-fr';
+
+const description = typoFr(
+  `Prix d’un site internet pour commerçant ou artisan à ${villesFr()} : site complet dès ${prixPlancher()}, abonnement ${prixFr(MOI.abonnement.prix)} par mois, options. Devis gratuit.`,
+);
 ---
 
-<Perso titre="Tarifs" description="Prix des sites Essentiel, Vitrine et Premium, abonnement mensuel et options.">
+<Perso titre="Tarifs d’un site internet" description={description}>
   <BandeauPage titre="Tarifs">
     <p class="intro-section">
       Un prix par gamme pour créer le site, puis un abonnement mensuel pour l’hébergement et l’entretien. Chaque

@@ -7,7 +7,7 @@ import EnTete from '../components/perso/EnTete.astro';
 import PiedPerso from '../components/perso/PiedPerso.astro';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { MOI, NOM, PUBLIE, aCompleter, urlLogo } from '../lib/moi';
+import { MOI, NOM, PUBLIE, aCompleter, urlLogo, villesFr, prixFr } from '../lib/moi';
 import { RACINE } from '../lib/images.mjs';
 import { telInternational } from '../lib/typo-fr';
 import { LIEN_ACCUEIL, LIEN_GRILLE, LIEN_TARIFS, LIEN_CONTACT, IMAGE_PARTAGE_PERSO } from '../lib/liens';
@@ -21,7 +21,9 @@ const { titre, description } = Astro.props;
 const METIER = 'Sites internet pour commerçants et artisans';
 const nomConnu = !aCompleter(NOM);
 const nom = nomConnu ? NOM : METIER;
-const titreComplet = titre ? `${titre} — ${nom}` : nomConnu ? `${NOM} — ${METIER}` : METIER;
+// Accueil : métier et villes en tête du titre (ce que les gens tapent dans Google), nom ensuite.
+const titreAccueil = `Création de sites internet à ${villesFr()}`;
+const titreComplet = titre ? `${titre} — ${nom}` : nomConnu ? `${titreAccueil} — ${NOM}` : titreAccueil;
 const absolue = (chemin: string) => new URL(chemin, Astro.site).href;
 const canonique = absolue(Astro.url.pathname);
 const estAccueil = Astro.url.pathname === LIEN_ACCUEIL;
@@ -31,18 +33,48 @@ const imagePartage = existsSync(join(RACINE, 'public', IMAGE_PARTAGE_PERSO)) ? a
 
 // Données structurées de l'accueil. Les champs encore « [À COMPLÉTER] » sont omis.
 const renseigne = (v: string) => (aCompleter(v) ? undefined : v);
+const prix = MOI.gammes.map((g) => g.prix).filter((p): p is number => typeof p === 'number');
+const logo = urlLogo('sombre');
+const ml = MOI.mentionsLegales;
+// Adresse « 2 rue X, 29200 Brest » → rue, code postal, ville (omise si le format ne correspond pas).
+const adresse = ml.adresse.match(/^(.+),\s*(\d{5})\s+(.+)$/);
+const idEntreprise = absolue('/#entreprise');
 const jsonLd = estAccueil
   ? JSON.stringify({
       '@context': 'https://schema.org',
-      '@type': 'ProfessionalService',
-      name: renseigne(NOM) ?? 'Sites internet pour commerçants et artisans',
-      description: MOI.accroche,
-      url: absolue(LIEN_ACCUEIL),
-      telephone: renseigne(MOI.telephone) && telInternational(MOI.telephone),
-      email: renseigne(MOI.email),
-      image: imagePartage,
-      areaServed: MOI.villes.map((name) => ({ '@type': 'City', name })),
-      knowsLanguage: 'fr',
+      '@graph': [
+        {
+          // Nom du site affiché par Google au-dessus du résultat.
+          '@type': 'WebSite',
+          '@id': absolue('/#site'),
+          name: nom,
+          url: absolue(LIEN_ACCUEIL),
+          inLanguage: 'fr-FR',
+          publisher: { '@id': idEntreprise },
+        },
+        {
+          '@type': 'ProfessionalService',
+          '@id': idEntreprise,
+          name: renseigne(NOM) ?? METIER,
+          description: MOI.accroche,
+          url: absolue(LIEN_ACCUEIL),
+          telephone: renseigne(MOI.telephone) && telInternational(MOI.telephone),
+          email: renseigne(MOI.email),
+          image: imagePartage,
+          logo: logo && absolue(logo),
+          founder: { '@type': 'Person', name: MOI.nom },
+          address: adresse && {
+            '@type': 'PostalAddress',
+            streetAddress: adresse[1],
+            postalCode: adresse[2],
+            addressLocality: adresse[3],
+            addressCountry: 'FR',
+          },
+          priceRange: prix.length ? `${prixFr(Math.min(...prix))} – ${prixFr(Math.max(...prix))}` : undefined,
+          areaServed: MOI.villes.map((name) => ({ '@type': 'City', name })),
+          knowsLanguage: 'fr',
+        },
+      ],
     }).replace(/</g, '\\u003c')
   : undefined;
 ---
