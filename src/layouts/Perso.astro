@@ -16,8 +16,10 @@ interface Props {
   /** Titre de la page ; absent sur l'accueil. */
   titre?: string;
   description: string;
+  /** false : page exclue de Google (noindex), ex. mentions légales qui portent l'adresse postale. */
+  indexer?: boolean;
 }
-const { titre, description } = Astro.props;
+const { titre, description, indexer = true } = Astro.props;
 const METIER = 'Sites internet pour commerçants et artisans';
 const nomConnu = !aCompleter(NOM);
 const nom = nomConnu ? NOM : METIER;
@@ -35,9 +37,6 @@ const imagePartage = existsSync(join(RACINE, 'public', IMAGE_PARTAGE_PERSO)) ? a
 const renseigne = (v: string) => (aCompleter(v) ? undefined : v);
 const prix = MOI.gammes.map((g) => g.prix).filter((p): p is number => typeof p === 'number');
 const logo = urlLogo('sombre');
-const ml = MOI.mentionsLegales;
-// Adresse « 2 rue X, 29200 Brest » → rue, code postal, ville (omise si le format ne correspond pas).
-const adresse = ml.adresse.match(/^(.+),\s*(\d{5})\s+(.+)$/);
 const idEntreprise = absolue('/#entreprise');
 const jsonLd = estAccueil
   ? JSON.stringify({
@@ -63,13 +62,6 @@ const jsonLd = estAccueil
           image: imagePartage,
           logo: logo && absolue(logo),
           founder: { '@type': 'Person', name: MOI.nom },
-          address: adresse && {
-            '@type': 'PostalAddress',
-            streetAddress: adresse[1],
-            postalCode: adresse[2],
-            addressLocality: adresse[3],
-            addressCountry: 'FR',
-          },
           priceRange: prix.length ? `${prixFr(Math.min(...prix))} – ${prixFr(Math.max(...prix))}` : undefined,
           areaServed: MOI.villes.map((name) => ({ '@type': 'City', name })),
           knowsLanguage: 'fr',
@@ -90,6 +82,7 @@ const jsonLd = estAccueil
     <title>{titreComplet}</title>
     <meta name="description" content={description} />
     {!PUBLIE && <meta name="robots" content="noindex, nofollow" />}
+    {PUBLIE && !indexer && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonique} />
 
     <meta property="og:type" content="website" />
