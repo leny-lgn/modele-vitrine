@@ -5,7 +5,6 @@ import type { Site } from '../../lib/schema';
 import TitreSection from './TitreSection.astro';
 import Appeler from '../commun/Appeler.astro';
 import { marquerAVerifier } from '../../lib/texte';
-import PremiersGestes from '../commun/PremiersGestes.astro';
 
 interface Props {
   site: Site;
@@ -13,6 +12,9 @@ interface Props {
 }
 const { site, id = 'urgences' } = Astro.props;
 const u = site.urgences?.actif ? site.urgences : undefined;
+// Avec des premiers gestes : chaque situation porte son geste (une seule liste, pas deux).
+// Sans : la liste courte des situations prises en charge.
+const gestes = site.premiersGestes;
 ---
 
 {
@@ -21,13 +23,6 @@ const u = site.urgences?.actif ? site.urgences : undefined;
       <div class="page-v">
         <TitreSection id={`titre-${id}`}>Urgences</TitreSection>
         {u.plage && <p class="uv-plage chiffres">{u.plage}</p>}
-        {u.cas?.length && (
-          <ul class="uv-cas">
-            {u.cas.map((c) => (
-              <li>{c}</li>
-            ))}
-          </ul>
-        )}
         <div class="uv-pied">
           <Appeler site={site} class="bouton-v" />
           {u.delai && (
@@ -36,11 +31,28 @@ const u = site.urgences?.actif ? site.urgences : undefined;
             </p>
           )}
         </div>
-        {site.premiersGestes.length > 0 && (
+        {gestes.length > 0 ? (
           <div class="uv-gestes">
             <h3 id={`titre-${id}-gestes`}>En attendant mon arrivée</h3>
-            <PremiersGestes site={site} />
+            <dl class="uv-cas">
+              {gestes.map((g) => (
+                <div>
+                  <dt>{g.cas}</dt>
+                  <dd>{g.geste}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
+        ) : (
+          u.cas?.length && (
+            <ul class="uv-cas">
+              {u.cas.map((c) => (
+                <li>
+                  <span class="uv-nom">{c}</span>
+                </li>
+              ))}
+            </ul>
+          )
         )}
       </div>
     </section>
@@ -55,20 +67,32 @@ const u = site.urgences?.actif ? site.urgences : undefined;
   }
 
   .uv-cas {
-    list-style: none;
+    display: grid;
+    gap: 0 var(--espace-4);
+    margin: 0;
     padding: 0;
-    margin-top: var(--espace-3);
+    list-style: none;
+  }
+
+  .uv-cas > * {
+    padding-block: var(--espace-2);
     border-top: 1px solid var(--couleur-trait);
   }
 
-  .uv-cas li {
-    padding-block: 0.75rem;
-    border-bottom: 1px solid var(--couleur-trait);
+  /* Le nom de la situation garde la taille d'affiche : c'est ce que cherche la personne. */
+  .uv-cas dt,
+  .uv-nom {
     font-stretch: var(--largeur-titres);
     font-weight: 700;
     font-size: var(--taille-3);
     line-height: 1.05;
     hyphens: manual;
+  }
+
+  .uv-cas dd {
+    margin: var(--espace-1) 0 0;
+    color: var(--couleur-texte-secondaire);
+    line-height: 1.5;
   }
 
   .uv-pied {
@@ -83,8 +107,12 @@ const u = site.urgences?.actif ? site.urgences : undefined;
 
   .uv-gestes h3 {
     margin-bottom: var(--espace-2);
-    font-size: var(--taille-2);
-    line-height: 1.1;
+    color: var(--couleur-texte-secondaire);
+    font-family: inherit;
+    font-size: var(--taille-texte);
+    font-stretch: normal;
+    font-weight: 600;
+    line-height: 1.3;
   }
 
   .uv-delai {
@@ -92,23 +120,16 @@ const u = site.urgences?.actif ? site.urgences : undefined;
     font-size: var(--taille-petit);
   }
 
-  @media (min-width: 64rem) {
+  @media (min-width: 48rem) {
     .uv-cas {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-      border-top: 0;
+      grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
     }
+  }
 
-    .uv-cas li {
-      padding: var(--espace-2) var(--espace-3) var(--espace-2) 0;
-      border-bottom: 0;
-      border-top: 1px solid var(--couleur-trait);
-      font-size: var(--taille-4);
-    }
-
-    .uv-cas li + li {
-      padding-left: var(--espace-3);
-      border-left: 1px solid var(--couleur-trait);
+  @media (min-width: 64rem) {
+    .uv-cas dt,
+    .uv-nom {
+      font-size: min(var(--taille-4), 2.6vw);
     }
 
     .uv-pied {

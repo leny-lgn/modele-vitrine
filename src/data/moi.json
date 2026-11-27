@@ -1,7 +1,7 @@
 {
   "publie": false,
   "nom": "Leny Langon",
-  "nomCommercial": "Haute-Lice",
+  "nomCommercial": "Haute Lice",
   "logo": {
     "clair": "haute-lice-blanc.svg",
     "sombre": "haute-lice-noir.svg",
@@ -34,7 +34,7 @@
   "zone": "Lannion, Brest, Nantes et alentours",
   "disponibilites": "7/7, réponse dans la journée (le plus souvent après 18 h en semaine)",
   "histoireNom": {
-    "titre": "Pourquoi Haute-Lice ?",
+    "titre": "Pourquoi Haute Lice ?",
     "texte": "La haute-lice est une technique de tapisserie tissée à la main, sur un métier dont les fils sont tendus à la verticale. Le licier travaille fil par fil, d'après un modèle peint qu'on appelle le carton, et vérifie son ouvrage dans un miroir. Je fais vos sites de la même façon : d'après un modèle choisi avec vous, page par page, en vérifiant chaque détail."
   },
   "presentation": [

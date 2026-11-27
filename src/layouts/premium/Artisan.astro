@@ -12,7 +12,7 @@ import Zone from '../../components/vitrine/Zone.astro';
 import Coordonnees from '../../components/vitrine/Coordonnees.astro';
 import type { Site } from '../../lib/schema';
 import { LIBELLES_PAGES } from '../../lib/secteurs';
-import { marquerAVerifier } from '../../lib/texte';
+import { contientAVerifier, marquerAVerifier } from '../../lib/texte';
 import { infosArtisan } from '../../lib/premium';
 
 interface Props {
@@ -23,6 +23,9 @@ const { artisan, nomArtisan, qualifications, assurance } = infosArtisan(site);
 const portrait = site.images.artisan;
 const atelier = site.images.atelier;
 const objet = site.objet3d?.actif && site.objet3d.page === 'artisan';
+// Sous « Ce qui est vérifiable », un SIRET encore à compléter ferait maquette inachevée :
+// la ligne n'apparaît qu'une fois le numéro renseigné (il reste sur les mentions légales).
+const siret = contientAVerifier(site.mentionsLegales.siret) ? undefined : site.mentionsLegales.siret;
 ---
 
 <Premium site={site} page="artisan" titre={LIBELLES_PAGES.artisan} description={artisan.presentation}>
@@ -50,10 +53,14 @@ const objet = site.objet3d?.actif && site.objet3d.page === 'artisan';
         <dt>Statut</dt>
         <dd set:html={marquerAVerifier(site.mentionsLegales.formeJuridique)} />
       </div>
-      <div>
-        <dt>SIRET</dt>
-        <dd class="chiffres" set:html={marquerAVerifier(site.mentionsLegales.siret)} />
-      </div>
+      {
+        siret && (
+          <div>
+            <dt>SIRET</dt>
+            <dd class="chiffres">{siret}</dd>
+          </div>
+        )
+      }
       {
         qualifications.length > 0 && (
           <div>

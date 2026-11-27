@@ -34,7 +34,7 @@ Abonnement mensuel sans engagement pour l'hébergement et les petites modificati
 ## Capabilities and Constraints
 - Pages : `/`, `/modeles/`, `/tarifs/`, `/contact/`, `/mentions-legales/`, `/confidentialite/`.
 - Toutes les données viennent de `src/data/moi.json` ; les modèles de `src/sites/`.
-- Nom commercial : Haute-Lice (hautelice.fr, contact@hautelice.fr). Prix, téléphone et adresse
+- Nom commercial : Haute Lice (hautelice.fr, contact@hautelice.fr). Prix, téléphone et adresse
   renseignés ; SIRET en cours d'attribution. Tant que `publie` est false, site en `noindex`
   (plus de bandeau « Site en préparation »).
 - Pas de barre « Appeler » fixe sur le site personnel (les démos gardent la leur).

@@ -270,7 +270,10 @@ const depart = modeles.find((s) => s.gamme === 'vitrine') ?? modeles[0];
     bottom: 2rem;
     z-index: 1;
     transform: translateX(-50%);
-    white-space: nowrap;
+    /* Sa largeur naturelle : sinon, placé à left: 50 %, il serait limité à la moitié de
+       l'écran et « Vitrine » passerait à la ligne (la règle globale des boutons autorise
+       le retour à la ligne). */
+    width: max-content;
   }
 
   .es-essayer:active {

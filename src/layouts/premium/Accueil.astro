@@ -337,8 +337,8 @@ const sansCesure = (t: string) =>
       <section class="section-p pg surface-carrelage" aria-labelledby="t-faq" style="--rangs: 1">
         <Titre id="t-faq">Questions</Titre>
         <div class="zg ac-faq-zg">
-          <p class="ac-faq-appel">Une autre question&#8239;? {nomArtisan ? `${nomArtisan} répond lui-même.` : 'Appelez.'}</p>
-          <Appeler site={site} class="bouton-p" />
+          {/* Pas de bouton ici : la bande « Un problème maintenant ? » qui suit porte l'appel. */}
+          <p class="ac-faq-appel">Une autre question&#8239;? Posez-la au téléphone{nomArtisan ? `, à ${nomArtisan}` : ''}.</p>
         </div>
         <Faq site={site} class="texte-p ac-faq" />
       </section>

@@ -1,6 +1,6 @@
 ---
 // Gamme Essentiel : une seule page, « on vous trouve et on vous appelle ».
-// Plaque (hero ardoise) → urgences → l'artisan → prestations → zone → horaires et contact.
+// Plaque (hero ardoise) → photo du métier → urgences → l'artisan → prestations → zone → horaires et contact.
 // Aucun élément signature, aucune animation : des filets fins comme seul décor.
 import { nomPrestation } from '../../lib/services';
 import PremiersGestes from '../../components/commun/PremiersGestes.astro';
@@ -28,6 +28,7 @@ const confiance = (site.confiance ?? {}) as Confiance;
 const nomArtisan = [artisan.prenom, artisan.nom].filter(Boolean).join(' ');
 
 const urgences = site.urgences?.actif ? site.urgences : undefined;
+const imgMetier = site.images.metier;
 const imgArtisan = site.images.artisan;
 const imgDetail = site.images.detail1;
 const email = site.email && !contientAVerifier(site.email) ? site.email : undefined;
@@ -70,6 +71,15 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
       <Arguments site={site} class="plaque-arguments" />
     </div>
   </section>
+
+  {/* Le métier en image, sous la plaque (brief : pas de grande photo DANS le hero). */}
+  {
+    imgMetier && (
+      <div class="bandeau-metier">
+        <CadreImage site={site} image={imgMetier} sizes="100vw" class="bandeau-metier-image" />
+      </div>
+    )
+  }
 
   {
     urgences && (urgences.cas?.length || urgences.delai) && (
@@ -325,8 +335,9 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
   /* Bureau : fond ardoise uni, sans grande photo (brief Essentiel). Hauteur selon le contenu :
      la plaque plein écran laissait de grands vides au-dessus et au-dessous du nom. */
   @media (min-width: 48rem) {
+    /* Moins de marge en bas : la photo du métier suit directement. */
     .plaque {
-      padding-block: var(--espace-5);
+      padding-block: var(--espace-5) var(--espace-4);
     }
 
     /* Le nom occupe la plaque comme une enseigne */
@@ -383,6 +394,31 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
       display: block;
       color: var(--couleur-texte-secondaire);
       font-size: var(--taille-petit);
+    }
+  }
+
+  /* ——— Bandeau photo du métier ———
+     Pleine largeur, collé sous la plaque ardoise. Plus haut sur mobile (3:2) pour que
+     le sujet reste lisible, très allongé sur bureau (5:2) pour ne pas pousser la suite
+     trop bas. Recadrage centré : le prompt place le sujet au milieu. */
+  .bandeau-metier {
+    background: var(--ardoise);
+  }
+
+  .bandeau-metier :global(.bandeau-metier-image) {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    /* Photo en 4:3 : on garde la tête, les mains sur le raccord et les genoux. */
+    object-position: 50% 38%;
+  }
+
+  @media (min-width: 48rem) {
+    .bandeau-metier :global(.bandeau-metier-image) {
+      aspect-ratio: 5 / 2;
+      max-height: 32rem;
     }
   }
 
@@ -564,7 +600,35 @@ const qualifications = confiance.qualifications?.filter(Boolean) ?? [];
   @media (min-width: 48rem) {
     .plaque :global(.plaque-arguments) {
       grid-column: 1 / -1;
+      margin-top: var(--espace-3);
     }
+  }
+
+  /* Essentiel : les arguments se lisent comme une liste de faits, pas comme des onglets.
+     Trait cuivre court devant le texte (au lieu d'un soulignement sur toute la colonne),
+     graisse normale, ton secondaire, largeur naturelle alignée à gauche. */
+  .plaque :global(.plaque-arguments) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--espace-1) var(--espace-4);
+  }
+
+  .plaque :global(.plaque-arguments li) {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding-top: 0;
+    border-top: 0;
+    color: var(--couleur-texte-secondaire);
+    font-weight: 400;
+  }
+
+  .plaque :global(.plaque-arguments li::before) {
+    content: '';
+    flex: none;
+    width: 1.25rem;
+    height: 2px;
+    background: var(--couleur-accent);
   }
 
   @media (min-width: 48rem) {

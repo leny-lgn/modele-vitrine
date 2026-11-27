@@ -7,7 +7,7 @@
   "artisan": {
     "prenom": "Julien",
     "nom": "Lemoine",
-    "presentation": "Plombier chauffagiste installé à Ville-Exemple. Je travaille seul, je réponds moi-même au téléphone et je donne le prix avant de commencer.",
+    "presentation": "Plombier chauffagiste installé à Ville-Exemple. Je travaille seul : c’est moi qui viens chez vous, du premier appel à la facture.",
     "methode": [
       "Le prix est annoncé avant de commencer : au téléphone pour un dépannage, sur devis écrit pour des travaux.",
       "Le sol est protégé et le chantier laissé propre, ancien matériel emporté.",
@@ -583,7 +583,7 @@
   },
   "bandeau": {
     "image": "atelier",
-    "texte": "Je réponds moi-même au téléphone et je donne le prix avant de commencer.",
+    "texte": "Une fuite un samedi soir ? Je décroche jusqu’à 21 h.",
     "auteur": "Julien Lemoine, plombier à Ville-Exemple"
   },
   "faq": [

@@ -18,6 +18,9 @@ const { site, page, class: classe } = Astro.props;
 const email = site.email && !contientAVerifier(site.email) ? site.email : undefined;
 const premium = site.gamme === 'premium';
 const vitrine = site.gamme === 'vitrine';
+// Essentiel (accueil) : la page finit sur « Horaires et contact » ; le pied de page ne répète pas
+// l'adresse, le téléphone et l'e-mail (nom et liens légaux seulement).
+const essentiel = site.gamme === 'essentiel' && page === 'accueil';
 const horaires = premium || vitrine ? resumeHoraires(site.horaires) : [];
 // Accueil et L'artisan (Premium) finissent déjà par une section « Contact » complète :
 // le pied de page n'y répète pas les coordonnées (nom et liens légaux seulement).
@@ -93,6 +96,7 @@ const services = site.services.map((g) => ({
 <footer class:list={['pied-de-page', { 'pdp-vitrine': vitrine }, classe]}>
   <div class="pdp-coordonnees">
     <p class="pdp-nom">{site.nom}</p>
+    {!essentiel && (
     <address>
       {site.adresse.rue}<br />
       {site.adresse.codePostal}&nbsp;{site.adresse.ville}<br />
@@ -106,6 +110,7 @@ const services = site.services.map((g) => ({
         )
       }
     </address>
+    )}
   </div>
   {
     vitrine && horaires.length > 0 && (

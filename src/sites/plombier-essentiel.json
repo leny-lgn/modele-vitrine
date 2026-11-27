@@ -98,6 +98,10 @@
     {
       "cas": "Plus d'eau chaude",
       "geste": "Regardez le disjoncteur du chauffe-eau dans le tableau électrique. Si l'appareil fuit, coupez son courant et son arrivée d'eau."
+    },
+    {
+      "cas": "Chasse d'eau qui coule",
+      "geste": "Fermez le petit robinet sous ou derrière le réservoir. Le reste de la maison garde l'eau."
     }
   ],
   "fermetureExceptionnelle": null,
@@ -164,6 +168,12 @@
       "format": "1:1",
       "alt": "Tuyaux en cuivre neufs alignés",
       "prompt": "Gros plan sur des tuyaux en cuivre neufs soudés, alignés sur un mur, lumière rasante."
+    },
+    "metier": {
+      "fichier": "metier.webp",
+      "format": "4:3",
+      "alt": "Plombier à genoux dans une salle de bain, il raccorde l'arrivée d'eau d'un lavabo",
+      "prompt": "Plan large et horizontal : plombier à genoux dans une salle de bain en rénovation, il raccorde l'arrivée d'eau d'un lavabo sur des tuyaux en cuivre, caisse à outils ouverte au sol, raccords en laiton, bâche de protection grise au sol. Vu de dos ou de trois quarts arrière, visage hors cadre. Cadrage horizontal, sujet au centre, de la tête aux genoux, pour supporter un recadrage en bandeau."
     },
     "artisan": {
       "fichier": "artisan.webp",
